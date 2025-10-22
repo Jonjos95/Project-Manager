@@ -132,7 +132,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize the app
     init();
 
-    // Initialize project visualization (if exists)
+    // Sync tasks with visualization
+    function syncTasksWithVisualization() {
+      const visualization = document.querySelector('project-visualization');
+      if (!visualization) return;
+
+      const todoTasks = tasks.filter(task => !task.completed);
+      const doneTasks = tasks.filter(task => task.completed);
+
+      visualization.shadowRoot.querySelectorAll('[data-task-id]').forEach(el => {
+        const colType = el.closest('.kanban-column')?.querySelector('.column-header span')?.textContent;
+        if (!colType) return;
+
+        if (colType === 'To Do') {
+          if (todoTasks.length > 0) {
+            el.innerHTML = todoTasks.map(task => `<div>${task.text}</div>`).join('');
+          } else {
+            el.innerHTML = '<div>No tasks yet</div>';
+          }
+        } else if (colType === 'Done') {
+          if (doneTasks.length > 0) {
+            el.innerHTML = doneTasks.map(task => `<div>${task.text}</div>`).join('');
+          } else {
+            el.innerHTML = '<div>No completed tasks</div>';
+          }
+        }
+      });
+    }
+
+    // Update visualization when tasks change
+    function saveTasks() {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      syncTasksWithVisualization();
+    }
+// Initialize project visualization (if exists)
     if (document.querySelector('project-visualization')) {
       // Future integration with task data
     }

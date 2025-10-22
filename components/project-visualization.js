@@ -4,13 +4,14 @@ class ProjectVisualization extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         .visualization-container {
-          background: white;
-          border-radius: 0.75rem;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          background: rgba(255, 255, 255, 0.7);
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
           padding: 1.5rem;
           margin-bottom: 2rem;
+          border: 1px solid rgba(255, 255, 255, 0.4);
         }
-        .tabs {
+.tabs {
           display: flex;
           border-bottom: 1px solid #e2e8f0;
           margin-bottom: 1.5rem;
@@ -21,12 +22,17 @@ class ProjectVisualization extends HTMLElement {
           font-weight: 500;
           color: #64748b;
           border-bottom: 2px solid transparent;
+          transition: all 0.3s ease;
         }
         .tab.active {
           color: #6b46c1;
           border-bottom-color: #6b46c1;
+          background: linear-gradient(to right, rgba(107, 70, 193, 0.1), transparent);
         }
-        .visualization-content {
+        .tab:hover:not(.active) {
+          color: #8a63d2;
+        }
+.visualization-content {
           min-height: 300px;
         }
         .kanban-board {
@@ -37,12 +43,13 @@ class ProjectVisualization extends HTMLElement {
         }
         .kanban-column {
           min-width: 280px;
-          background: #f8fafc;
-          border-radius: 0.5rem;
+          background: rgba(248, 250, 252, 0.6);
+          border-radius: 12px;
           padding: 1rem;
-          border: 1px solid #e2e8f0;
+          border: 1px solid rgba(226, 232, 240, 0.5);
+          backdrop-filter: blur(5px);
         }
-        .column-header {
+.column-header {
           font-weight: 600;
           margin-bottom: 1rem;
           display: flex;
@@ -50,14 +57,16 @@ class ProjectVisualization extends HTMLElement {
           align-items: center;
         }
         .kanban-task {
-          background: white;
+          background: rgba(255, 255, 255, 0.8);
           padding: 0.75rem;
-          border-radius: 0.5rem;
+          border-radius: 8px;
           margin-bottom: 0.75rem;
-          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.03);
           cursor: move;
+          transition: transform 0.2s, box-shadow 0.2s;
+          border: 1px solid rgba(226, 232, 240, 0.5);
         }
-        .waterfall-chart {
+.waterfall-chart {
           height: 400px;
           position: relative;
           border-left: 1px solid #e2e8f0;
@@ -67,9 +76,15 @@ class ProjectVisualization extends HTMLElement {
           position: absolute;
           background: rgba(107, 70, 193, 0.1);
           border-left: 3px solid #6b46c1;
-          padding: 0.5rem;
+          padding: 0.75rem;
+          border-radius: 4px;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(2px);
         }
-        .phase-name {
+        .phase:hover {
+          background: rgba(107, 70, 193, 0.2);
+        }
+.phase-name {
           font-weight: 600;
           color: #6b46c1;
         }
