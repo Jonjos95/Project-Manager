@@ -129,7 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveTasks() {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
-
     // Initialize the app
     init();
+
+    // Initialize project visualization (if exists)
+    if (document.querySelector('project-visualization')) {
+      // Future integration with task data
+    }
 });
