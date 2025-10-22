@@ -70,8 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         taskList.innerHTML = filteredTasks.map(task => `
-            <div class="task-item bg-white border border-gray-200 rounded-lg p-4 flex items-start hover:shadow-md">
-                <button 
+            <div class="task-item bg-white border border-gray-200 rounded-lg p-4 flex items-start hover:bg-gray-50">
+<button 
                     class="task-toggle flex-shrink-0 w-6 h-6 rounded-full border-2 ${task.completed ? 'bg-primary-500 border-primary-500' : 'border-gray-300'} flex items-center justify-center mr-3 mt-1"
                     data-id="${task.id}"
                 >

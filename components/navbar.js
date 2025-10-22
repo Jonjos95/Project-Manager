@@ -4,14 +4,15 @@ class CustomNavbar extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         nav {
-          background: linear-gradient(135deg, #6b46c1 0%, #4299e1 100%);
+          background: white;
           padding: 1rem 2rem;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          border-bottom: 1px solid #eaeaea;
         }
-        .logo { 
+.logo { 
           color: white; 
           font-weight: 700;
           font-size: 1.25rem;
