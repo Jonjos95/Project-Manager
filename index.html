@@ -1,19 +1,93 @@
-<!doctype html>
-<html>
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<title>My static Space</title>
-		<link rel="stylesheet" href="style.css" />
-	</head>
-	<body>
-		<div class="card">
-			<h1>Welcome to your static Space!</h1>
-			<p>You can modify this app directly by editing <i>index.html</i> in the Files and versions tab.</p>
-			<p>
-				Also don't forget to check the
-				<a href="https://huggingface.co/docs/hub/spaces" target="_blank">Spaces documentation</a>.
-			</p>
-		</div>
-	</body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster Pro 🚀</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                500: '#6b46c1',
+              },
+              secondary: {
+                500: '#4299e1',
+              }
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <custom-navbar></custom-navbar>
+    
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-3xl mx-auto">
+            <div class="mb-10 text-center">
+                <h1 class="text-4xl font-bold text-primary-500 mb-2">TaskMaster Pro</h1>
+                <p class="text-gray-600">Organize your work and boost productivity</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <div class="flex gap-3 mb-6">
+                    <input 
+                        id="taskInput" 
+                        type="text" 
+                        placeholder="Add a new task..." 
+                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    >
+                    <button 
+                        id="addTaskBtn" 
+                        class="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
+                    >
+                        <i data-feather="plus"></i>
+                        Add
+                    </button>
+                </div>
+
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-sm text-gray-500">
+                        <span id="taskCount">0</span> tasks remaining
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="filter-btn active px-4 py-2 rounded-lg text-sm font-medium" data-filter="all">
+                            All
+                        </button>
+                        <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium" data-filter="active">
+                            Active
+                        </button>
+                        <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium" data-filter="completed">
+                            Completed
+                        </button>
+                    </div>
+                </div>
+
+                <div id="taskList" class="space-y-3">
+                    <!-- Tasks will be added here dynamically -->
+                    <div class="empty-state text-center py-10">
+                        <i data-feather="check-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
+                        <p class="text-gray-500">No tasks yet. Add one above!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <custom-footer></custom-footer>
+
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="script.js"></script>
+    <script>
+        feather.replace();
+    </script>
+<script src="https://deepsite.hf.co/deepsite-badge.js"></script>
+</body>
 </html>
