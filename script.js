@@ -114,6 +114,52 @@ function setupEventListeners() {
             closeDetailModal();
         }
     });
+    
+    document.getElementById('settingsModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            toggleSettingsMenu();
+        }
+    });
+    
+    document.getElementById('helpModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            toggleHelpMenu();
+        }
+    });
+    
+    // Close profile menu when clicking outside
+    document.addEventListener('click', function(e) {
+        const profileMenu = document.getElementById('profileMenu');
+        const profileButton = e.target.closest('[onclick="toggleProfileMenu()"]');
+        
+        if (!profileButton && !profileMenu.contains(e.target)) {
+            profileMenu.classList.add('hidden');
+        }
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + K to focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            document.getElementById('searchInput').focus();
+        }
+        
+        // Escape to close modals
+        if (e.key === 'Escape') {
+            closeEditModal();
+            closeDetailModal();
+            toggleSettingsMenu(false);
+            toggleHelpMenu(false);
+            document.getElementById('profileMenu').classList.add('hidden');
+        }
+    });
+    
+    // Sync mobile search with desktop search
+    document.getElementById('searchInputMobile').addEventListener('input', function() {
+        document.getElementById('searchInput').value = this.value;
+        searchTasks();
+    });
 }
 
 // Task CRUD Operations
@@ -636,6 +682,111 @@ function scrollKanban(direction) {
         container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
     } else {
         container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+}
+
+// Menu Toggle Functions
+function toggleProfileMenu() {
+    const menu = document.getElementById('profileMenu');
+    menu.classList.toggle('hidden');
+}
+
+function toggleSettingsMenu(forceClose = null) {
+    const modal = document.getElementById('settingsModal');
+    if (forceClose === false) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    } else if (forceClose === true) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    } else {
+        modal.classList.toggle('hidden');
+        modal.classList.toggle('flex');
+    }
+    if (!modal.classList.contains('hidden')) {
+        feather.replace();
+    }
+}
+
+function toggleHelpMenu(forceClose = null) {
+    const modal = document.getElementById('helpModal');
+    if (forceClose === false) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    } else if (forceClose === true) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    } else {
+        modal.classList.toggle('hidden');
+        modal.classList.toggle('flex');
+    }
+}
+
+// Data Management Functions
+function exportData() {
+    const dataStr = JSON.stringify(tasks, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `n8tive-tasks-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    alert('Tasks exported successfully!');
+}
+
+function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedTasks = JSON.parse(e.target.result);
+            
+            if (!Array.isArray(importedTasks)) {
+                throw new Error('Invalid format');
+            }
+            
+            // Validate task structure
+            const isValid = importedTasks.every(task => 
+                task.id && task.title && task.status
+            );
+            
+            if (!isValid) {
+                throw new Error('Invalid task structure');
+            }
+            
+            if (confirm(`This will import ${importedTasks.length} tasks. Continue?`)) {
+                tasks = importedTasks;
+                saveTasks();
+                renderTasks();
+                updateCounters();
+                feather.replace();
+                alert('Tasks imported successfully!');
+                toggleSettingsMenu();
+            }
+        } catch (error) {
+            alert('Error importing tasks: ' + error.message);
+        }
+    };
+    reader.readAsText(file);
+    
+    // Reset input
+    event.target.value = '';
+}
+
+function clearAllData() {
+    if (confirm('Are you sure you want to delete ALL tasks? This action cannot be undone!')) {
+        if (confirm('This will permanently delete all your tasks. Are you absolutely sure?')) {
+            tasks = [];
+            saveTasks();
+            renderTasks();
+            updateCounters();
+            alert('All tasks have been deleted.');
+            toggleSettingsMenu();
+        }
     }
 }
 
