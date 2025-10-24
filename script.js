@@ -9,9 +9,64 @@ let currentDetailTaskId = null;
 // Constants
 const STORAGE_KEY = 'n8tive.tasks';
 const THEME_KEY = 'theme';
+const METHODOLOGY_KEY = 'methodology';
 
-// All available statuses
-const STATUSES = ['backlog', 'todo', 'doing', 'review', 'testing', 'done', 'archived'];
+// Project Management Methodologies
+const METHODOLOGIES = {
+    kanban: {
+        name: 'Kanban',
+        statuses: [
+            { id: 'backlog', name: 'Backlog', icon: 'inbox', color: 'gray' },
+            { id: 'todo', name: 'To Do', icon: 'circle', color: 'gray' },
+            { id: 'doing', name: 'In Progress', icon: 'loader', color: 'blue' },
+            { id: 'review', name: 'Review', icon: 'eye', color: 'yellow' },
+            { id: 'testing', name: 'Testing', icon: 'check-square', color: 'purple' },
+            { id: 'done', name: 'Done', icon: 'check-circle', color: 'green' },
+            { id: 'archived', name: 'Archived', icon: 'archive', color: 'gray' }
+        ]
+    },
+    waterfall: {
+        name: 'Waterfall',
+        statuses: [
+            { id: 'requirements', name: 'Requirements', icon: 'file-text', color: 'blue' },
+            { id: 'design', name: 'Design', icon: 'layout', color: 'purple' },
+            { id: 'implementation', name: 'Implementation', icon: 'code', color: 'yellow' },
+            { id: 'verification', name: 'Verification', icon: 'check-square', color: 'orange' },
+            { id: 'maintenance', name: 'Maintenance', icon: 'tool', color: 'green' },
+            { id: 'archived', name: 'Archived', icon: 'archive', color: 'gray' }
+        ]
+    },
+    scrum: {
+        name: 'Scrum',
+        statuses: [
+            { id: 'product_backlog', name: 'Product Backlog', icon: 'inbox', color: 'gray' },
+            { id: 'sprint_backlog', name: 'Sprint Backlog', icon: 'list', color: 'blue' },
+            { id: 'in_progress', name: 'In Progress', icon: 'loader', color: 'yellow' },
+            { id: 'testing', name: 'Testing', icon: 'check-square', color: 'purple' },
+            { id: 'done', name: 'Done', icon: 'check-circle', color: 'green' },
+            { id: 'archived', name: 'Archived', icon: 'archive', color: 'gray' }
+        ]
+    },
+    lean: {
+        name: 'Lean',
+        statuses: [
+            { id: 'requested', name: 'Requested', icon: 'inbox', color: 'gray' },
+            { id: 'in_progress', name: 'In Progress', icon: 'loader', color: 'blue' },
+            { id: 'done', name: 'Done', icon: 'check-circle', color: 'green' }
+        ]
+    },
+    simple: {
+        name: 'Simple',
+        statuses: [
+            { id: 'todo', name: 'To Do', icon: 'circle', color: 'gray' },
+            { id: 'doing', name: 'Doing', icon: 'loader', color: 'blue' },
+            { id: 'done', name: 'Done', icon: 'check-circle', color: 'green' }
+        ]
+    }
+};
+
+let currentMethodology = 'kanban';
+let STATUSES = [];
 
 // Seed data
 const SEED_TASKS = [
@@ -42,11 +97,69 @@ const SEED_TASKS = [
 // Initialize App
 function init() {
     loadTheme();
+    loadMethodology();
     loadTasks();
     setupEventListeners();
+    renderKanbanBoard();
+    updateFilters();
+    updateStatusSelectors();
     renderTasks();
     updateCounters();
     feather.replace();
+}
+
+// Load Methodology
+function loadMethodology() {
+    const saved = localStorage.getItem(METHODOLOGY_KEY);
+    currentMethodology = saved && METHODOLOGIES[saved] ? saved : 'kanban';
+    STATUSES = METHODOLOGIES[currentMethodology].statuses.map(s => s.id);
+    updateMethodologySelector();
+}
+
+function saveMethodology() {
+    localStorage.setItem(METHODOLOGY_KEY, currentMethodology);
+}
+
+function changeMethodology(methodology) {
+    if (!METHODOLOGIES[methodology]) return;
+    
+    currentMethodology = methodology;
+    STATUSES = METHODOLOGIES[currentMethodology].statuses.map(s => s.id);
+    saveMethodology();
+    
+    // Migrate tasks to first valid status if their current status doesn't exist
+    tasks.forEach(task => {
+        if (!STATUSES.includes(task.status)) {
+            task.status = STATUSES[0];
+            task.updatedAt = new Date().toISOString();
+        }
+    });
+    saveTasks();
+    
+    // Re-render everything
+    renderKanbanBoard();
+    updateFilters();
+    updateStatusSelectors();
+    renderTasks();
+    updateCounters();
+    feather.replace();
+}
+
+function updateStatusSelectors() {
+    const taskStatusSelect = document.getElementById('taskStatus');
+    if (taskStatusSelect) {
+        const methodology = METHODOLOGIES[currentMethodology];
+        taskStatusSelect.innerHTML = methodology.statuses.slice(0, 2).map(status => 
+            `<option value="${status.id}">${status.name}</option>`
+        ).join('');
+    }
+}
+
+function updateMethodologySelector() {
+    const selector = document.getElementById('methodologySelector');
+    if (selector) {
+        selector.value = currentMethodology;
+    }
 }
 
 // Generate unique ID
@@ -508,6 +621,97 @@ function getFilteredTasks() {
     }
     
     return filtered;
+}
+
+// Dynamic Kanban Board Rendering
+function renderKanbanBoard() {
+    const container = document.getElementById('kanbanBoardColumns');
+    if (!container) return;
+    
+    const methodology = METHODOLOGIES[currentMethodology];
+    container.innerHTML = '';
+    
+    methodology.statuses.forEach(statusConfig => {
+        const column = createColumnElement(statusConfig);
+        container.appendChild(column);
+    });
+}
+
+function createColumnElement(statusConfig) {
+    const colorClasses = {
+        gray: 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300',
+        blue: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
+        purple: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300',
+        yellow: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300',
+        orange: 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300',
+        green: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+    };
+    
+    const iconColors = {
+        gray: 'text-gray-500',
+        blue: 'text-blue-500',
+        purple: 'text-purple-500',
+        yellow: 'text-yellow-500',
+        orange: 'text-orange-500',
+        green: 'text-green-500'
+    };
+    
+    const column = document.createElement('div');
+    column.className = 'bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 w-80 flex-shrink-0';
+    column.innerHTML = `
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
+                <i data-feather="${statusConfig.icon}" class="w-5 h-5 mr-2 ${iconColors[statusConfig.color] || 'text-gray-500'}"></i>
+                ${statusConfig.name}
+            </h3>
+            <span class="${colorClasses[statusConfig.color] || colorClasses.gray} px-2 py-1 rounded-full text-sm" id="${statusConfig.id}Count">0</span>
+        </div>
+        <div 
+            id="${statusConfig.id}Column" 
+            class="space-y-3 min-h-[300px]"
+            data-status="${statusConfig.id}"
+            ondrop="handleDrop(event)"
+            ondragover="handleDragOver(event)"
+            ondragleave="handleDragLeave(event)"
+        ></div>
+    `;
+    
+    return column;
+}
+
+// Update Filters Based on Methodology
+function updateFilters() {
+    const filterContainer = document.querySelector('.space-y-2');
+    if (!filterContainer) return;
+    
+    const methodology = METHODOLOGIES[currentMethodology];
+    
+    // Keep "All Tasks" filter and rebuild status filters
+    const allButton = filterContainer.querySelector('[data-filter="all"]');
+    filterContainer.innerHTML = '';
+    
+    if (allButton) {
+        filterContainer.appendChild(allButton);
+    } else {
+        const allBtn = document.createElement('button');
+        allBtn.onclick = () => filterTasks('all');
+        allBtn.className = 'filter-btn w-full text-left px-4 py-2 rounded-lg bg-purple-600 text-white';
+        allBtn.setAttribute('data-filter', 'all');
+        allBtn.innerHTML = '<i data-feather="list" class="w-4 h-4 inline mr-2"></i> All Tasks';
+        filterContainer.appendChild(allBtn);
+    }
+    
+    // Add status-specific filters
+    methodology.statuses.forEach(statusConfig => {
+        const btn = document.createElement('button');
+        btn.onclick = () => filterTasks(statusConfig.id);
+        btn.className = 'filter-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700';
+        btn.setAttribute('data-filter', statusConfig.id);
+        btn.innerHTML = `<i data-feather="${statusConfig.icon}" class="w-4 h-4 inline mr-2"></i> ${statusConfig.name}`;
+        filterContainer.appendChild(btn);
+    });
+    
+    feather.replace();
 }
 
 // Render Functions

@@ -360,8 +360,24 @@
             
             <!-- Kanban Board Section -->
             <div class="mb-4">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Kanban Board</h3>
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <div class="flex items-center gap-4">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white">Workflow Board</h3>
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm text-gray-600 dark:text-gray-400">Methodology:</label>
+                            <select 
+                                id="methodologySelector" 
+                                onchange="changeMethodology(this.value)"
+                                class="px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            >
+                                <option value="kanban">Kanban</option>
+                                <option value="scrum">Scrum</option>
+                                <option value="waterfall">Waterfall</option>
+                                <option value="lean">Lean</option>
+                                <option value="simple">Simple</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="flex items-center gap-2">
                         <button onclick="scrollKanban('left')" class="p-2 bg-white dark:bg-gray-800 rounded-lg shadow hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" title="Scroll Left">
                             <i data-feather="chevron-left" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
@@ -375,139 +391,8 @@
             
             <!-- Kanban Board -->
             <div id="kanbanContainer" class="kanban-board-container overflow-x-auto pb-4 scroll-smooth">
-                <div class="flex gap-4 min-w-max">
-                    <!-- Backlog Column -->
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 w-80 flex-shrink-0">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
-                                <i data-feather="inbox" class="w-5 h-5 mr-2 text-gray-400"></i>
-                                Backlog
-                            </h3>
-                            <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full text-sm" id="backlogCount">0</span>
-                        </div>
-                        <div 
-                            id="backlogColumn" 
-                            class="space-y-3 min-h-[300px]"
-                            data-status="backlog"
-                            ondrop="handleDrop(event)"
-                            ondragover="handleDragOver(event)"
-                            ondragleave="handleDragLeave(event)"
-                        ></div>
-                    </div>
-                    
-                    <!-- To Do Column -->
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 w-80 flex-shrink-0">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
-                                <i data-feather="circle" class="w-5 h-5 mr-2 text-gray-500"></i>
-                                To Do
-                            </h3>
-                            <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full text-sm" id="todoCount">0</span>
-                        </div>
-                        <div 
-                            id="todoColumn" 
-                            class="space-y-3 min-h-[300px]"
-                            data-status="todo"
-                            ondrop="handleDrop(event)"
-                            ondragover="handleDragOver(event)"
-                            ondragleave="handleDragLeave(event)"
-                        ></div>
-                    </div>
-                    
-                    <!-- In Progress Column -->
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 w-80 flex-shrink-0">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
-                                <i data-feather="loader" class="w-5 h-5 mr-2 text-blue-500"></i>
-                                In Progress
-                            </h3>
-                            <span class="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full text-sm" id="doingCount">0</span>
-                        </div>
-                        <div 
-                            id="doingColumn" 
-                            class="space-y-3 min-h-[300px]"
-                            data-status="doing"
-                            ondrop="handleDrop(event)"
-                            ondragover="handleDragOver(event)"
-                            ondragleave="handleDragLeave(event)"
-                        ></div>
-                    </div>
-                    
-                    <!-- Review Column -->
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 w-80 flex-shrink-0">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
-                                <i data-feather="eye" class="w-5 h-5 mr-2 text-yellow-500"></i>
-                                Review
-                            </h3>
-                            <span class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-full text-sm" id="reviewCount">0</span>
-                        </div>
-                        <div 
-                            id="reviewColumn" 
-                            class="space-y-3 min-h-[300px]"
-                            data-status="review"
-                            ondrop="handleDrop(event)"
-                            ondragover="handleDragOver(event)"
-                            ondragleave="handleDragLeave(event)"
-                        ></div>
-                    </div>
-                    
-                    <!-- Testing Column -->
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 w-80 flex-shrink-0">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
-                                <i data-feather="check-square" class="w-5 h-5 mr-2 text-purple-500"></i>
-                                Testing
-                            </h3>
-                            <span class="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-full text-sm" id="testingCount">0</span>
-                        </div>
-                        <div 
-                            id="testingColumn" 
-                            class="space-y-3 min-h-[300px]"
-                            data-status="testing"
-                            ondrop="handleDrop(event)"
-                            ondragover="handleDragOver(event)"
-                            ondragleave="handleDragLeave(event)"
-                        ></div>
-                    </div>
-                    
-                    <!-- Done Column -->
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 w-80 flex-shrink-0">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
-                                <i data-feather="check-circle" class="w-5 h-5 mr-2 text-green-500"></i>
-                                Done
-                            </h3>
-                            <span class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-1 rounded-full text-sm" id="doneCount">0</span>
-                        </div>
-                        <div 
-                            id="doneColumn" 
-                            class="space-y-3 min-h-[300px]"
-                            data-status="done"
-                            ondrop="handleDrop(event)"
-                            ondragover="handleDragOver(event)"
-                            ondragleave="handleDragLeave(event)"
-                        ></div>
-                    </div>
-                    
-                    <!-- Archived Column -->
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 w-80 flex-shrink-0">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
-                                <i data-feather="archive" class="w-5 h-5 mr-2 text-gray-400"></i>
-                                Archived
-                            </h3>
-                            <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full text-sm" id="archivedCount">0</span>
-                        </div>
-                        <div 
-                            id="archivedColumn" 
-                            class="space-y-3 min-h-[300px]"
-                            data-status="archived"
-                            ondrop="handleDrop(event)"
-                            ondragover="handleDragOver(event)"
-                            ondragleave="handleDragLeave(event)"
-                        ></div>
-                    </div>
+                <div id="kanbanBoardColumns" class="flex gap-4 min-w-max">
+                    <!-- Columns will be dynamically generated here -->
                 </div>
             </div>
         </div>
