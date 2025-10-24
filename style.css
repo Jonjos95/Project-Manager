@@ -2,6 +2,12 @@
 
 /* Optional custom CSS overrides */
 
+/* Sidebar button overflow prevention */
+.filter-btn, .nav-btn {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 /* Smooth transitions for drag and drop */
 .drag-over {
     background-color: rgba(107, 70, 193, 0.1);

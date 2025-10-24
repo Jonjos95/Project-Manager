@@ -698,25 +698,21 @@ function createColumnElement(statusConfig) {
 
 // Update Filters Based on Methodology
 function updateFilters() {
-    const filterContainer = document.querySelector('.space-y-2');
+    const filterContainer = document.getElementById('filterButtons');
     if (!filterContainer) return;
     
     const methodology = METHODOLOGIES[currentMethodology];
     
-    // Keep "All Tasks" filter and rebuild status filters
-    const allButton = filterContainer.querySelector('[data-filter="all"]');
+    // Clear and rebuild all filters
     filterContainer.innerHTML = '';
     
-    if (allButton) {
-        filterContainer.appendChild(allButton);
-    } else {
-        const allBtn = document.createElement('button');
-        allBtn.onclick = () => filterTasks('all');
-        allBtn.className = 'filter-btn w-full text-left px-4 py-2 rounded-lg bg-purple-600 text-white';
-        allBtn.setAttribute('data-filter', 'all');
-        allBtn.innerHTML = '<i data-feather="list" class="w-4 h-4 inline mr-2"></i> All Tasks';
-        filterContainer.appendChild(allBtn);
-    }
+    // Add "All Tasks" filter
+    const allBtn = document.createElement('button');
+    allBtn.onclick = () => filterTasks('all');
+    allBtn.className = 'filter-btn w-full text-left px-4 py-2 rounded-lg bg-purple-600 text-white';
+    allBtn.setAttribute('data-filter', 'all');
+    allBtn.innerHTML = '<i data-feather="list" class="w-4 h-4 inline mr-2"></i><span class="filter-text">All Tasks</span>';
+    filterContainer.appendChild(allBtn);
     
     // Add status-specific filters
     methodology.statuses.forEach(statusConfig => {
@@ -724,7 +720,7 @@ function updateFilters() {
         btn.onclick = () => filterTasks(statusConfig.id);
         btn.className = 'filter-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700';
         btn.setAttribute('data-filter', statusConfig.id);
-        btn.innerHTML = `<i data-feather="${statusConfig.icon}" class="w-4 h-4 inline mr-2"></i> ${statusConfig.name}`;
+        btn.innerHTML = `<i data-feather="${statusConfig.icon}" class="w-4 h-4 inline mr-2"></i><span class="filter-text">${statusConfig.name}</span>`;
         filterContainer.appendChild(btn);
     });
     
@@ -923,7 +919,7 @@ function applySidebarCollapse() {
     const sidebarTitle = document.getElementById('sidebarTitle');
     const collapseBtn = document.getElementById('collapseBtn');
     const collapseIcon = document.getElementById('collapseIcon');
-    const textElements = document.querySelectorAll('.sidebar-text, .nav-text');
+    const textElements = document.querySelectorAll('.sidebar-text, .nav-text, .filter-text');
     const filterBtns = document.querySelectorAll('.filter-btn');
     const navBtns = document.querySelectorAll('.nav-btn');
     
