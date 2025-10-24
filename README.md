@@ -1,5 +1,5 @@
 ---
-title: N8tive.io Project Manager 🧭
+title: Project Manager
 colorFrom: purple
 colorTo: blue
 emoji: 🧭
