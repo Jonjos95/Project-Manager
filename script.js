@@ -98,6 +98,7 @@ const SEED_TASKS = [
 function init() {
     loadTheme();
     loadMethodology();
+    loadSidebarState();
     loadTasks();
     setupEventListeners();
     renderKanbanBoard();
@@ -875,6 +876,86 @@ function toggleMobileMenu() {
     
     sidebar.classList.toggle('-translate-x-full');
     overlay.classList.toggle('hidden');
+}
+
+// Sidebar Collapse/Expand
+let sidebarCollapsed = false;
+
+function loadSidebarState() {
+    const saved = localStorage.getItem('sidebarCollapsed');
+    sidebarCollapsed = saved === 'true';
+    if (sidebarCollapsed) {
+        applySidebarCollapse();
+    }
+}
+
+function toggleSidebarCollapse() {
+    sidebarCollapsed = !sidebarCollapsed;
+    localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
+    applySidebarCollapse();
+}
+
+function applySidebarCollapse() {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    const sidebarTitle = document.getElementById('sidebarTitle');
+    const collapseIcon = document.getElementById('collapseIcon');
+    const textElements = document.querySelectorAll('.sidebar-text');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    
+    if (sidebarCollapsed) {
+        // Collapse
+        sidebar.classList.remove('w-64');
+        sidebar.classList.add('w-20');
+        mainContent.classList.remove('lg:ml-64');
+        mainContent.classList.add('lg:ml-20');
+        
+        // Hide text elements
+        sidebarTitle.classList.add('hidden');
+        textElements.forEach(el => el.classList.add('hidden'));
+        
+        // Center filter buttons and show only icons
+        filterBtns.forEach(btn => {
+            btn.classList.add('justify-center');
+            const text = btn.childNodes[btn.childNodes.length - 1];
+            if (text && text.nodeType === 3) {
+                text.textContent = '';
+            }
+        });
+        
+        // Change icon
+        collapseIcon.setAttribute('data-feather', 'chevrons-right');
+        
+        // Hide sections content
+        document.getElementById('darkModeSection').classList.add('justify-center');
+        document.getElementById('countersSection').classList.add('hidden');
+        
+    } else {
+        // Expand
+        sidebar.classList.remove('w-20');
+        sidebar.classList.add('w-64');
+        mainContent.classList.remove('lg:ml-20');
+        mainContent.classList.add('lg:ml-64');
+        
+        // Show text elements
+        sidebarTitle.classList.remove('hidden');
+        textElements.forEach(el => el.classList.remove('hidden'));
+        
+        // Restore filter buttons
+        filterBtns.forEach(btn => {
+            btn.classList.remove('justify-center');
+        });
+        updateFilters(); // Re-render with text
+        
+        // Change icon
+        collapseIcon.setAttribute('data-feather', 'chevrons-left');
+        
+        // Show sections
+        document.getElementById('darkModeSection').classList.remove('justify-center');
+        document.getElementById('countersSection').classList.remove('hidden');
+    }
+    
+    feather.replace();
 }
 
 // Kanban Board Scrolling

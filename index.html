@@ -46,13 +46,13 @@
     <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleMobileMenu()"></div>
     
     <!-- Sidebar -->
-    <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 overflow-y-auto">
+    <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg z-50 transform -translate-x-full lg:translate-x-0 transition-all duration-300 overflow-y-auto">
         <div class="p-6">
             <!-- Logo/Title -->
             <div class="flex items-center justify-between mb-8">
                 <div class="flex items-center gap-2">
                     <!-- Logo SVG -->
-                    <svg class="w-8 h-8" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg id="sidebarLogo" class="w-8 h-8 transition-all duration-300" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M24 4L40 13V27L24 36L8 27V13L24 4Z" fill="#6b46c1" opacity="0.2"/>
                         <path d="M24 4L40 13V27L24 36L8 27V13L24 4Z" stroke="#6b46c1" stroke-width="2" stroke-linejoin="round"/>
                         <line x1="24" y1="4" x2="24" y2="36" stroke="#6b46c1" stroke-width="2"/>
@@ -64,24 +64,29 @@
                         <circle cx="16" cy="24" r="2" fill="#6b46c1"/>
                         <circle cx="32" cy="24" r="2" fill="#6b46c1"/>
                     </svg>
-                    <h1 class="text-xl font-bold text-purple-700 dark:text-purple-400">N8tive.io</h1>
+                    <h1 id="sidebarTitle" class="text-xl font-bold text-purple-700 dark:text-purple-400 transition-all duration-300">N8tive.io</h1>
                 </div>
-                <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-600 dark:text-gray-300">
-                    <i data-feather="x" class="w-6 h-6"></i>
-                </button>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleSidebarCollapse()" class="hidden lg:block text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors" title="Collapse sidebar">
+                        <i data-feather="chevrons-left" id="collapseIcon" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-600 dark:text-gray-300">
+                        <i data-feather="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
             </div>
             
             <!-- Dark Mode Toggle -->
-            <div class="mb-6 flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Dark Mode</span>
+            <div id="darkModeSection" class="mb-6 flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-lg transition-all duration-300">
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 sidebar-text">Dark Mode</span>
                 <button id="darkModeToggle" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-300 dark:bg-purple-600">
                     <span class="inline-block w-4 h-4 transform transition-transform bg-white rounded-full translate-x-1 dark:translate-x-6"></span>
                 </button>
             </div>
             
             <!-- Filters -->
-            <div class="mb-6">
-                <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3">Filters</h3>
+            <div id="filtersSection" class="mb-6 transition-all duration-300">
+                <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3 sidebar-text">Filters</h3>
                 <div class="space-y-2">
                     <button onclick="filterTasks('all')" class="filter-btn w-full text-left px-4 py-2 rounded-lg bg-purple-600 text-white" data-filter="all">
                         <i data-feather="list" class="w-4 h-4 inline mr-2"></i> All Tasks
@@ -111,21 +116,21 @@
             </div>
             
             <!-- Counters -->
-            <div class="space-y-3">
+            <div id="countersSection" class="space-y-3 transition-all duration-300">
                 <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                     <div class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="remainingCount">0</div>
-                    <div class="text-xs text-blue-600 dark:text-blue-400">Tasks Remaining</div>
+                    <div class="text-xs text-blue-600 dark:text-blue-400 sidebar-text">Tasks Remaining</div>
                 </div>
                 <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                     <div class="text-2xl font-bold text-green-600 dark:text-green-400" id="completedCount">0</div>
-                    <div class="text-xs text-green-600 dark:text-green-400">Tasks Completed</div>
+                    <div class="text-xs text-green-600 dark:text-green-400 sidebar-text">Tasks Completed</div>
                 </div>
             </div>
         </div>
     </aside>
     
     <!-- Main Content -->
-    <div class="lg:ml-64 min-h-screen flex flex-col">
+    <div id="mainContent" class="lg:ml-64 min-h-screen flex flex-col transition-all duration-300">
         <!-- Header -->
         <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
             <div class="px-4 py-4 sm:px-6 lg:px-8">
