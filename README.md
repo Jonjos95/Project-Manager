@@ -11,11 +11,11 @@ tags:
   - project-management
 ---
 
-# N8tive.io Project Manager 🧭
+# N8tive.io Project Manager
 
 A complete, responsive task management application built with HTML, Tailwind CSS, and Vanilla JavaScript.
 
-## ✨ Features
+## Features
 
 - **Task CRUD Operations**: Add, edit, and delete tasks with localStorage persistence
 - **Advanced Kanban Board**: Seven workflow stages (Backlog, To Do, In Progress, Review, Testing, Done, Archived) with drag-and-drop functionality
@@ -29,22 +29,22 @@ A complete, responsive task management application built with HTML, Tailwind CSS
 - **Smooth Animations**: Fade and slide transitions for enhanced UX
 - **Priority Levels**: Low, Medium, and High priority indicators with color coding
 
-##  Quick Start
+## Quick Start
 
 Simply open `index.html` in your browser. No build process or dependencies required!
 
-## 💾 Data Persistence
+## Data Persistence
 
 All tasks are automatically saved to `localStorage` under the key `n8tive.tasks`. Your data persists across browser sessions.
 
-## 🎨 Tech Stack
+## Tech Stack
 
 - **HTML5**
 - **Tailwind CSS** (CDN)
 - **Vanilla JavaScript**
 - **Feather Icons** (CDN)
 
-## 📋 Task Schema
+## Task Schema
 
 ```json
 {
@@ -69,7 +69,7 @@ All tasks are automatically saved to `localStorage` under the key `n8tive.tasks`
 }
 ```
 
-## 🎯 Usage
+## Usage
 
 1. **Add Tasks**: Fill out the form, select initial status, and click "Add Task"
 2. **View Task Details**: Click on any task card to open the detailed view with all metadata
@@ -82,7 +82,7 @@ All tasks are automatically saved to `localStorage` under the key `n8tive.tasks`
 9. **Search Tasks**: Use the search bar to find specific tasks by title or description
 10. **Toggle Dark Mode**: Click the dark mode toggle in the sidebar
 
-##  Color Scheme
+## Color Scheme
 
 - Primary: #6b46c1 (Purple)
 - Secondary: #4299e1 (Blue)
