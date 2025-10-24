@@ -38,6 +38,9 @@
     <!-- Feather Icons CDN -->
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
     <!-- Custom Styles -->
     <link rel="stylesheet" href="style.css">
 </head>
@@ -72,6 +75,25 @@
                     </button>
                     <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-600 dark:text-gray-300">
                         <i data-feather="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <div id="navigationSection" class="mb-6 transition-all duration-300">
+                <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3 sidebar-text">Navigation</h3>
+                <div class="space-y-2">
+                    <button onclick="showView('board')" class="nav-btn w-full text-left px-4 py-2 rounded-lg bg-purple-600 text-white transition-colors duration-200" data-view="board">
+                        <i data-feather="trello" class="w-4 h-4 inline mr-2"></i>
+                        <span class="nav-text">Board</span>
+                    </button>
+                    <button onclick="showView('analytics')" class="nav-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" data-view="analytics">
+                        <i data-feather="bar-chart-2" class="w-4 h-4 inline mr-2"></i>
+                        <span class="nav-text">Analytics</span>
+                    </button>
+                    <button onclick="showView('timeline')" class="nav-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" data-view="timeline">
+                        <i data-feather="activity" class="w-4 h-4 inline mr-2"></i>
+                        <span class="nav-text">Timeline</span>
                     </button>
                 </div>
             </div>
@@ -335,8 +357,11 @@
             </div>
         </div>
         
-        <!-- Task Input Section -->
-        <div class="px-4 py-6 sm:px-6 lg:px-8">
+        <!-- Views Container -->
+        <div id="viewsContainer" class="px-4 py-6 sm:px-6 lg:px-8">
+            
+            <!-- Board View -->
+            <div id="boardView" class="view-content">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 animate-fadeIn">
                 <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Add New Task</h3>
                 <form id="taskForm" class="space-y-4">
@@ -429,6 +454,117 @@
                     <!-- Columns will be dynamically generated here -->
                 </div>
             </div>
+            </div>
+            <!-- End Board View -->
+            
+            <!-- Analytics View -->
+            <div id="analyticsView" class="view-content hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Analytics Dashboard</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Track your project metrics and performance</p>
+                </div>
+                
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Tasks</p>
+                                <p class="text-3xl font-bold text-gray-800 dark:text-white" id="metricTotalTasks">0</p>
+                            </div>
+                            <i data-feather="layers" class="w-10 h-10 text-blue-500"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-green-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Completion Rate</p>
+                                <p class="text-3xl font-bold text-gray-800 dark:text-white" id="metricCompletionRate">0%</p>
+                            </div>
+                            <i data-feather="trending-up" class="w-10 h-10 text-green-500"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Avg. Time to Complete</p>
+                                <p class="text-3xl font-bold text-gray-800 dark:text-white" id="metricAvgTime">0d</p>
+                            </div>
+                            <i data-feather="clock" class="w-10 h-10 text-yellow-500"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Active Tasks</p>
+                                <p class="text-3xl font-bold text-gray-800 dark:text-white" id="metricActiveTasks">0</p>
+                            </div>
+                            <i data-feather="zap" class="w-10 h-10 text-purple-500"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Status Distribution Chart -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Status Distribution</h3>
+                        <canvas id="statusChart" class="max-h-64"></canvas>
+                    </div>
+                    
+                    <!-- Priority Distribution Chart -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Priority Breakdown</h3>
+                        <canvas id="priorityChart" class="max-h-64"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Task Completion Timeline -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Task Completion Over Time</h3>
+                    <canvas id="timelineChart" class="max-h-64"></canvas>
+                </div>
+                
+                <!-- Detailed Task Analytics -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Task Analytics by Stage</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300">Stage</th>
+                                    <th class="px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300">Tasks</th>
+                                    <th class="px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300">Avg. Duration</th>
+                                    <th class="px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300">Completion Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stageAnalyticsTable" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Analytics View -->
+            
+            <!-- Timeline View -->
+            <div id="timelineView" class="view-content hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Task Timeline</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Visualize task progress and milestones</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <div id="timelineContent" class="space-y-4">
+                        <!-- Timeline items populated dynamically -->
+                    </div>
+                </div>
+            </div>
+            <!-- End Timeline View -->
+            
         </div>
         
         <!-- Footer -->

@@ -910,8 +910,9 @@ function applySidebarCollapse() {
     const sidebarTitle = document.getElementById('sidebarTitle');
     const collapseBtn = document.getElementById('collapseBtn');
     const collapseIcon = document.getElementById('collapseIcon');
-    const textElements = document.querySelectorAll('.sidebar-text');
+    const textElements = document.querySelectorAll('.sidebar-text, .nav-text');
     const filterBtns = document.querySelectorAll('.filter-btn');
+    const navBtns = document.querySelectorAll('.nav-btn');
     
     if (sidebarCollapsed) {
         // Collapse
@@ -925,13 +926,11 @@ function applySidebarCollapse() {
         collapseBtn.classList.add('hidden');
         textElements.forEach(el => el.classList.add('hidden'));
         
-        // Center filter buttons and show only icons
-        filterBtns.forEach(btn => {
+        // Center all buttons and show only icons
+        [...filterBtns, ...navBtns].forEach(btn => {
             btn.classList.add('justify-center');
-            const text = btn.childNodes[btn.childNodes.length - 1];
-            if (text && text.nodeType === 3) {
-                text.textContent = '';
-            }
+            btn.classList.add('px-2');
+            btn.classList.remove('px-4');
         });
         
         // Change icon for when it's shown again
@@ -952,9 +951,11 @@ function applySidebarCollapse() {
         collapseBtn.classList.remove('hidden');
         textElements.forEach(el => el.classList.remove('hidden'));
         
-        // Restore filter buttons
-        filterBtns.forEach(btn => {
+        // Restore all buttons
+        [...filterBtns, ...navBtns].forEach(btn => {
             btn.classList.remove('justify-center');
+            btn.classList.remove('px-2');
+            btn.classList.add('px-4');
         });
         updateFilters(); // Re-render with text
         
@@ -1083,6 +1084,315 @@ function clearAllData() {
             toggleSettingsMenu();
         }
     }
+}
+
+// View Management
+let currentView = 'board';
+let charts = {};
+
+function showView(viewName) {
+    currentView = viewName;
+    
+    // Hide all views
+    document.querySelectorAll('.view-content').forEach(view => {
+        view.classList.add('hidden');
+    });
+    
+    // Show selected view
+    document.getElementById(viewName + 'View').classList.remove('hidden');
+    
+    // Update navigation buttons
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        if (btn.dataset.view === viewName) {
+            btn.classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+            btn.classList.add('bg-purple-600', 'text-white');
+        } else {
+            btn.classList.remove('bg-purple-600', 'text-white');
+            btn.classList.add('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+        }
+    });
+    
+    // Load view-specific content
+    if (viewName === 'analytics') {
+        renderAnalytics();
+    } else if (viewName === 'timeline') {
+        renderTimeline();
+    }
+    
+    feather.replace();
+}
+
+// Analytics Functions
+function renderAnalytics() {
+    calculateMetrics();
+    renderCharts();
+    renderStageAnalytics();
+}
+
+function calculateMetrics() {
+    const total = tasks.length;
+    const completed = tasks.filter(t => t.status === 'done').length;
+    const active = tasks.filter(t => t.status !== 'done' && t.status !== 'archived').length;
+    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+    
+    // Calculate average time to complete
+    const completedTasks = tasks.filter(t => t.completedAt);
+    let avgTime = 0;
+    if (completedTasks.length > 0) {
+        const totalTime = completedTasks.reduce((sum, task) => {
+            const created = new Date(task.createdAt);
+            const completed = new Date(task.completedAt);
+            return sum + (completed - created);
+        }, 0);
+        avgTime = Math.round(totalTime / completedTasks.length / (1000 * 60 * 60 * 24)); // Convert to days
+    }
+    
+    // Update metrics display
+    document.getElementById('metricTotalTasks').textContent = total;
+    document.getElementById('metricCompletionRate').textContent = completionRate + '%';
+    document.getElementById('metricAvgTime').textContent = avgTime + 'd';
+    document.getElementById('metricActiveTasks').textContent = active;
+}
+
+function renderCharts() {
+    // Destroy existing charts
+    Object.values(charts).forEach(chart => chart.destroy());
+    charts = {};
+    
+    const isDark = document.documentElement.classList.contains('dark');
+    const textColor = isDark ? '#9CA3AF' : '#374151';
+    const gridColor = isDark ? 'rgba(75, 85, 99, 0.3)' : 'rgba(209, 213, 219, 0.3)';
+    
+    // Status Distribution Chart
+    const statusData = STATUSES.map(status => 
+        tasks.filter(t => t.status === status).length
+    );
+    
+    const statusLabels = METHODOLOGIES[currentMethodology].statuses.map(s => s.name);
+    const statusColors = METHODOLOGIES[currentMethodology].statuses.map(s => {
+        const colors = {
+            gray: '#9CA3AF',
+            blue: '#3B82F6',
+            purple: '#A855F7',
+            yellow: '#EAB308',
+            orange: '#F97316',
+            green: '#10B981'
+        };
+        return colors[s.color] || colors.gray;
+    });
+    
+    charts.status = new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusData,
+                backgroundColor: statusColors,
+                borderWidth: 2,
+                borderColor: isDark ? '#1F2937' : '#FFFFFF'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: textColor }
+                }
+            }
+        }
+    });
+    
+    // Priority Distribution Chart
+    const priorityData = [
+        tasks.filter(t => t.priority === 'high').length,
+        tasks.filter(t => t.priority === 'med').length,
+        tasks.filter(t => t.priority === 'low').length
+    ];
+    
+    charts.priority = new Chart(document.getElementById('priorityChart'), {
+        type: 'bar',
+        data: {
+            labels: ['High', 'Medium', 'Low'],
+            datasets: [{
+                label: 'Tasks',
+                data: priorityData,
+                backgroundColor: ['#EF4444', '#EAB308', '#10B981'],
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: textColor, stepSize: 1 },
+                    grid: { color: gridColor }
+                },
+                x: {
+                    ticks: { color: textColor },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+    
+    // Timeline Chart - Last 7 days
+    const last7Days = Array.from({length: 7}, (_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - i));
+        return d.toISOString().split('T')[0];
+    });
+    
+    const timelineData = last7Days.map(date => {
+        return tasks.filter(t => {
+            if (!t.completedAt) return false;
+            const completedDate = new Date(t.completedAt).toISOString().split('T')[0];
+            return completedDate === date;
+        }).length;
+    });
+    
+    charts.timeline = new Chart(document.getElementById('timelineChart'), {
+        type: 'line',
+        data: {
+            labels: last7Days.map(d => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+            datasets: [{
+                label: 'Tasks Completed',
+                data: timelineData,
+                borderColor: '#A855F7',
+                backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: { color: textColor }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: textColor, stepSize: 1 },
+                    grid: { color: gridColor }
+                },
+                x: {
+                    ticks: { color: textColor },
+                    grid: { color: gridColor }
+                }
+            }
+        }
+    });
+}
+
+function renderStageAnalytics() {
+    const tableBody = document.getElementById('stageAnalyticsTable');
+    tableBody.innerHTML = '';
+    
+    METHODOLOGIES[currentMethodology].statuses.forEach(statusConfig => {
+        const stageTasks = tasks.filter(t => t.status === statusConfig.id);
+        const count = stageTasks.length;
+        
+        // Calculate average duration for completed tasks from this stage
+        const completedFromStage = tasks.filter(t => 
+            t.completedAt && t.status === statusConfig.id
+        );
+        
+        let avgDuration = 'N/A';
+        if (completedFromStage.length > 0) {
+            const totalDuration = completedFromStage.reduce((sum, task) => {
+                const created = new Date(task.createdAt);
+                const completed = new Date(task.completedAt);
+                return sum + (completed - created);
+            }, 0);
+            const days = Math.round(totalDuration / completedFromStage.length / (1000 * 60 * 60 * 24));
+            avgDuration = days + ' days';
+        }
+        
+        // Calculate completion rate (tasks that moved from this stage)
+        const totalTasks = tasks.length;
+        const completionRate = totalTasks > 0 ? Math.round((count / totalTasks) * 100) : 0;
+        
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700';
+        row.innerHTML = `
+            <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">${statusConfig.name}</td>
+            <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">${count}</td>
+            <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">${avgDuration}</td>
+            <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">${completionRate}%</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// Timeline View
+function renderTimeline() {
+    const container = document.getElementById('timelineContent');
+    container.innerHTML = '';
+    
+    // Sort tasks by creation date
+    const sortedTasks = [...tasks].sort((a, b) => 
+        new Date(b.createdAt) - new Date(a.createdAt)
+    );
+    
+    sortedTasks.forEach(task => {
+        const created = new Date(task.createdAt);
+        const statusConfig = METHODOLOGIES[currentMethodology].statuses.find(s => s.id === task.status);
+        
+        const item = document.createElement('div');
+        item.className = 'flex items-start gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:shadow-md transition-shadow cursor-pointer';
+        item.onclick = () => openDetailModal(task.id);
+        
+        const colorClasses = {
+            gray: 'bg-gray-400',
+            blue: 'bg-blue-500',
+            purple: 'bg-purple-500',
+            yellow: 'bg-yellow-500',
+            orange: 'bg-orange-500',
+            green: 'bg-green-500'
+        };
+        
+        item.innerHTML = `
+            <div class="flex-shrink-0">
+                <div class="w-10 h-10 ${colorClasses[statusConfig?.color || 'gray']} rounded-full flex items-center justify-center">
+                    <i data-feather="${statusConfig?.icon || 'circle'}" class="w-5 h-5 text-white"></i>
+                </div>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                    <h4 class="font-semibold text-gray-800 dark:text-white truncate">${escapeHtml(task.title)}</h4>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 ml-2 whitespace-nowrap">${formatRelativeTime(created)}</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">${statusConfig?.name || task.status}</p>
+                ${task.description ? `<p class="text-sm text-gray-500 dark:text-gray-500 line-clamp-2">${escapeHtml(task.description)}</p>` : ''}
+            </div>
+        `;
+        
+        container.appendChild(item);
+    });
+    
+    feather.replace();
+}
+
+function formatRelativeTime(date) {
+    const now = new Date();
+    const diff = now - date;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    
+    if (days > 0) return days + 'd ago';
+    if (hours > 0) return hours + 'h ago';
+    if (minutes > 0) return minutes + 'm ago';
+    return 'Just now';
 }
 
 // Initialize app when DOM is loaded
