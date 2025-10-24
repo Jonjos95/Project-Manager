@@ -1,12 +1,83 @@
 
 /* Shared styles */
+:root {
+    --primary-500: #6b46c1;
+    --primary-600: #553c9a;
+    --secondary-500: #4299e1;
+}
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     line-height: 1.5;
     background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
     min-height: 100vh;
+    transition: background-color 0.3s;
 }
 
+.dark body {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    color: #e2e8f0;
+}
+
+.dark .main-content,
+.dark .sidebar,
+.dark .task-container,
+.dark .visualization-container {
+    background: rgba(26, 32, 44, 0.9) !important;
+    border-color: rgba(74, 85, 104, 0.5) !important;
+    color: #e2e8f0;
+}
+
+.dark .task-item {
+    background: rgba(45, 55, 72, 0.8);
+    border-color: rgba(74, 85, 104, 0.5);
+    color: #e2e8f0;
+}
+
+.dark .kanban-column {
+    background: rgba(45, 55, 72, 0.6) !important;
+    border-color: rgba(74, 85, 104, 0.5) !important;
+}
+
+.dark .kanban-task {
+    background: rgba(26, 32, 44, 0.8) !important;
+    border-color: rgba(74, 85, 104, 0.5) !important;
+    color: #e2e8f0;
+}
+
+.progress-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: #e2e8f0;
+    overflow: hidden;
+}
+
+.dark .progress-bar {
+    background: #2d3748;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--primary-500), var(--primary-600));
+    transition: width 0.5s ease;
+}
+
+@keyframes pulse-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.pulse-slow {
+    animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.task-item {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.kanban-task {
+    transition: all 0.3s ease;
+}
 .main-content {
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);

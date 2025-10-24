@@ -6,9 +6,43 @@
     <title>TaskMaster Pro 🚀</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                500: '#6b46c1',
+                600: '#553c9a',
+              },
+              secondary: {
+                500: '#4299e1',
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.3s ease-out',
+              'slide-up': 'slideUp 0.3s ease-out',
+              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(10px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              }
+            }
+          }
+        }
+      }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <script>
+    <script src="https://unpkg.com/sortablejs@1.14.0/Sortable.min.js"></script>
+<script>
       tailwind.config = {
         theme: {
           extend: {
@@ -63,14 +97,23 @@
                         <button class="px-3 py-1 bg-gray-100 rounded text-sm">Calendar</button>
                     </div>
                 </div>
-<div class="flex gap-3 mb-6">
+                <div class="flex flex-col md:flex-row gap-3 mb-6">
+                    <div class="flex-1 relative">
+                        <input 
+                            id="searchInput" 
+                            type="text" 
+                            placeholder="Search tasks..." 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                        >
+                        <i data-feather="search" class="absolute right-3 top-3.5 text-gray-400"></i>
+                    </div>
                     <input 
                         id="taskInput" 
                         type="text" 
                         placeholder="Add a new task..." 
-                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                     >
-                    <button 
+<button 
                         id="addTaskBtn" 
                         class="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
                     >
@@ -78,12 +121,19 @@
                         Add
                     </button>
                 </div>
-
-                <div class="flex justify-between items-center mb-6">
-                    <div class="text-sm text-gray-500">
-                        <span id="taskCount">0</span> tasks remaining
+                <div class="flex flex-col gap-4 mb-6">
+                    <div class="flex justify-between items-center">
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            <span id="taskCount">0</span> tasks remaining
+                        </div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            <span id="completedCount">0</span> completed
+                        </div>
                     </div>
-                    <div class="flex gap-2">
+                    <div class="progress-bar w-full">
+                        <div id="progressBar" class="progress-fill" style="width: 0%"></div>
+                    </div>
+<div class="flex gap-2">
                         <button class="filter-btn active px-4 py-2 rounded-lg text-sm font-medium" data-filter="all">
                             All
                         </button>

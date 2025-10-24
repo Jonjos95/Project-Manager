@@ -53,14 +53,17 @@ class CustomNavbar extends HTMLElement {
       <nav>
         <div class="logo">
           <i data-feather="check-circle"></i>
-          TaskMaster Pro
+          <span>TaskMaster Pro</span>
         </div>
-        <ul>
-          <li><a href="#"><i data-feather="home"></i> Home</a></li>
-          <li><a href="#"><i data-feather="settings"></i> Settings</a></li>
-          <li><a href="#"><i data-feather="user"></i> Profile</a></li>
-        </ul>
-      </nav>
+        <div class="flex items-center gap-4">
+          <ul>
+            <li><a href="#"><i data-feather="home"></i> <span class="hidden md:inline">Home</span></a></li>
+            <li><a href="#"><i data-feather="settings"></i> <span class="hidden md:inline">Settings</span></a></li>
+            <li><a href="#"><i data-feather="user"></i> <span class="hidden md:inline">Profile</span></a></li>
+          </ul>
+          <dark-mode-toggle></dark-mode-toggle>
+        </div>
+</nav>
     `;
   }
 }
