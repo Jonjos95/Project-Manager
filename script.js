@@ -1,5 +1,9 @@
 // N8tive.io Project Manager - Main JavaScript
 
+// Authentication State
+let currentUser = null;
+let users = []; // Stored users database
+
 // Task Management State
 let tasks = [];
 let currentFilter = 'all';
@@ -8,6 +12,8 @@ let currentDetailTaskId = null;
 
 // Constants
 const STORAGE_KEY = 'n8tive.tasks';
+const USERS_KEY = 'n8tive.users';
+const SESSION_KEY = 'n8tive.session';
 const THEME_KEY = 'theme';
 const METHODOLOGY_KEY = 'methodology';
 
@@ -94,19 +100,261 @@ const SEED_TASKS = [
     }
 ];
 
-// Initialize App
-function init() {
-    loadTheme();
-    loadMethodology();
-    loadSidebarState();
+// ========================================
+// AUTHENTICATION SYSTEM
+// ========================================
+
+// Load users from localStorage
+function loadUsers() {
+    try {
+        const stored = localStorage.getItem(USERS_KEY);
+        users = stored ? JSON.parse(stored) : [];
+    } catch (e) {
+        console.error('Error loading users:', e);
+        users = [];
+    }
+}
+
+// Save users to localStorage
+function saveUsers() {
+    try {
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    } catch (e) {
+        console.error('Error saving users:', e);
+    }
+}
+
+// Hash password (simple client-side hashing - in production use proper backend hashing)
+function hashPassword(password) {
+    // Simple hash for demo - in production, use bcrypt on backend
+    let hash = 0;
+    for (let i = 0; i < password.length; i++) {
+        const char = password.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+    return hash.toString(36);
+}
+
+// Check if user is authenticated
+function isAuthenticated() {
+    return currentUser !== null;
+}
+
+// Get user initials for avatar
+function getUserInitials(name) {
+    if (!name) return 'U';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+}
+
+// Update UI with current user info
+function updateUserUI() {
+    if (!currentUser) return;
+    
+    document.getElementById('userFullName').textContent = currentUser.name;
+    document.getElementById('userUsernameDisplay').textContent = '@' + currentUser.username;
+    document.getElementById('userInitials').textContent = getUserInitials(currentUser.name);
+    
+    feather.replace();
+}
+
+// Register new user
+function handleRegister(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('registerName').value.trim();
+    const username = document.getElementById('registerUsername').value.trim().toLowerCase();
+    const password = document.getElementById('registerPassword').value;
+    const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+    
+    // Validation
+    if (!name || !username || !password) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters');
+        return;
+    }
+    
+    if (password !== passwordConfirm) {
+        alert('Passwords do not match');
+        return;
+    }
+    
+    // Check if username already exists
+    if (users.find(u => u.username === username)) {
+        alert('Username already taken. Please choose another.');
+        return;
+    }
+    
+    // Create new user
+    const newUser = {
+        id: 'user_' + Date.now(),
+        name,
+        username,
+        passwordHash: hashPassword(password),
+        createdAt: new Date().toISOString()
+    };
+    
+    users.push(newUser);
+    saveUsers();
+    
+    // Auto login
+    currentUser = { ...newUser };
+    delete currentUser.passwordHash; // Don't keep password hash in memory
+    saveSession();
+    
+    // Close modal and initialize app
+    document.getElementById('registerModal').classList.add('hidden');
+    document.getElementById('registerForm').reset();
+    
+    initializeAfterLogin();
+}
+
+// Login user
+function handleLogin(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('loginUsername').value.trim().toLowerCase();
+    const password = document.getElementById('loginPassword').value;
+    
+    if (!username || !password) {
+        alert('Please enter username and password');
+        return;
+    }
+    
+    // Find user
+    const user = users.find(u => u.username === username);
+    
+    if (!user) {
+        alert('Invalid username or password');
+        return;
+    }
+    
+    // Check password
+    if (user.passwordHash !== hashPassword(password)) {
+        alert('Invalid username or password');
+        return;
+    }
+    
+    // Login successful
+    currentUser = { ...user };
+    delete currentUser.passwordHash;
+    saveSession();
+    
+    // Close modal
+    document.getElementById('loginModal').classList.remove('flex');
+    document.getElementById('loginModal').classList.add('hidden');
+    document.getElementById('loginForm').reset();
+    
+    initializeAfterLogin();
+}
+
+// Save session
+function saveSession() {
+    try {
+        localStorage.setItem(SESSION_KEY, JSON.stringify({
+            userId: currentUser.id,
+            username: currentUser.username,
+            name: currentUser.name
+        }));
+    } catch (e) {
+        console.error('Error saving session:', e);
+    }
+}
+
+// Load session
+function loadSession() {
+    try {
+        const stored = localStorage.getItem(SESSION_KEY);
+        if (stored) {
+            currentUser = JSON.parse(stored);
+            return true;
+        }
+    } catch (e) {
+        console.error('Error loading session:', e);
+    }
+    return false;
+}
+
+// Logout
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        currentUser = null;
+        localStorage.removeItem(SESSION_KEY);
+        
+        // Reload to show login screen
+        window.location.reload();
+    }
+}
+
+// Show login modal
+function showLoginModal() {
+    document.getElementById('registerModal').classList.add('hidden');
+    document.getElementById('loginModal').classList.remove('hidden');
+    document.getElementById('loginModal').classList.add('flex');
+    setTimeout(() => document.getElementById('loginUsername').focus(), 100);
+}
+
+// Show register modal
+function showRegisterModal() {
+    document.getElementById('loginModal').classList.add('hidden');
+    document.getElementById('registerModal').classList.remove('hidden');
+    document.getElementById('registerModal').classList.add('flex');
+    setTimeout(() => document.getElementById('registerName').focus(), 100);
+}
+
+// Initialize after successful login
+function initializeAfterLogin() {
+    updateUserUI();
     loadTasks();
     loadActivityLog();
-    setupEventListeners();
     renderKanbanBoard();
     updateFilters();
     updateStatusSelectors();
     renderTasks();
     updateCounters();
+    feather.replace();
+}
+
+// ========================================
+// APP INITIALIZATION
+// ========================================
+
+// Initialize App
+function init() {
+    loadTheme();
+    loadMethodology();
+    loadSidebarState();
+    loadUsers();
+    
+    // Check if user is logged in
+    const hasSession = loadSession();
+    
+    if (!hasSession) {
+        // Show login modal
+        document.getElementById('loginModal').classList.add('flex');
+        document.getElementById('loginModal').classList.remove('hidden');
+        setTimeout(() => document.getElementById('loginUsername').focus(), 100);
+    } else {
+        // User is logged in, initialize app
+        updateUserUI();
+        loadTasks();
+        loadActivityLog();
+        renderKanbanBoard();
+        updateFilters();
+        updateStatusSelectors();
+        renderTasks();
+        updateCounters();
+    }
+    
+    setupEventListeners();
     feather.replace();
 }
 
@@ -171,23 +419,55 @@ function generateId() {
 
 // Local Storage Functions
 function loadTasks() {
+    if (!currentUser) {
+        tasks = [];
+        return;
+    }
+    
     const stored = localStorage.getItem(STORAGE_KEY);
+    let allTasks = [];
+    
     if (stored) {
-        tasks = JSON.parse(stored);
-        // Migrate old tasks to new schema
-        tasks = tasks.map(task => ({
+        allTasks = JSON.parse(stored);
+        
+        // Migrate old tasks (without userId) to current user
+        allTasks = allTasks.map(task => ({
             ...task,
+            userId: task.userId || currentUser.id, // Assign to current user if no userId
             updatedAt: task.updatedAt || task.createdAt,
             files: task.files || []
         }));
+        
+        // Save migrated tasks
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(allTasks));
     } else {
-        tasks = SEED_TASKS;
-        saveTasks();
+        // Create seed tasks for new user
+        allTasks = SEED_TASKS.map(task => ({
+            ...task,
+            userId: currentUser.id
+        }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(allTasks));
     }
+    
+    // Filter tasks for current user (ROW-LEVEL SECURITY)
+    tasks = allTasks.filter(task => task.userId === currentUser.id);
 }
 
 function saveTasks() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    if (!currentUser) return;
+    
+    // Load all tasks from storage
+    const stored = localStorage.getItem(STORAGE_KEY);
+    let allTasks = stored ? JSON.parse(stored) : [];
+    
+    // Remove current user's tasks from all tasks
+    allTasks = allTasks.filter(task => task.userId !== currentUser.id);
+    
+    // Add back current user's updated tasks
+    allTasks = [...allTasks, ...tasks];
+    
+    // Save all tasks
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(allTasks));
 }
 
 // Theme Functions
@@ -208,6 +488,10 @@ function toggleTheme() {
 
 // Event Listeners
 function setupEventListeners() {
+    // Authentication forms
+    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    document.getElementById('registerForm').addEventListener('submit', handleRegister);
+    
     // Dark mode toggle (now in settings modal)
     const darkModeToggle = document.getElementById('darkModeToggle');
     if (darkModeToggle) {
@@ -293,6 +577,7 @@ function handleAddTask(e) {
     
     const newTask = {
         id: generateId(),
+        userId: currentUser.id, // Row-level security
         title,
         description,
         priority,

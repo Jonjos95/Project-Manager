@@ -195,8 +195,8 @@
                         <!-- Profile Dropdown -->
                         <div class="relative">
                             <button onclick="toggleProfileMenu()" class="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-                                    <span class="text-white text-sm font-semibold">JJ</span>
+                                <div id="userAvatar" class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+                                    <span id="userInitials" class="text-white text-sm font-semibold">U</span>
                                 </div>
                                 <i data-feather="chevron-down" class="w-4 h-4 text-gray-600 dark:text-gray-300 hidden sm:block"></i>
                             </button>
@@ -204,30 +204,27 @@
                             <!-- Profile Dropdown Menu -->
                             <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                                 <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                                    <p class="text-sm font-semibold text-gray-800 dark:text-white">John Doe</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">john@n8tive.io</p>
+                                    <p id="userFullName" class="text-sm font-semibold text-gray-800 dark:text-white">User</p>
+                                    <p id="userUsernameDisplay" class="text-xs text-gray-500 dark:text-gray-400">@username</p>
                                 </div>
-                                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <button onclick="toggleProfileMenu()" class="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <i data-feather="user" class="w-4 h-4 mr-3"></i>
                                     My Profile
-                                </a>
-                                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                </button>
+                                <button onclick="toggleSettingsMenu(); toggleProfileMenu();" class="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <i data-feather="settings" class="w-4 h-4 mr-3"></i>
                                     Settings
-                                </a>
-                                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                </button>
+                                <button onclick="exportData(); toggleProfileMenu();" class="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <i data-feather="database" class="w-4 h-4 mr-3"></i>
                                     Export Data
-                                </a>
-                                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <i data-feather="download" class="w-4 h-4 mr-3"></i>
-                                    Import Data
-                                </a>
-                                <div class="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                                <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <i data-feather="log-out" class="w-4 h-4 mr-3"></i>
-                                    Sign Out
-                                </a>
+                                </button>
+                                <div class="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2">
+                                    <button onclick="logout()" class="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        <i data-feather="log-out" class="w-4 h-4 mr-3"></i>
+                                        Logout
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -764,6 +761,126 @@
         </div>
     </div>
     
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6 animate-fadeIn">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Welcome to N8tive.io</h2>
+                <p class="text-gray-600 dark:text-gray-400">Sign in to access your project manager</p>
+            </div>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Username</label>
+                    <input 
+                        type="text" 
+                        id="loginUsername" 
+                        placeholder="Enter your username" 
+                        required
+                        autocomplete="username"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                    <input 
+                        type="password" 
+                        id="loginPassword" 
+                        placeholder="Enter your password" 
+                        required
+                        autocomplete="current-password"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                    Sign In
+                </button>
+            </form>
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    Don't have an account? 
+                    <button onclick="showRegisterModal()" class="text-purple-600 hover:text-purple-700 font-medium">
+                        Create one
+                    </button>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Register Modal -->
+    <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6 animate-fadeIn">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Create Account</h2>
+                <p class="text-gray-600 dark:text-gray-400">Join N8tive.io Project Manager</p>
+            </div>
+            <form id="registerForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="registerName" 
+                        placeholder="Enter your full name" 
+                        required
+                        autocomplete="name"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Username</label>
+                    <input 
+                        type="text" 
+                        id="registerUsername" 
+                        placeholder="Choose a username" 
+                        required
+                        autocomplete="username"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                    <input 
+                        type="password" 
+                        id="registerPassword" 
+                        placeholder="Choose a password (min 6 characters)" 
+                        required
+                        minlength="6"
+                        autocomplete="new-password"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirm Password</label>
+                    <input 
+                        type="password" 
+                        id="registerPasswordConfirm" 
+                        placeholder="Confirm your password" 
+                        required
+                        minlength="6"
+                        autocomplete="new-password"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                    Create Account
+                </button>
+            </form>
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    Already have an account? 
+                    <button onclick="showLoginModal()" class="text-purple-600 hover:text-purple-700 font-medium">
+                        Sign in
+                    </button>
+                </p>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
     <script>
         // Initialize Feather Icons
