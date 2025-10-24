@@ -3,171 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskMaster Pro 🚀</title>
-    <link rel="stylesheet" href="style.css">
+    <title>N8tive.io Project Manager 🧭</title>
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              primary: {
-                500: '#6b46c1',
-                600: '#553c9a',
-              },
-              secondary: {
-                500: '#4299e1',
-              }
-            },
-            animation: {
-              'fade-in': 'fadeIn 0.3s ease-out',
-              'slide-up': 'slideUp 0.3s ease-out',
-              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            },
-            keyframes: {
-              fadeIn: {
-                '0%': { opacity: '0' },
-                '100%': { opacity: '1' },
-              },
-              slideUp: {
-                '0%': { transform: 'translateY(10px)', opacity: '0' },
-                '100%': { transform: 'translateY(0)', opacity: '1' },
-              }
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6b46c1',
+                        secondary: '#4299e1'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideIn: {
+                            '0%': { opacity: '0', transform: 'translateX(-20px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' }
+                        }
+                    },
+                    animation: {
+                        fadeIn: 'fadeIn 0.3s ease-out',
+                        slideIn: 'slideIn 0.3s ease-out'
+                    }
+                }
             }
-          }
         }
-      }
     </script>
+    
+    <!-- Feather Icons CDN -->
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
-    <script src="https://unpkg.com/sortablejs@1.14.0/Sortable.min.js"></script>
-<script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: {
-                500: '#6b46c1',
-              },
-              secondary: {
-                500: '#4299e1',
-              }
-            }
-          }
-        }
-      }
-    </script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <custom-navbar></custom-navbar>
-    <main class="container">
-        <div class="main-content">
-            <div class="sidebar">
-                <div class="space-y-4">
-                    <div class="space-y-2">
-                        <h3 class="font-medium text-gray-700">SPACES</h3>
-                        <div class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
-                            <div class="w-5 h-5 rounded bg-purple-500"></div>
-                            <span>My Workspace</span>
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <h3 class="font-medium text-gray-700">PROJECTS</h3>
-                        <div class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
-                            <i data-feather="briefcase"></i>
-                            <span>Marketing</span>
-                        </div>
-                        <div class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
-                            <i data-feather="briefcase"></i>
-                            <span>Development</span>
-                        </div>
-                    </div>
-                </div>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleMobileMenu()"></div>
+    
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+        <div class="p-6">
+            <!-- Logo/Title -->
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-2xl font-bold text-purple-700 dark:text-purple-400">N8tive.io</h1>
+                <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-600 dark:text-gray-300">
+                    <i data-feather="x" class="w-6 h-6"></i>
+                </button>
             </div>
-
-            <div class="task-container">
-                <div class="task-header">
-                    <div>
-                        <h1 class="text-2xl font-bold">Tasks</h1>
-                    </div>
-                    <div class="flex gap-2">
-                        <button class="px-3 py-1 bg-gray-100 rounded text-sm">List</button>
-                        <button class="px-3 py-1 bg-gray-100 rounded text-sm">Board</button>
-                        <button class="px-3 py-1 bg-gray-100 rounded text-sm">Calendar</button>
-                    </div>
-                </div>
-                <div class="flex flex-col md:flex-row gap-3 mb-6">
-                    <div class="flex-1 relative">
-                        <input 
-                            id="searchInput" 
-                            type="text" 
-                            placeholder="Search tasks..." 
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                        >
-                        <i data-feather="search" class="absolute right-3 top-3.5 text-gray-400"></i>
-                    </div>
-                    <input 
-                        id="taskInput" 
-                        type="text" 
-                        placeholder="Add a new task..." 
-                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                    >
-<button 
-                        id="addTaskBtn" 
-                        class="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
-                    >
-                        <i data-feather="plus"></i>
-                        Add
+            
+            <!-- Dark Mode Toggle -->
+            <div class="mb-6 flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Dark Mode</span>
+                <button id="darkModeToggle" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-300 dark:bg-purple-600">
+                    <span class="inline-block w-4 h-4 transform transition-transform bg-white rounded-full translate-x-1 dark:translate-x-6"></span>
+                </button>
+            </div>
+            
+            <!-- Filters -->
+            <div class="mb-6">
+                <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3">Filters</h3>
+                <div class="space-y-2">
+                    <button onclick="filterTasks('all')" class="filter-btn w-full text-left px-4 py-2 rounded-lg bg-purple-600 text-white" data-filter="all">
+                        <i data-feather="list" class="w-4 h-4 inline mr-2"></i> All Tasks
+                    </button>
+                    <button onclick="filterTasks('active')" class="filter-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-filter="active">
+                        <i data-feather="circle" class="w-4 h-4 inline mr-2"></i> Active
+                    </button>
+                    <button onclick="filterTasks('completed')" class="filter-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-filter="completed">
+                        <i data-feather="check-circle" class="w-4 h-4 inline mr-2"></i> Completed
                     </button>
                 </div>
-                <div class="flex flex-col gap-4 mb-6">
-                    <div class="flex justify-between items-center">
-                        <div class="text-sm text-gray-500 dark:text-gray-400">
-                            <span id="taskCount">0</span> tasks remaining
-                        </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">
-                            <span id="completedCount">0</span> completed
-                        </div>
-                    </div>
-                    <div class="progress-bar w-full">
-                        <div id="progressBar" class="progress-fill" style="width: 0%"></div>
-                    </div>
-<div class="flex gap-2">
-                        <button class="filter-btn active px-4 py-2 rounded-lg text-sm font-medium" data-filter="all">
-                            All
-                        </button>
-                        <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium" data-filter="active">
-                            Active
-                        </button>
-                        <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium" data-filter="completed">
-                            Completed
-                        </button>
-                    </div>
+            </div>
+            
+            <!-- Counters -->
+            <div class="space-y-3">
+                <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="remainingCount">0</div>
+                    <div class="text-xs text-blue-600 dark:text-blue-400">Tasks Remaining</div>
                 </div>
-
-                <div id="taskList" class="space-y-3">
-                    <!-- Tasks will be added here dynamically -->
-                    <div class="empty-state text-center py-10">
-                        <i data-feather="check-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
-                        <p class="text-gray-500">No tasks yet. Add one above!</p>
+                <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                    <div class="text-2xl font-bold text-green-600 dark:text-green-400" id="completedCount">0</div>
+                    <div class="text-xs text-green-600 dark:text-green-400">Tasks Completed</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="lg:ml-64 min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white dark:bg-gray-800 shadow-sm">
+            <div class="px-4 py-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <button onclick="toggleMobileMenu()" class="lg:hidden mr-4 text-gray-600 dark:text-gray-300">
+                            <i data-feather="menu" class="w-6 h-6"></i>
+                        </button>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Project Manager</h2>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <!-- Search -->
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                placeholder="Search tasks..." 
+                                class="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                                oninput="searchTasks()"
+                            >
+                            <i data-feather="search" class="w-5 h-5 absolute left-3 top-2.5 text-gray-400"></i>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <project-visualization></project-visualization>
+        </header>
+        
+        <!-- Task Input Section -->
+        <div class="px-4 py-6 sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 animate-fadeIn">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Add New Task</h3>
+                <form id="taskForm" class="space-y-4">
+                    <div>
+                        <input 
+                            type="text" 
+                            id="taskTitle" 
+                            placeholder="Task title..." 
+                            required
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                        >
+                    </div>
+                    <div>
+                        <textarea 
+                            id="taskDescription" 
+                            placeholder="Task description (optional)..." 
+                            rows="3"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                        ></textarea>
+                    </div>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Priority</label>
+                            <select 
+                                id="taskPriority" 
+                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                            >
+                                <option value="low">Low</option>
+                                <option value="med" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button 
+                                type="submit" 
+                                class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors duration-200 flex items-center"
+                            >
+                                <i data-feather="plus" class="w-5 h-5 mr-2"></i>
+                                Add Task
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Kanban Board -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- To Do Column -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
+                            <i data-feather="circle" class="w-5 h-5 mr-2 text-gray-500"></i>
+                            To Do
+                        </h3>
+                        <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full text-sm" id="todoCount">0</span>
+                    </div>
+                    <div 
+                        id="todoColumn" 
+                        class="space-y-3 min-h-[200px]"
+                        data-status="todo"
+                        ondrop="handleDrop(event)"
+                        ondragover="handleDragOver(event)"
+                        ondragleave="handleDragLeave(event)"
+                    ></div>
+                </div>
+                
+                <!-- In Progress Column -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
+                            <i data-feather="loader" class="w-5 h-5 mr-2 text-blue-500"></i>
+                            In Progress
+                        </h3>
+                        <span class="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full text-sm" id="doingCount">0</span>
+                    </div>
+                    <div 
+                        id="doingColumn" 
+                        class="space-y-3 min-h-[200px]"
+                        data-status="doing"
+                        ondrop="handleDrop(event)"
+                        ondragover="handleDragOver(event)"
+                        ondragleave="handleDragLeave(event)"
+                    ></div>
+                </div>
+                
+                <!-- Done Column -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
+                            <i data-feather="check-circle" class="w-5 h-5 mr-2 text-green-500"></i>
+                            Done
+                        </h3>
+                        <span class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-1 rounded-full text-sm" id="doneCount">0</span>
+                    </div>
+                    <div 
+                        id="doneColumn" 
+                        class="space-y-3 min-h-[200px]"
+                        data-status="done"
+                        ondrop="handleDrop(event)"
+                        ondragover="handleDragOver(event)"
+                        ondragleave="handleDragLeave(event)"
+                    ></div>
+                </div>
+            </div>
         </div>
-    </main>
-
-    <custom-footer></custom-footer>
-    <script src="components/navbar.js"></script>
-    <script src="components/sidebar-item.js"></script>
-<script src="components/footer.js"></script>
-    <script src="components/project-visualization.js"></script>
-<script src="script.js"></script>
+        
+        <!-- Footer -->
+        <footer class="mt-auto bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4">
+            <div class="px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-600 dark:text-gray-400">
+                © 2025 N8tive.io. All rights reserved.
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Floating Add Button (Mobile) -->
+    <button 
+        onclick="document.getElementById('taskTitle').focus()" 
+        class="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg flex items-center justify-center z-30 transition-transform hover:scale-110"
+    >
+        <i data-feather="plus" class="w-6 h-6"></i>
+    </button>
+    
+    <!-- Edit Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6 animate-fadeIn">
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Edit Task</h3>
+            <form id="editForm" class="space-y-4">
+                <input type="hidden" id="editTaskId">
+                <div>
+                    <input 
+                        type="text" 
+                        id="editTaskTitle" 
+                        placeholder="Task title..." 
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                </div>
+                <div>
+                    <textarea 
+                        id="editTaskDescription" 
+                        placeholder="Task description (optional)..." 
+                        rows="3"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    ></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Priority</label>
+                    <select 
+                        id="editTaskPriority" 
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                        <option value="low">Low</option>
+                        <option value="med">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button 
+                        type="submit" 
+                        class="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors duration-200"
+                    >
+                        Save Changes
+                    </button>
+                    <button 
+                        type="button" 
+                        onclick="closeEditModal()" 
+                        class="flex-1 px-4 py-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 rounded-lg font-medium transition-colors duration-200"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
     <script>
+        // Initialize Feather Icons
         feather.replace();
     </script>
-<script src="https://deepsite.hf.co/deepsite-badge.js"></script>
 </body>
 </html>
