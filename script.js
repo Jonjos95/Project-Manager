@@ -207,8 +207,11 @@ function toggleTheme() {
 
 // Event Listeners
 function setupEventListeners() {
-    // Dark mode toggle
-    document.getElementById('darkModeToggle').addEventListener('click', toggleTheme);
+    // Dark mode toggle (now in settings modal)
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', toggleTheme);
+    }
     
     // Task form submission
     document.getElementById('taskForm').addEventListener('submit', handleAddTask);
@@ -895,10 +898,17 @@ function toggleSidebarCollapse() {
     applySidebarCollapse();
 }
 
+function expandSidebarIfCollapsed() {
+    if (sidebarCollapsed && window.innerWidth >= 1024) {
+        toggleSidebarCollapse();
+    }
+}
+
 function applySidebarCollapse() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
     const sidebarTitle = document.getElementById('sidebarTitle');
+    const collapseBtn = document.getElementById('collapseBtn');
     const collapseIcon = document.getElementById('collapseIcon');
     const textElements = document.querySelectorAll('.sidebar-text');
     const filterBtns = document.querySelectorAll('.filter-btn');
@@ -910,8 +920,9 @@ function applySidebarCollapse() {
         mainContent.classList.remove('lg:ml-64');
         mainContent.classList.add('lg:ml-20');
         
-        // Hide text elements
+        // Hide text elements and collapse button
         sidebarTitle.classList.add('hidden');
+        collapseBtn.classList.add('hidden');
         textElements.forEach(el => el.classList.add('hidden'));
         
         // Center filter buttons and show only icons
@@ -923,11 +934,10 @@ function applySidebarCollapse() {
             }
         });
         
-        // Change icon
+        // Change icon for when it's shown again
         collapseIcon.setAttribute('data-feather', 'chevrons-right');
         
-        // Hide sections content
-        document.getElementById('darkModeSection').classList.add('justify-center');
+        // Hide counters
         document.getElementById('countersSection').classList.add('hidden');
         
     } else {
@@ -937,8 +947,9 @@ function applySidebarCollapse() {
         mainContent.classList.remove('lg:ml-20');
         mainContent.classList.add('lg:ml-64');
         
-        // Show text elements
+        // Show text elements and collapse button
         sidebarTitle.classList.remove('hidden');
+        collapseBtn.classList.remove('hidden');
         textElements.forEach(el => el.classList.remove('hidden'));
         
         // Restore filter buttons
@@ -950,8 +961,7 @@ function applySidebarCollapse() {
         // Change icon
         collapseIcon.setAttribute('data-feather', 'chevrons-left');
         
-        // Show sections
-        document.getElementById('darkModeSection').classList.remove('justify-center');
+        // Show counters
         document.getElementById('countersSection').classList.remove('hidden');
     }
     

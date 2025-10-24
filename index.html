@@ -50,7 +50,7 @@
         <div class="p-6">
             <!-- Logo/Title -->
             <div class="flex items-center justify-between mb-8">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="expandSidebarIfCollapsed()">
                     <!-- Logo SVG -->
                     <svg id="sidebarLogo" class="w-8 h-8 transition-all duration-300" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M24 4L40 13V27L24 36L8 27V13L24 4Z" fill="#6b46c1" opacity="0.2"/>
@@ -67,21 +67,13 @@
                     <h1 id="sidebarTitle" class="text-xl font-bold text-purple-700 dark:text-purple-400 transition-all duration-300">N8tive.io</h1>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="toggleSidebarCollapse()" class="hidden lg:block text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors" title="Collapse sidebar">
+                    <button id="collapseBtn" onclick="toggleSidebarCollapse()" class="hidden lg:block text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors" title="Collapse sidebar">
                         <i data-feather="chevrons-left" id="collapseIcon" class="w-5 h-5"></i>
                     </button>
                     <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-600 dark:text-gray-300">
                         <i data-feather="x" class="w-6 h-6"></i>
                     </button>
                 </div>
-            </div>
-            
-            <!-- Dark Mode Toggle -->
-            <div id="darkModeSection" class="mb-6 flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-lg transition-all duration-300">
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 sidebar-text">Dark Mode</span>
-                <button id="darkModeToggle" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-300 dark:bg-purple-600">
-                    <span class="inline-block w-4 h-4 transform transition-transform bg-white rounded-full translate-x-1 dark:translate-x-6"></span>
-                </button>
             </div>
             
             <!-- Filters -->
@@ -268,10 +260,10 @@
                     <!-- Theme Setting -->
                     <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                         <div>
-                            <h4 class="font-semibold text-gray-800 dark:text-white">Theme</h4>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Choose your preferred theme</p>
+                            <h4 class="font-semibold text-gray-800 dark:text-white">Dark Mode</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Switch between light and dark theme</p>
                         </div>
-                        <button id="darkModeToggleSettings" onclick="toggleTheme()" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-300 dark:bg-purple-600">
+                        <button id="darkModeToggle" onclick="toggleTheme()" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-300 dark:bg-purple-600">
                             <span class="inline-block w-4 h-4 transform transition-transform bg-white rounded-full translate-x-1 dark:translate-x-6"></span>
                         </button>
                     </div>
