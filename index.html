@@ -195,8 +195,23 @@
                 </form>
             </div>
             
+            <!-- Kanban Board Section -->
+            <div class="mb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Kanban Board</h3>
+                    <div class="flex items-center gap-2">
+                        <button onclick="scrollKanban('left')" class="p-2 bg-white dark:bg-gray-800 rounded-lg shadow hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" title="Scroll Left">
+                            <i data-feather="chevron-left" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
+                        </button>
+                        <button onclick="scrollKanban('right')" class="p-2 bg-white dark:bg-gray-800 rounded-lg shadow hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" title="Scroll Right">
+                            <i data-feather="chevron-right" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Kanban Board -->
-            <div class="kanban-board-container overflow-x-auto pb-4">
+            <div id="kanbanContainer" class="kanban-board-container overflow-x-auto pb-4 scroll-smooth">
                 <div class="flex gap-4 min-w-max">
                     <!-- Backlog Column -->
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 w-80 flex-shrink-0">

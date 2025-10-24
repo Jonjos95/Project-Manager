@@ -39,11 +39,46 @@
 /* Horizontal scroll for Kanban board */
 .kanban-board-container {
     scrollbar-width: thin;
-    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+    scrollbar-color: rgba(107, 70, 193, 0.6) rgba(243, 244, 246, 0.3);
+    scroll-behavior: smooth;
 }
 
 .dark .kanban-board-container {
-    scrollbar-color: rgba(75, 85, 99, 0.5) transparent;
+    scrollbar-color: rgba(107, 70, 193, 0.6) rgba(31, 41, 55, 0.3);
+}
+
+/* Make horizontal scrollbar more visible */
+.kanban-board-container::-webkit-scrollbar {
+    height: 12px;
+}
+
+.kanban-board-container::-webkit-scrollbar-track {
+    background: rgba(243, 244, 246, 0.3);
+    border-radius: 6px;
+}
+
+.kanban-board-container::-webkit-scrollbar-thumb {
+    background: rgba(107, 70, 193, 0.6);
+    border-radius: 6px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.kanban-board-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(107, 70, 193, 0.8);
+    background-clip: padding-box;
+}
+
+.dark .kanban-board-container::-webkit-scrollbar-track {
+    background: rgba(31, 41, 55, 0.3);
+}
+
+.dark .kanban-board-container::-webkit-scrollbar-thumb {
+    background: rgba(107, 70, 193, 0.6);
+}
+
+.dark .kanban-board-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(107, 70, 193, 0.8);
 }
 
 /* Line clamp utility for task descriptions */

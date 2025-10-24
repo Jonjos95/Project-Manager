@@ -627,6 +627,18 @@ function toggleMobileMenu() {
     overlay.classList.toggle('hidden');
 }
 
+// Kanban Board Scrolling
+function scrollKanban(direction) {
+    const container = document.getElementById('kanbanContainer');
+    const scrollAmount = 350; // Width of one column plus gap
+    
+    if (direction === 'left') {
+        container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    } else {
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+}
+
 // Initialize app when DOM is loaded
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
