@@ -1,3 +1,16 @@
+---
+title: N8tive.io Project Manager 🧭
+colorFrom: purple
+colorTo: blue
+emoji: 🧭
+sdk: static
+pinned: false
+tags:
+  - task-management
+  - kanban
+  - project-management
+---
+
 # N8tive.io Project Manager 🧭
 
 A complete, responsive task management application built with HTML, Tailwind CSS, and Vanilla JavaScript.
