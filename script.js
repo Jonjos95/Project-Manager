@@ -100,6 +100,7 @@ function init() {
     loadMethodology();
     loadSidebarState();
     loadTasks();
+    loadActivityLog();
     setupEventListeners();
     renderKanbanBoard();
     updateFilters();
@@ -307,6 +308,9 @@ function handleAddTask(e) {
     renderTasks();
     updateCounters();
     
+    // Log activity
+    logActivity('created', newTask, `Created in ${status}`);
+    
     // Reset form
     document.getElementById('taskForm').reset();
     document.getElementById('taskTitle').focus();
@@ -316,8 +320,10 @@ function handleAddTask(e) {
 }
 
 function deleteTask(taskId) {
-    if (confirm('Are you sure you want to delete this task?')) {
-        tasks = tasks.filter(task => task.id !== taskId);
+    const task = tasks.find(t => t.id === taskId);
+    if (task && confirm('Are you sure you want to delete this task?')) {
+        logActivity('deleted', task, 'Deleted from board');
+        tasks = tasks.filter(t => t.id !== taskId);
         saveTasks();
         renderTasks();
         updateCounters();
@@ -354,6 +360,7 @@ function handleEditTask(e) {
     
     const task = tasks.find(t => t.id === taskId);
     if (task) {
+        const oldTitle = task.title;
         task.title = title;
         task.description = description;
         task.priority = priority;
@@ -362,6 +369,9 @@ function handleEditTask(e) {
         saveTasks();
         renderTasks();
         closeEditModal();
+        
+        // Log activity
+        logActivity('updated', task, oldTitle !== title ? `Renamed from "${oldTitle}"` : 'Updated details');
         
         // Update detail view if open
         if (currentDetailTaskId === taskId) {
@@ -566,14 +576,17 @@ function handleDrop(e) {
     const task = tasks.find(t => t.id === draggedTaskId);
     
     if (task && task.status !== newStatus) {
+        const oldStatus = task.status;
         task.status = newStatus;
         task.updatedAt = new Date().toISOString();
         
         // Update completedAt timestamp
         if (newStatus === 'done' && !task.completedAt) {
             task.completedAt = new Date().toISOString();
+            logActivity('completed', task, `Moved from ${oldStatus} to ${newStatus}`);
         } else if (newStatus !== 'done') {
             task.completedAt = null;
+            logActivity('moved', task, `Moved from ${oldStatus} to ${newStatus}`);
         }
         
         saveTasks();
@@ -1089,6 +1102,7 @@ function clearAllData() {
 // View Management
 let currentView = 'board';
 let charts = {};
+let activityLog = []; // Track all activities
 
 function showView(viewName) {
     currentView = viewName;
@@ -1112,11 +1126,21 @@ function showView(viewName) {
         }
     });
     
+    // Show/hide filters based on view
+    const filtersSection = document.getElementById('filtersSection');
+    if (viewName === 'board') {
+        filtersSection.style.display = 'block';
+    } else {
+        filtersSection.style.display = 'none';
+    }
+    
     // Load view-specific content
     if (viewName === 'analytics') {
         renderAnalytics();
     } else if (viewName === 'timeline') {
         renderTimeline();
+    } else if (viewName === 'reports') {
+        renderReports();
     }
     
     feather.replace();
@@ -1393,6 +1417,226 @@ function formatRelativeTime(date) {
     if (hours > 0) return hours + 'h ago';
     if (minutes > 0) return minutes + 'm ago';
     return 'Just now';
+}
+
+// Reports View
+function renderReports() {
+    loadActivityLog();
+    renderActivityLog();
+    feather.replace();
+}
+
+function logActivity(type, task, details = '') {
+    const activity = {
+        id: Date.now(),
+        type, // 'created', 'updated', 'deleted', 'completed', 'moved'
+        task: {
+            id: task.id,
+            title: task.title,
+            status: task.status,
+            priority: task.priority
+        },
+        details,
+        timestamp: new Date().toISOString()
+    };
+    
+    activityLog.unshift(activity); // Add to beginning
+    if (activityLog.length > 100) activityLog.pop(); // Keep last 100
+    
+    localStorage.setItem('n8tive.activity', JSON.stringify(activityLog));
+}
+
+function loadActivityLog() {
+    try {
+        const stored = localStorage.getItem('n8tive.activity');
+        if (stored) {
+            activityLog = JSON.parse(stored);
+        }
+    } catch (e) {
+        console.error('Error loading activity log:', e);
+        activityLog = [];
+    }
+}
+
+function renderActivityLog() {
+    const container = document.getElementById('activityLog');
+    if (!container) return;
+    
+    if (activityLog.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                <i data-feather="inbox" class="w-12 h-12 mx-auto mb-2"></i>
+                <p>No recent activity</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const getActivityIcon = (type) => {
+        switch(type) {
+            case 'created': return 'plus-circle';
+            case 'updated': return 'edit-2';
+            case 'deleted': return 'trash-2';
+            case 'completed': return 'check-circle';
+            case 'moved': return 'arrow-right';
+            default: return 'activity';
+        }
+    };
+    
+    const getActivityColor = (type) => {
+        switch(type) {
+            case 'created': return 'text-green-500';
+            case 'updated': return 'text-blue-500';
+            case 'deleted': return 'text-red-500';
+            case 'completed': return 'text-purple-500';
+            case 'moved': return 'text-yellow-500';
+            default: return 'text-gray-500';
+        }
+    };
+    
+    container.innerHTML = activityLog.slice(0, 50).map(activity => `
+        <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+            <i data-feather="${getActivityIcon(activity.type)}" class="w-5 h-5 ${getActivityColor(activity.type)} flex-shrink-0 mt-1"></i>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm text-gray-800 dark:text-white font-medium truncate">${activity.task.title}</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                    <span class="capitalize">${activity.type}</span>${activity.details ? `: ${activity.details}` : ''}
+                </p>
+                <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">${formatRelativeTime(new Date(activity.timestamp))}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+function generateReport(type) {
+    const reportTasks = loadTasks();
+    let reportData = {};
+    
+    switch(type) {
+        case 'productivity':
+            reportData = generateProductivityReport(reportTasks);
+            showReportSummary('Productivity Report', reportData);
+            break;
+        case 'team':
+            reportData = generateTeamReport(reportTasks);
+            showReportSummary('Team Performance', reportData);
+            break;
+        case 'milestone':
+            reportData = generateMilestoneReport(reportTasks);
+            showReportSummary('Milestone Report', reportData);
+            break;
+    }
+}
+
+function showReportSummary(title, data) {
+    alert(`${title}\n\n${JSON.stringify(data, null, 2)}`);
+}
+
+function generateProductivityReport(reportTasks) {
+    const completed = reportTasks.filter(t => t.completedAt);
+    const avgCompletionTime = completed.length > 0
+        ? completed.reduce((sum, t) => sum + (new Date(t.completedAt) - new Date(t.createdAt)), 0) / completed.length
+        : 0;
+    
+    return {
+        totalTasks: reportTasks.length,
+        completedTasks: completed.length,
+        completionRate: reportTasks.length > 0 ? (completed.length / reportTasks.length * 100).toFixed(1) + '%' : '0%',
+        avgCompletionDays: Math.floor(avgCompletionTime / (1000 * 60 * 60 * 24)),
+        weeklyVelocity: calculateVelocity(reportTasks)
+    };
+}
+
+function generateTeamReport(reportTasks) {
+    const byStatus = {};
+    const byPriority = {};
+    
+    reportTasks.forEach(t => {
+        byStatus[t.status] = (byStatus[t.status] || 0) + 1;
+        byPriority[t.priority] = (byPriority[t.priority] || 0) + 1;
+    });
+    
+    return {
+        totalTasks: reportTasks.length,
+        byStatus,
+        byPriority
+    };
+}
+
+function generateMilestoneReport(reportTasks) {
+    const methodology = METHODOLOGIES[currentMethodology];
+    const byStatus = {};
+    
+    methodology.statuses.forEach(status => {
+        byStatus[status] = reportTasks.filter(t => t.status === status).length;
+    });
+    
+    return {
+        methodology: currentMethodology,
+        stages: byStatus,
+        totalTasks: reportTasks.length
+    };
+}
+
+function calculateVelocity(reportTasks) {
+    const now = new Date();
+    const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+    const recentCompleted = reportTasks.filter(t => 
+        t.completedAt && new Date(t.completedAt) >= weekAgo
+    );
+    return recentCompleted.length;
+}
+
+function exportReport(format) {
+    const exportTasks = loadTasks();
+    let content = '';
+    let filename = `n8tive-tasks-${new Date().toISOString().split('T')[0]}`;
+    
+    switch(format) {
+        case 'csv':
+            content = generateCSV(exportTasks);
+            filename += '.csv';
+            downloadFile(content, filename, 'text/csv');
+            break;
+        case 'json':
+            content = JSON.stringify(exportTasks, null, 2);
+            filename += '.json';
+            downloadFile(content, filename, 'application/json');
+            break;
+        case 'pdf':
+            alert('PDF export coming soon! Use CSV or JSON for now.');
+            break;
+        case 'excel':
+            alert('Excel export coming soon! Use CSV for now.');
+            break;
+    }
+}
+
+function generateCSV(exportTasks) {
+    const headers = ['ID', 'Title', 'Description', 'Status', 'Priority', 'Created', 'Completed'];
+    const rows = exportTasks.map(t => [
+        t.id,
+        `"${t.title.replace(/"/g, '""')}"`,
+        `"${(t.description || '').replace(/"/g, '""')}"`,
+        t.status,
+        t.priority,
+        new Date(t.createdAt).toISOString(),
+        t.completedAt ? new Date(t.completedAt).toISOString() : ''
+    ]);
+    
+    return [headers, ...rows].map(row => row.join(',')).join('\n');
+}
+
+function downloadFile(content, filename, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 // Initialize app when DOM is loaded

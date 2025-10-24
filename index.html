@@ -81,7 +81,7 @@
             
             <!-- Navigation -->
             <div id="navigationSection" class="mb-6 transition-all duration-300">
-                <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3 sidebar-text">Navigation</h3>
+                <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3 sidebar-text">Views</h3>
                 <div class="space-y-2">
                     <button onclick="showView('board')" class="nav-btn w-full text-left px-4 py-2 rounded-lg bg-purple-600 text-white transition-colors duration-200" data-view="board">
                         <i data-feather="trello" class="w-4 h-4 inline mr-2"></i>
@@ -95,37 +95,18 @@
                         <i data-feather="activity" class="w-4 h-4 inline mr-2"></i>
                         <span class="nav-text">Timeline</span>
                     </button>
+                    <button onclick="showView('reports')" class="nav-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" data-view="reports">
+                        <i data-feather="file-text" class="w-4 h-4 inline mr-2"></i>
+                        <span class="nav-text">Reports</span>
+                    </button>
                 </div>
             </div>
             
-            <!-- Filters -->
+            <!-- Quick Filters (only for Board view) -->
             <div id="filtersSection" class="mb-6 transition-all duration-300">
-                <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3 sidebar-text">Filters</h3>
-                <div class="space-y-2">
-                    <button onclick="filterTasks('all')" class="filter-btn w-full text-left px-4 py-2 rounded-lg bg-purple-600 text-white" data-filter="all">
-                        <i data-feather="list" class="w-4 h-4 inline mr-2"></i> All Tasks
-                    </button>
-                    <button onclick="filterTasks('backlog')" class="filter-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-filter="backlog">
-                        <i data-feather="inbox" class="w-4 h-4 inline mr-2"></i> Backlog
-                    </button>
-                    <button onclick="filterTasks('todo')" class="filter-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-filter="todo">
-                        <i data-feather="circle" class="w-4 h-4 inline mr-2"></i> To Do
-                    </button>
-                    <button onclick="filterTasks('doing')" class="filter-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-filter="doing">
-                        <i data-feather="loader" class="w-4 h-4 inline mr-2"></i> In Progress
-                    </button>
-                    <button onclick="filterTasks('review')" class="filter-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-filter="review">
-                        <i data-feather="eye" class="w-4 h-4 inline mr-2"></i> Review
-                    </button>
-                    <button onclick="filterTasks('testing')" class="filter-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-filter="testing">
-                        <i data-feather="check-square" class="w-4 h-4 inline mr-2"></i> Testing
-                    </button>
-                    <button onclick="filterTasks('done')" class="filter-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-filter="done">
-                        <i data-feather="check-circle" class="w-4 h-4 inline mr-2"></i> Done
-                    </button>
-                    <button onclick="filterTasks('archived')" class="filter-btn w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-filter="archived">
-                        <i data-feather="archive" class="w-4 h-4 inline mr-2"></i> Archived
-                    </button>
+                <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3 sidebar-text">Quick Filters</h3>
+                <div id="filterButtons" class="space-y-2">
+                    <!-- Populated dynamically based on current view -->
                 </div>
             </div>
             
@@ -564,6 +545,76 @@
                 </div>
             </div>
             <!-- End Timeline View -->
+            
+            <!-- Reports View -->
+            <div id="reportsView" class="view-content hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Reports & Insights</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Generate detailed reports and export data</p>
+                </div>
+                
+                <!-- Report Generator -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer" onclick="generateReport('productivity')">
+                        <div class="flex items-center justify-between mb-4">
+                            <i data-feather="trending-up" class="w-12 h-12 text-blue-500"></i>
+                            <i data-feather="download" class="w-5 h-5 text-gray-400"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Productivity Report</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Task completion rates, velocity, and efficiency metrics</p>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer" onclick="generateReport('team')">
+                        <div class="flex items-center justify-between mb-4">
+                            <i data-feather="users" class="w-12 h-12 text-green-500"></i>
+                            <i data-feather="download" class="w-5 h-5 text-gray-400"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Team Performance</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Workload distribution and collaboration insights</p>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer" onclick="generateReport('milestone')">
+                        <div class="flex items-center justify-between mb-4">
+                            <i data-feather="flag" class="w-12 h-12 text-purple-500"></i>
+                            <i data-feather="download" class="w-5 h-5 text-gray-400"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Milestone Report</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Progress tracking and deadline analysis</p>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity Log -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Recent Activity</h3>
+                    <div id="activityLog" class="space-y-3 max-h-96 overflow-y-auto">
+                        <!-- Activity items populated dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Export Options -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Export Data</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <button onclick="exportReport('csv')" class="flex flex-col items-center gap-2 p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-purple-500 dark:hover:border-purple-400 transition-colors">
+                            <i data-feather="file" class="w-8 h-8 text-gray-600 dark:text-gray-400"></i>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">CSV</span>
+                        </button>
+                        <button onclick="exportReport('json')" class="flex flex-col items-center gap-2 p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-purple-500 dark:hover:border-purple-400 transition-colors">
+                            <i data-feather="code" class="w-8 h-8 text-gray-600 dark:text-gray-400"></i>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">JSON</span>
+                        </button>
+                        <button onclick="exportReport('pdf')" class="flex flex-col items-center gap-2 p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-purple-500 dark:hover:border-purple-400 transition-colors">
+                            <i data-feather="file-text" class="w-8 h-8 text-gray-600 dark:text-gray-400"></i>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">PDF</span>
+                        </button>
+                        <button onclick="exportReport('excel')" class="flex flex-col items-center gap-2 p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-purple-500 dark:hover:border-purple-400 transition-colors">
+                            <i data-feather="grid" class="w-8 h-8 text-gray-600 dark:text-gray-400"></i>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Excel</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- End Reports View -->
             
         </div>
         
