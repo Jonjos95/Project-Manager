@@ -4,10 +4,14 @@
 let tasks = [];
 let currentFilter = 'all';
 let searchQuery = '';
+let currentDetailTaskId = null;
 
 // Constants
 const STORAGE_KEY = 'n8tive.tasks';
 const THEME_KEY = 'theme';
+
+// All available statuses
+const STATUSES = ['backlog', 'todo', 'doing', 'review', 'testing', 'done', 'archived'];
 
 // Seed data
 const SEED_TASKS = [
@@ -18,7 +22,9 @@ const SEED_TASKS = [
         priority: 'med',
         status: 'todo',
         createdAt: new Date().toISOString(),
-        completedAt: null
+        updatedAt: new Date().toISOString(),
+        completedAt: null,
+        files: []
     },
     {
         id: generateId(),
@@ -27,7 +33,9 @@ const SEED_TASKS = [
         priority: 'high',
         status: 'doing',
         createdAt: new Date().toISOString(),
-        completedAt: null
+        updatedAt: new Date().toISOString(),
+        completedAt: null,
+        files: []
     }
 ];
 
@@ -51,8 +59,13 @@ function loadTasks() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
         tasks = JSON.parse(stored);
+        // Migrate old tasks to new schema
+        tasks = tasks.map(task => ({
+            ...task,
+            updatedAt: task.updatedAt || task.createdAt,
+            files: task.files || []
+        }));
     } else {
-        // Use seed data if no tasks exist
         tasks = SEED_TASKS;
         saveTasks();
     }
@@ -89,10 +102,16 @@ function setupEventListeners() {
     // Edit form submission
     document.getElementById('editForm').addEventListener('submit', handleEditTask);
     
-    // Close edit modal on outside click
+    // Close modals on outside click
     document.getElementById('editModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeEditModal();
+        }
+    });
+    
+    document.getElementById('detailModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeDetailModal();
         }
     });
 }
@@ -104,6 +123,7 @@ function handleAddTask(e) {
     const title = document.getElementById('taskTitle').value.trim();
     const description = document.getElementById('taskDescription').value.trim();
     const priority = document.getElementById('taskPriority').value;
+    const status = document.getElementById('taskStatus').value;
     
     if (!title) return;
     
@@ -112,9 +132,11 @@ function handleAddTask(e) {
         title,
         description,
         priority,
-        status: 'todo',
+        status,
         createdAt: new Date().toISOString(),
-        completedAt: null
+        updatedAt: new Date().toISOString(),
+        completedAt: null,
+        files: []
     };
     
     tasks.push(newTask);
@@ -172,12 +194,170 @@ function handleEditTask(e) {
         task.title = title;
         task.description = description;
         task.priority = priority;
+        task.updatedAt = new Date().toISOString();
         
         saveTasks();
         renderTasks();
         closeEditModal();
+        
+        // Update detail view if open
+        if (currentDetailTaskId === taskId) {
+            openDetailModal(taskId);
+        }
+        
         feather.replace();
     }
+}
+
+// Detailed View Modal
+function openDetailModal(taskId) {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+    
+    currentDetailTaskId = taskId;
+    
+    // Populate modal
+    document.getElementById('detailTitle').textContent = task.title;
+    document.getElementById('detailDescription').textContent = task.description || 'No description provided';
+    document.getElementById('detailStatus').textContent = task.status.replace('_', ' ');
+    document.getElementById('detailId').textContent = task.id;
+    
+    // Priority badge
+    const priorityBadge = `
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(task.priority)}">
+            ${task.priority === 'high' ? '🔴' : task.priority === 'med' ? '🟡' : '🟢'} ${task.priority.toUpperCase()}
+        </span>
+    `;
+    document.getElementById('detailPriority').innerHTML = priorityBadge;
+    
+    // Dates
+    document.getElementById('detailCreated').textContent = formatDateTime(task.createdAt);
+    document.getElementById('detailUpdated').textContent = formatDateTime(task.updatedAt);
+    document.getElementById('detailCompleted').textContent = task.completedAt ? formatDateTime(task.completedAt) : 'Not completed';
+    
+    // Files
+    renderFileList(task.files);
+    
+    // Show modal
+    document.getElementById('detailModal').classList.remove('hidden');
+    document.getElementById('detailModal').classList.add('flex');
+    
+    feather.replace();
+}
+
+function closeDetailModal() {
+    document.getElementById('detailModal').classList.add('hidden');
+    document.getElementById('detailModal').classList.remove('flex');
+    currentDetailTaskId = null;
+}
+
+function openEditModalFromDetail() {
+    if (currentDetailTaskId) {
+        closeDetailModal();
+        openEditModal(currentDetailTaskId);
+    }
+}
+
+function deleteTaskFromDetail() {
+    if (currentDetailTaskId) {
+        deleteTask(currentDetailTaskId);
+        closeDetailModal();
+    }
+}
+
+// File Management
+function handleFileUpload(e) {
+    if (!currentDetailTaskId) return;
+    
+    const task = tasks.find(t => t.id === currentDetailTaskId);
+    if (!task) return;
+    
+    const files = Array.from(e.target.files);
+    
+    files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const fileData = {
+                id: generateId(),
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                data: event.target.result,
+                uploadedAt: new Date().toISOString()
+            };
+            
+            task.files.push(fileData);
+            task.updatedAt = new Date().toISOString();
+            saveTasks();
+            renderFileList(task.files);
+        };
+        
+        // Read file as data URL for storage
+        reader.readAsDataURL(file);
+    });
+    
+    // Reset input
+    e.target.value = '';
+}
+
+function renderFileList(files) {
+    const container = document.getElementById('detailFiles');
+    
+    if (!files || files.length === 0) {
+        container.innerHTML = '<p class="text-sm text-gray-500 dark:text-gray-400">No attachments</p>';
+        return;
+    }
+    
+    container.innerHTML = files.map(file => `
+        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div class="flex items-center space-x-3 flex-1 min-w-0">
+                <i data-feather="file" class="w-5 h-5 text-gray-400 flex-shrink-0"></i>
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">${escapeHtml(file.name)}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">${formatFileSize(file.size)} • ${formatDateTime(file.uploadedAt)}</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 ml-2">
+                <button onclick="downloadFile('${file.id}')" class="text-blue-500 hover:text-blue-600 p-1" title="Download">
+                    <i data-feather="download" class="w-4 h-4"></i>
+                </button>
+                <button onclick="deleteFile('${file.id}')" class="text-red-500 hover:text-red-600 p-1" title="Delete">
+                    <i data-feather="trash-2" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+    
+    feather.replace();
+}
+
+function downloadFile(fileId) {
+    if (!currentDetailTaskId) return;
+    
+    const task = tasks.find(t => t.id === currentDetailTaskId);
+    if (!task) return;
+    
+    const file = task.files.find(f => f.id === fileId);
+    if (!file) return;
+    
+    // Create download link
+    const link = document.createElement('a');
+    link.href = file.data;
+    link.download = file.name;
+    link.click();
+}
+
+function deleteFile(fileId) {
+    if (!currentDetailTaskId) return;
+    if (!confirm('Are you sure you want to delete this file?')) return;
+    
+    const task = tasks.find(t => t.id === currentDetailTaskId);
+    if (!task) return;
+    
+    task.files = task.files.filter(f => f.id !== fileId);
+    task.updatedAt = new Date().toISOString();
+    saveTasks();
+    renderFileList(task.files);
 }
 
 // Drag and Drop Functions
@@ -224,11 +404,12 @@ function handleDrop(e) {
     
     if (task && task.status !== newStatus) {
         task.status = newStatus;
+        task.updatedAt = new Date().toISOString();
         
         // Update completedAt timestamp
-        if (newStatus === 'done') {
+        if (newStatus === 'done' && !task.completedAt) {
             task.completedAt = new Date().toISOString();
-        } else {
+        } else if (newStatus !== 'done') {
             task.completedAt = null;
         }
         
@@ -268,10 +449,8 @@ function getFilteredTasks() {
     let filtered = [...tasks];
     
     // Apply filter
-    if (currentFilter === 'active') {
-        filtered = filtered.filter(task => task.status !== 'done');
-    } else if (currentFilter === 'completed') {
-        filtered = filtered.filter(task => task.status === 'done');
+    if (currentFilter !== 'all') {
+        filtered = filtered.filter(task => task.status === currentFilter);
     }
     
     // Apply search
@@ -289,45 +468,56 @@ function getFilteredTasks() {
 function renderTasks() {
     const filteredTasks = getFilteredTasks();
     
-    // Clear columns
-    document.getElementById('todoColumn').innerHTML = '';
-    document.getElementById('doingColumn').innerHTML = '';
-    document.getElementById('doneColumn').innerHTML = '';
+    // Clear all columns
+    STATUSES.forEach(status => {
+        const columnId = status + 'Column';
+        const column = document.getElementById(columnId);
+        if (column) {
+            column.innerHTML = '';
+        }
+    });
     
-    // Render tasks by status
-    const todoTasks = filteredTasks.filter(task => task.status === 'todo');
-    const doingTasks = filteredTasks.filter(task => task.status === 'doing');
-    const doneTasks = filteredTasks.filter(task => task.status === 'done');
+    // Group tasks by status
+    const tasksByStatus = {};
+    STATUSES.forEach(status => {
+        tasksByStatus[status] = filteredTasks.filter(task => task.status === status);
+    });
     
-    todoTasks.forEach(task => renderTask(task, 'todoColumn'));
-    doingTasks.forEach(task => renderTask(task, 'doingColumn'));
-    doneTasks.forEach(task => renderTask(task, 'doneColumn'));
-    
-    // Update column counts
-    document.getElementById('todoCount').textContent = todoTasks.length;
-    document.getElementById('doingCount').textContent = doingTasks.length;
-    document.getElementById('doneCount').textContent = doneTasks.length;
-    
-    // Show empty state if no tasks
-    if (todoTasks.length === 0) {
-        document.getElementById('todoColumn').innerHTML = '<p class="text-gray-400 dark:text-gray-500 text-sm text-center py-4">No tasks</p>';
-    }
-    if (doingTasks.length === 0) {
-        document.getElementById('doingColumn').innerHTML = '<p class="text-gray-400 dark:text-gray-500 text-sm text-center py-4">No tasks</p>';
-    }
-    if (doneTasks.length === 0) {
-        document.getElementById('doneColumn').innerHTML = '<p class="text-gray-400 dark:text-gray-500 text-sm text-center py-4">No tasks</p>';
-    }
+    // Render tasks in each column
+    Object.entries(tasksByStatus).forEach(([status, statusTasks]) => {
+        const columnId = status + 'Column';
+        statusTasks.forEach(task => renderTask(task, columnId));
+        
+        // Update column count
+        const countId = status + 'Count';
+        const countEl = document.getElementById(countId);
+        if (countEl) {
+            countEl.textContent = statusTasks.length;
+        }
+        
+        // Show empty state if no tasks
+        const column = document.getElementById(columnId);
+        if (column && statusTasks.length === 0) {
+            column.innerHTML = '<p class="text-gray-400 dark:text-gray-500 text-sm text-center py-4">No tasks</p>';
+        }
+    });
 }
 
 function renderTask(task, columnId) {
     const column = document.getElementById(columnId);
+    if (!column) return;
     
     const taskCard = document.createElement('div');
     taskCard.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-4 cursor-move hover:shadow-md transition-shadow duration-200 animate-fadeIn border-l-4 ' + getPriorityBorderColor(task.priority);
     taskCard.draggable = true;
     taskCard.ondragstart = (e) => handleDragStart(e, task.id);
     taskCard.ondragend = handleDragEnd;
+    taskCard.onclick = (e) => {
+        // Don't open detail if clicking on buttons
+        if (!e.target.closest('button')) {
+            openDetailModal(task.id);
+        }
+    };
     
     const priorityBadge = `
         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority)}">
@@ -335,28 +525,34 @@ function renderTask(task, columnId) {
         </span>
     `;
     
+    const fileCount = task.files && task.files.length > 0 ? `
+        <span class="inline-flex items-center text-xs text-gray-500 dark:text-gray-400">
+            <i data-feather="paperclip" class="w-3 h-3 mr-1"></i>${task.files.length}
+        </span>
+    ` : '';
+    
     const createdDate = new Date(task.createdAt).toLocaleDateString();
-    const completedDate = task.completedAt ? new Date(task.completedAt).toLocaleDateString() : null;
     
     taskCard.innerHTML = `
         <div class="flex items-start justify-between mb-2">
             <h4 class="font-semibold text-gray-800 dark:text-white flex-1 ${task.status === 'done' ? 'line-through opacity-60' : ''}">${escapeHtml(task.title)}</h4>
             <div class="flex items-center space-x-2 ml-2">
-                <button onclick="openEditModal('${task.id}')" class="text-blue-500 hover:text-blue-600 p-1" title="Edit">
+                <button onclick="event.stopPropagation(); openEditModal('${task.id}')" class="text-blue-500 hover:text-blue-600 p-1" title="Edit">
                     <i data-feather="edit-2" class="w-4 h-4"></i>
                 </button>
-                <button onclick="deleteTask('${task.id}')" class="text-red-500 hover:text-red-600 p-1" title="Delete">
+                <button onclick="event.stopPropagation(); deleteTask('${task.id}')" class="text-red-500 hover:text-red-600 p-1" title="Delete">
                     <i data-feather="trash-2" class="w-4 h-4"></i>
                 </button>
             </div>
         </div>
-        ${task.description ? `<p class="text-sm text-gray-600 dark:text-gray-300 mb-3">${escapeHtml(task.description)}</p>` : ''}
+        ${task.description ? `<p class="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">${escapeHtml(task.description)}</p>` : ''}
         <div class="flex items-center justify-between text-xs">
             <div class="flex items-center space-x-2">
                 ${priorityBadge}
+                ${fileCount}
             </div>
             <div class="text-gray-500 dark:text-gray-400">
-                ${completedDate ? `✓ ${completedDate}` : createdDate}
+                ${createdDate}
             </div>
         </div>
     `;
@@ -395,8 +591,27 @@ function escapeHtml(text) {
     return text.replace(/[&<>"']/g, m => map[m]);
 }
 
+function formatDateTime(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
 function updateCounters() {
-    const remaining = tasks.filter(task => task.status !== 'done').length;
+    const remaining = tasks.filter(task => task.status !== 'done' && task.status !== 'archived').length;
     const completed = tasks.filter(task => task.status === 'done').length;
     
     document.getElementById('remainingCount').textContent = remaining;
