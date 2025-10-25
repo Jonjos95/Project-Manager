@@ -12,8 +12,8 @@ jobs:
     - name: Deploy Frontend & Backend to EC2
       uses: appleboy/ssh-action@master
       with:
-        host: 54.158.1.37
-        username: ec2-user
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           echo "🔄 Pulling latest code..."

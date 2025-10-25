@@ -1,0 +1,50 @@
+# Production Configuration (contains sensitive data)
+config.production.js
+*.production.js
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+*.env
+
+# SSH Keys
+*.pem
+*.key
+*-key.pem
+
+# AWS Credentials
+.aws/
+aws-credentials.json
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Build outputs
+dist/
+build/
+

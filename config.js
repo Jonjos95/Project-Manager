@@ -1,4 +1,13 @@
 // API Configuration
+// For production deployment, create config.production.js with your actual values
+
+// Try to load production config if it exists
+let PRODUCTION_CONFIG = null;
+try {
+    PRODUCTION_CONFIG = typeof require !== 'undefined' ? require('./config.production.js') : null;
+} catch (e) {
+    // Production config not found, will use defaults
+}
 
 const API_CONFIG = {
     // Local development (when testing on localhost)
@@ -9,12 +18,13 @@ const API_CONFIG = {
     // AWS Production (frontend served via Nginx on EC2)
     // Uses relative path since frontend and backend are on same domain
     production: {
-        apiUrl: '/api'  // Nginx proxies /api to Node.js backend
+        apiUrl: PRODUCTION_CONFIG?.apiUrl || '/api'  // Nginx proxies /api to Node.js backend
     },
     
     // File protocol (double-clicking index.html)
+    // WARNING: Set production config for security
     fileProtocol: {
-        apiUrl: 'http://54.158.1.37/api'  // Direct to AWS
+        apiUrl: PRODUCTION_CONFIG?.fileApiUrl || '/api'  // Configure in config.production.js
     }
 };
 
