@@ -68,8 +68,8 @@ class UIController {
             // Collapse sidebar
             sidebar.classList.remove('w-64');
             sidebar.classList.add('w-20');
-            mainContent.classList.remove('lg:ml-64', 'ml-64');
-            mainContent.classList.add('lg:ml-20', 'ml-20');
+            mainContent.classList.remove('md:ml-64', 'lg:ml-64', 'ml-64');
+            mainContent.classList.add('md:ml-20', 'lg:ml-20', 'ml-20');
             
             // Hide text elements, title, and collapse button (but keep counters visible)
             if (sidebarTitle) sidebarTitle.classList.add('hidden');
@@ -107,8 +107,8 @@ class UIController {
             // Expand sidebar
             sidebar.classList.remove('w-20');
             sidebar.classList.add('w-64');
-            mainContent.classList.remove('lg:ml-20', 'ml-20');
-            mainContent.classList.add('lg:ml-64', 'ml-64');
+            mainContent.classList.remove('md:ml-20', 'lg:ml-20', 'ml-20');
+            mainContent.classList.add('md:ml-64', 'lg:ml-64', 'ml-64');
             
             // Show text elements, title, and collapse button
             if (sidebarTitle) sidebarTitle.classList.remove('hidden');

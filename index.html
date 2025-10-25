@@ -48,10 +48,10 @@
     <!-- Main App Container (hidden when not authenticated) -->
     <div id="appContainer" class="hidden">
         <!-- Mobile Menu Overlay -->
-        <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleMobileMenu()"></div>
+        <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden" onclick="toggleMobileMenu()"></div>
         
         <!-- Sidebar -->
-    <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg z-50 transform -translate-x-full lg:translate-x-0 transition-all duration-300 overflow-y-auto">
+    <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg z-50 transform -translate-x-full md:translate-x-0 transition-all duration-300 overflow-y-auto">
         <div class="p-6">
             <!-- Logo/Title -->
             <div class="flex items-center justify-between mb-8">
@@ -72,10 +72,10 @@
                     <h1 id="sidebarTitle" class="text-xl font-bold text-purple-700 dark:text-purple-400 transition-all duration-300">N8tive.io</h1>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button id="collapseBtn" onclick="toggleSidebarCollapse()" class="hidden lg:block text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors" title="Collapse sidebar">
+                    <button id="collapseBtn" onclick="toggleSidebarCollapse()" class="hidden md:block text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors" title="Collapse sidebar">
                         <i data-feather="chevrons-left" id="collapseIcon" class="w-5 h-5"></i>
                     </button>
-                    <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-600 dark:text-gray-300">
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-gray-600 dark:text-gray-300">
                         <i data-feather="x" class="w-6 h-6"></i>
                     </button>
                 </div>
@@ -133,14 +133,14 @@
     </aside>
     
     <!-- Main Content -->
-    <div id="mainContent" class="lg:ml-64 min-h-screen flex flex-col transition-all duration-300">
+    <div id="mainContent" class="md:ml-64 min-h-screen flex flex-col transition-all duration-300">
         <!-- Header -->
         <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
             <div class="px-4 py-4 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-4">
                     <!-- Left: Logo/Title -->
                     <div class="flex items-center flex-shrink-0">
-                        <button onclick="toggleMobileMenu()" class="lg:hidden mr-4 text-gray-600 dark:text-gray-300">
+                        <button onclick="toggleMobileMenu()" class="md:hidden mr-4 text-gray-600 dark:text-gray-300">
                             <i data-feather="menu" class="w-6 h-6"></i>
                         </button>
                         <div class="flex items-center gap-3">
