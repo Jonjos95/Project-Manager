@@ -12,8 +12,16 @@ sudo cp index.html /var/www/html/Project-Manager/
 sudo cp script.js /var/www/html/Project-Manager/
 sudo cp style.css /var/www/html/Project-Manager/
 sudo cp config.js /var/www/html/Project-Manager/
-sudo cp README.md /var/www/html/Project-Manager/
-sudo cp -r components /var/www/html/Project-Manager/
+sudo cp README.md /var/www/html/Project-Manager/ 2>/dev/null || true
+
+# Copy components directory if it exists and has files
+if [ -d "components" ] && [ "$(ls -A components 2>/dev/null)" ]; then
+    echo "📦 Copying components..."
+    sudo cp -r components /var/www/html/Project-Manager/
+else
+    echo "ℹ️  No components directory or empty, skipping..."
+    sudo mkdir -p /var/www/html/Project-Manager/components
+fi
 
 # Set permissions
 echo "🔐 Setting permissions..."
