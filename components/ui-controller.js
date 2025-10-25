@@ -67,7 +67,7 @@ class UIController {
         if (this.sidebarCollapsed) {
             // Collapse sidebar
             sidebar.classList.remove('w-64');
-            sidebar.classList.add('w-20');
+            sidebar.classList.add('w-20', 'sidebar-collapsed');
             mainContent.classList.remove('md:ml-64', 'lg:ml-64', 'ml-64');
             mainContent.classList.add('md:ml-20', 'lg:ml-20', 'ml-20');
             
@@ -120,7 +120,7 @@ class UIController {
             
         } else {
             // Expand sidebar
-            sidebar.classList.remove('w-20');
+            sidebar.classList.remove('w-20', 'sidebar-collapsed');
             sidebar.classList.add('w-64');
             mainContent.classList.remove('md:ml-20', 'lg:ml-20', 'ml-20');
             mainContent.classList.add('md:ml-64', 'lg:ml-64', 'ml-64');

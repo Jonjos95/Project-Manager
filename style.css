@@ -150,3 +150,15 @@ select:focus-visible {
 .dark #detailFiles .dark\:bg-gray-700:hover {
     background-color: rgba(55, 65, 81, 0.8);
 }
+
+/* Collapsed sidebar - make icons larger */
+.sidebar-collapsed .nav-btn svg,
+.sidebar-collapsed .filter-btn svg {
+    width: 32px !important;
+    height: 32px !important;
+}
+
+.sidebar-collapsed #countersSection svg {
+    width: 32px !important;
+    height: 32px !important;
+}
