@@ -83,16 +83,6 @@ class UIController {
             document.querySelectorAll('.nav-btn, .filter-btn').forEach(btn => {
                 btn.classList.add('justify-center', 'px-2', 'py-4');
                 btn.classList.remove('px-4', 'py-2');
-                
-                // Make icons much larger when collapsed for better visibility
-                const svg = btn.querySelector('svg');
-                if (svg) {
-                    // Set both attributes and classes for maximum compatibility
-                    svg.setAttribute('width', '32');
-                    svg.setAttribute('height', '32');
-                    svg.classList.remove('w-5', 'h-5');
-                    svg.classList.add('w-8', 'h-8');
-                }
             });
             
             // Adjust counter padding for collapsed state
@@ -100,15 +90,6 @@ class UIController {
                 countersSection.querySelectorAll('.p-3').forEach(counter => {
                     counter.classList.remove('p-3');
                     counter.classList.add('p-2');
-                });
-                
-                // Make counter icons larger when collapsed
-                countersSection.querySelectorAll('svg').forEach(svg => {
-                    // Set both attributes and classes for maximum compatibility
-                    svg.setAttribute('width', '32');
-                    svg.setAttribute('height', '32');
-                    svg.classList.remove('w-6', 'h-6');
-                    svg.classList.add('w-8', 'h-8');
                 });
             }
             
@@ -137,16 +118,6 @@ class UIController {
             document.querySelectorAll('.nav-btn, .filter-btn').forEach(btn => {
                 btn.classList.remove('justify-center', 'px-2', 'py-4');
                 btn.classList.add('px-4', 'py-2');
-                
-                // Restore original icon size
-                const svg = btn.querySelector('svg');
-                if (svg) {
-                    // Set both attributes and classes for maximum compatibility
-                    svg.setAttribute('width', '20');
-                    svg.setAttribute('height', '20');
-                    svg.classList.remove('w-8', 'h-8');
-                    svg.classList.add('w-5', 'h-5');
-                }
             });
             
             // Restore counter padding for expanded state
@@ -154,15 +125,6 @@ class UIController {
                 countersSection.querySelectorAll('.p-2').forEach(counter => {
                     counter.classList.remove('p-2');
                     counter.classList.add('p-3');
-                });
-                
-                // Restore counter icon size
-                countersSection.querySelectorAll('svg').forEach(svg => {
-                    // Set both attributes and classes for maximum compatibility
-                    svg.setAttribute('width', '24');
-                    svg.setAttribute('height', '24');
-                    svg.classList.remove('w-8', 'h-8');
-                    svg.classList.add('w-6', 'h-6');
                 });
             }
             
