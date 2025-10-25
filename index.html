@@ -45,10 +45,12 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <!-- Mobile Menu Overlay -->
-    <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleMobileMenu()"></div>
-    
-    <!-- Sidebar -->
+    <!-- Main App Container (hidden when not authenticated) -->
+    <div id="appContainer" class="hidden">
+        <!-- Mobile Menu Overlay -->
+        <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleMobileMenu()"></div>
+        
+        <!-- Sidebar -->
     <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg z-50 transform -translate-x-full lg:translate-x-0 transition-all duration-300 overflow-y-auto">
         <div class="p-6">
             <!-- Logo/Title -->
@@ -760,6 +762,7 @@
             </div>
         </div>
     </div>
+    </div> <!-- End of appContainer -->
     
     <!-- Login Modal -->
     <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
