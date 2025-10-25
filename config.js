@@ -9,18 +9,20 @@ const API_CONFIG = {
     
     // AWS Production
     production: {
-        apiUrl: 'http://YOUR-EC2-PUBLIC-IP:3000/api'  // Update this!
+        apiUrl: 'http://54.158.1.37:3000/api'
     }
 };
 
 // Auto-detect environment
 const isLocalhost = window.location.hostname === 'localhost' || 
-                    window.location.hostname === '127.0.0.1' ||
-                    window.location.hostname === '';
+                    window.location.hostname === '127.0.0.1';
 
 const API_URL = isLocalhost ? 
     API_CONFIG.development.apiUrl : 
     API_CONFIG.production.apiUrl;
+
+// Show which environment we're using
+console.log('Environment:', isLocalhost ? 'Development (localhost)' : 'Production (AWS)');
 
 console.log('API URL:', API_URL);
 
