@@ -20,8 +20,8 @@ class App {
         // Initialize methodology
         this.methodology.init();
         
-        // Check authentication
-        const hasSession = this.auth.init();
+        // Check authentication (await the promise)
+        const hasSession = await this.auth.init();
         
         if (!hasSession) {
             // Show login modal
@@ -256,7 +256,7 @@ class App {
                 if (success) {
                     this.board.render();
                     this.ui.showToast('Data imported successfully', 'success');
-                } else {
+          } else {
                     this.ui.alert('Failed to import data. Invalid format.');
                 }
             };

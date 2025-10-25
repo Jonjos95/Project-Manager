@@ -273,14 +273,14 @@ class KanbanBoard {
             <button onclick="app.board.setFilter('all')" 
                     class="filter-btn flex items-center space-x-2 w-full px-3 py-2 rounded-lg transition-colors
                            ${currentFilter === 'all' ? 'bg-purple-100 dark:bg-gray-800 text-purple-700 dark:text-purple-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}">
-                <i data-feather="list" class="w-4 h-4"></i>
+                <i data-feather="list" class="w-5 h-5"></i>
                 <span class="filter-text">All Tasks</span>
             </button>
         ` + statuses.map(status => `
             <button onclick="app.board.setFilter('${status.id}')" 
                     class="filter-btn flex items-center space-x-2 w-full px-3 py-2 rounded-lg transition-colors
                            ${currentFilter === status.id ? 'bg-purple-100 dark:bg-gray-800 text-purple-700 dark:text-purple-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}">
-                <i data-feather="${status.icon}" class="w-4 h-4"></i>
+                <i data-feather="${status.icon}" class="w-5 h-5"></i>
                 <span class="filter-text">${status.name}</span>
             </button>
         `).join('');
