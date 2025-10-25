@@ -357,9 +357,8 @@ function showView(viewName) {
                 }
                 break;
             case 'timeline':
-                if (window.app.analytics) {
-                    window.app.analytics.renderTimeline();
-                }
+                // Initialize timeline with current date
+                renderTimeline();
                 break;
             case 'reports':
                 if (window.app.analytics) {
@@ -404,6 +403,298 @@ function showRegisterModal() {
 
 function logout() {
     window.app.auth.logout();
+}
+
+// Timeline View Management
+let timelineState = {
+    view: 'month', // 'month' or 'year'
+    currentDate: new Date(),
+    currentMonth: new Date().getMonth(),
+    currentYear: new Date().getFullYear()
+};
+
+function setTimelineView(view) {
+    timelineState.view = view;
+    
+    // Update button states
+    const monthBtn = document.getElementById('timelineMonthBtn');
+    const yearBtn = document.getElementById('timelineYearBtn');
+    
+    if (view === 'month') {
+        monthBtn.classList.add('bg-purple-600', 'text-white');
+        monthBtn.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+        yearBtn.classList.remove('bg-purple-600', 'text-white');
+        yearBtn.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+    } else {
+        yearBtn.classList.add('bg-purple-600', 'text-white');
+        yearBtn.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+        monthBtn.classList.remove('bg-purple-600', 'text-white');
+        monthBtn.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+    }
+    
+    renderTimeline();
+}
+
+function timelineNavigate(direction) {
+    if (timelineState.view === 'month') {
+        if (direction === 'prev') {
+            timelineState.currentMonth--;
+            if (timelineState.currentMonth < 0) {
+                timelineState.currentMonth = 11;
+                timelineState.currentYear--;
+            }
+        } else {
+            timelineState.currentMonth++;
+            if (timelineState.currentMonth > 11) {
+                timelineState.currentMonth = 0;
+                timelineState.currentYear++;
+            }
+        }
+    } else {
+        timelineState.currentYear += direction === 'prev' ? -1 : 1;
+    }
+    
+    timelineState.currentDate = new Date(timelineState.currentYear, timelineState.currentMonth, 1);
+    renderTimeline();
+}
+
+function changeTimelineYear(year) {
+    timelineState.currentYear = parseInt(year);
+    timelineState.currentDate = new Date(timelineState.currentYear, timelineState.currentMonth, 1);
+    renderTimeline();
+}
+
+function timelineToday() {
+    const now = new Date();
+    timelineState.currentMonth = now.getMonth();
+    timelineState.currentYear = now.getFullYear();
+    timelineState.currentDate = now;
+    renderTimeline();
+}
+
+function renderTimeline() {
+    // Populate year selector
+    const yearSelect = document.getElementById('timelineYearSelect');
+    if (yearSelect.children.length === 0) {
+        const currentYear = new Date().getFullYear();
+        for (let year = currentYear - 5; year <= currentYear + 5; year++) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            if (year === timelineState.currentYear) option.selected = true;
+            yearSelect.appendChild(option);
+        }
+    } else {
+        yearSelect.value = timelineState.currentYear;
+    }
+    
+    // Render based on view type
+    if (timelineState.view === 'month') {
+        renderMonthTimeline();
+    } else {
+        renderYearTimeline();
+    }
+}
+
+function renderMonthTimeline() {
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                        'July', 'August', 'September', 'October', 'November', 'December'];
+    
+    // Update period display
+    document.getElementById('timelinePeriod').textContent = 
+        `${monthNames[timelineState.currentMonth]} ${timelineState.currentYear}`;
+    
+    // Get days in month
+    const daysInMonth = new Date(timelineState.currentYear, timelineState.currentMonth + 1, 0).getDate();
+    const firstDay = new Date(timelineState.currentYear, timelineState.currentMonth, 1).getDay();
+    
+    // Create calendar grid
+    let html = '<div class="grid grid-cols-7 gap-2">';
+    
+    // Day headers
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    dayNames.forEach(day => {
+        html += `<div class="text-center font-semibold text-gray-600 dark:text-gray-400 text-sm py-2">${day}</div>`;
+    });
+    
+    // Empty cells for days before month starts
+    for (let i = 0; i < firstDay; i++) {
+        html += '<div class="aspect-square"></div>';
+    }
+    
+    // Days of month
+    const today = new Date();
+    const isCurrentMonth = today.getMonth() === timelineState.currentMonth && 
+                          today.getFullYear() === timelineState.currentYear;
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+        const isToday = isCurrentMonth && today.getDate() === day;
+        const bgClass = isToday ? 'bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-500' : 
+                                  'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600';
+        
+        html += `
+            <div class="aspect-square ${bgClass} rounded-lg p-2 transition-colors cursor-pointer relative">
+                <div class="text-center font-medium text-gray-800 dark:text-white">${day}</div>
+                <div id="day-${day}-tasks" class="mt-1 space-y-1">
+                    <!-- Tasks for this day -->
+                </div>
+            </div>
+        `;
+    }
+    
+    html += '</div>';
+    document.getElementById('timelineGrid').innerHTML = html;
+    
+    // Populate tasks if available
+    if (window.app && window.app.taskManager) {
+        populateMonthTasks();
+    }
+}
+
+function renderYearTimeline() {
+    document.getElementById('timelinePeriod').textContent = timelineState.currentYear;
+    
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    let html = '<div class="grid grid-cols-4 gap-4">';
+    
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    
+    monthNames.forEach((month, index) => {
+        const isCurrentMonth = index === currentMonth && timelineState.currentYear === currentYear;
+        const borderClass = isCurrentMonth ? 'border-2 border-blue-500' : '';
+        
+        html += `
+            <div class="${borderClass} bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+                 onclick="jumpToMonth(${index})">
+                <div class="text-center font-semibold text-gray-800 dark:text-white mb-2">${month}</div>
+                <div id="month-${index}-summary" class="text-center text-sm text-gray-600 dark:text-gray-400">
+                    <!-- Task summary -->
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    document.getElementById('timelineGrid').innerHTML = html;
+    
+    // Populate summaries if available
+    if (window.app && window.app.taskManager) {
+        populateYearSummary();
+    }
+}
+
+function jumpToMonth(monthIndex) {
+    timelineState.view = 'month';
+    timelineState.currentMonth = monthIndex;
+    setTimelineView('month');
+}
+
+function populateMonthTasks() {
+    const tasks = window.app.taskManager.getAllTasks();
+    const monthStart = new Date(timelineState.currentYear, timelineState.currentMonth, 1);
+    const monthEnd = new Date(timelineState.currentYear, timelineState.currentMonth + 1, 0);
+    
+    const tasksInMonth = tasks.filter(task => {
+        const taskDate = new Date(task.createdAt);
+        return taskDate >= monthStart && taskDate <= monthEnd;
+    });
+    
+    // Add task indicators to days
+    tasksInMonth.forEach(task => {
+        const day = new Date(task.createdAt).getDate();
+        const dayEl = document.getElementById(`day-${day}-tasks`);
+        if (dayEl) {
+            const dot = document.createElement('div');
+            dot.className = `w-1.5 h-1.5 rounded-full ${getPriorityColor(task.priority)} mx-auto`;
+            dot.title = task.title;
+            dayEl.appendChild(dot);
+        }
+    });
+    
+    // Update task list
+    renderTimelineTaskList(tasksInMonth);
+}
+
+function populateYearSummary() {
+    const tasks = window.app.taskManager.getAllTasks();
+    
+    for (let month = 0; month < 12; month++) {
+        const monthStart = new Date(timelineState.currentYear, month, 1);
+        const monthEnd = new Date(timelineState.currentYear, month + 1, 0);
+        
+        const tasksInMonth = tasks.filter(task => {
+            const taskDate = new Date(task.createdAt);
+            return taskDate >= monthStart && taskDate <= monthEnd;
+        });
+        
+        const summaryEl = document.getElementById(`month-${month}-summary`);
+        if (summaryEl) {
+            summaryEl.textContent = `${tasksInMonth.length} tasks`;
+        }
+    }
+    
+    // Show all tasks for the year
+    const tasksInYear = tasks.filter(task => {
+        return new Date(task.createdAt).getFullYear() === timelineState.currentYear;
+    });
+    renderTimelineTaskList(tasksInYear);
+}
+
+function renderTimelineTaskList(tasks) {
+    const listEl = document.getElementById('timelineTaskList');
+    
+    if (tasks.length === 0) {
+        listEl.innerHTML = `
+            <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                <i data-feather="calendar" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                <p>No tasks in this period</p>
+            </div>
+        `;
+        if (typeof feather !== 'undefined') feather.replace();
+        return;
+    }
+    
+    let html = '';
+    tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(task => {
+        const date = new Date(task.createdAt).toLocaleDateString();
+        html += `
+            <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+                 onclick="openTaskDetailModal('${task.id}')">
+                <div class="w-2 h-2 rounded-full ${getPriorityColor(task.priority)}"></div>
+                <div class="flex-1">
+                    <div class="font-medium text-gray-800 dark:text-white">${task.title}</div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">${date}</div>
+                </div>
+                <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(task.status)}">
+                    ${task.status}
+                </span>
+            </div>
+        `;
+    });
+    
+    listEl.innerHTML = html;
+}
+
+function getPriorityColor(priority) {
+    switch (priority) {
+        case 'high': return 'bg-red-500';
+        case 'med': return 'bg-yellow-500';
+        case 'low': return 'bg-green-500';
+        default: return 'bg-gray-500';
+    }
+}
+
+function getStatusColor(status) {
+    const colors = {
+        backlog: 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300',
+        todo: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
+        'in-progress': 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300',
+        done: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+    };
+    return colors[status] || colors.backlog;
 }
 
 function exportData() {
