@@ -28,7 +28,11 @@ class App {
             this.auth.showLoginModal();
             document.getElementById('appContainer').classList.add('hidden');
         } else {
-            // User is authenticated
+            // User is authenticated - hide login/register modals and show app
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('loginModal').classList.remove('flex');
+            document.getElementById('registerModal').classList.add('hidden');
+            document.getElementById('registerModal').classList.remove('flex');
             document.getElementById('appContainer').classList.remove('hidden');
             this.initializeAfterLogin(this.auth.getCurrentUser());
         }
