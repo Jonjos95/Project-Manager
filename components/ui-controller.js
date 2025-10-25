@@ -98,6 +98,12 @@ class UIController {
                     counter.classList.remove('p-3');
                     counter.classList.add('p-2');
                 });
+                
+                // Make counter icons larger when collapsed
+                countersSection.querySelectorAll('.counter-icon').forEach(icon => {
+                    icon.classList.remove('w-5', 'h-5');
+                    icon.classList.add('w-6', 'h-6');
+                });
             }
             
             // Change collapse icon direction
@@ -136,6 +142,12 @@ class UIController {
                 countersSection.querySelectorAll('.p-2').forEach(counter => {
                     counter.classList.remove('p-2');
                     counter.classList.add('p-3');
+                });
+                
+                // Restore counter icon size
+                countersSection.querySelectorAll('.counter-icon').forEach(icon => {
+                    icon.classList.remove('w-6', 'h-6');
+                    icon.classList.add('w-5', 'h-5');
                 });
             }
             
