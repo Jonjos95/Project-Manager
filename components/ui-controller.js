@@ -308,7 +308,7 @@ class UIController {
         // Close dropdowns when clicking outside
         document.addEventListener('click', (e) => {
             const profileMenu = document.getElementById('profileMenu');
-            const profileBtn = e.target.closest('[onclick="app.ui.toggleProfileMenu()"]');
+            const profileBtn = e.target.closest('[onclick*="toggleProfileMenu"]');
             
             if (profileMenu && !profileMenu.contains(e.target) && !profileBtn) {
                 profileMenu.classList.add('hidden');
