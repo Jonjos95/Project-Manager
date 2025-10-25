@@ -59,44 +59,60 @@ class UIController {
     applySidebarCollapse() {
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
+        const sidebarTitle = document.getElementById('sidebarTitle');
         const collapseBtn = document.getElementById('collapseBtn');
+        const collapseIcon = document.getElementById('collapseIcon');
+        const countersSection = document.getElementById('countersSection');
         
         if (this.sidebarCollapsed) {
-            sidebar.classList.add('w-20');
+            // Collapse sidebar
             sidebar.classList.remove('w-64');
-            mainContent.classList.add('ml-20');
-            mainContent.classList.remove('ml-64');
+            sidebar.classList.add('w-20');
+            mainContent.classList.remove('lg:ml-64');
+            mainContent.classList.add('lg:ml-20');
             
-            // Hide text elements
+            // Hide text elements, title, collapse button, and counters
+            if (sidebarTitle) sidebarTitle.classList.add('hidden');
+            if (collapseBtn) collapseBtn.classList.add('hidden');
+            if (countersSection) countersSection.classList.add('hidden');
+            
             document.querySelectorAll('.sidebar-text, .nav-text, .filter-text').forEach(el => {
                 el.classList.add('hidden');
             });
             
-            // Hide collapse button
-            if (collapseBtn) collapseBtn.classList.add('hidden');
-            
-            // Center buttons
+            // Center buttons and adjust padding
             document.querySelectorAll('.nav-btn, .filter-btn').forEach(btn => {
-                btn.classList.add('justify-center');
+                btn.classList.add('justify-center', 'px-2');
+                btn.classList.remove('px-4');
             });
+            
+            // Change collapse icon direction
+            if (collapseIcon) collapseIcon.setAttribute('data-feather', 'chevrons-right');
+            
         } else {
+            // Expand sidebar
             sidebar.classList.remove('w-20');
             sidebar.classList.add('w-64');
-            mainContent.classList.remove('ml-20');
-            mainContent.classList.add('ml-64');
+            mainContent.classList.remove('lg:ml-20');
+            mainContent.classList.add('lg:ml-64');
             
-            // Show text elements
+            // Show text elements, title, collapse button, and counters
+            if (sidebarTitle) sidebarTitle.classList.remove('hidden');
+            if (collapseBtn) collapseBtn.classList.remove('hidden');
+            if (countersSection) countersSection.classList.remove('hidden');
+            
             document.querySelectorAll('.sidebar-text, .nav-text, .filter-text').forEach(el => {
                 el.classList.remove('hidden');
             });
             
-            // Show collapse button
-            if (collapseBtn) collapseBtn.classList.remove('hidden');
-            
-            // Un-center buttons
+            // Restore button alignment and padding
             document.querySelectorAll('.nav-btn, .filter-btn').forEach(btn => {
-                btn.classList.remove('justify-center');
+                btn.classList.remove('justify-center', 'px-2');
+                btn.classList.add('px-4');
             });
+            
+            // Change collapse icon direction
+            if (collapseIcon) collapseIcon.setAttribute('data-feather', 'chevrons-left');
         }
         
         // Update Feather icons
