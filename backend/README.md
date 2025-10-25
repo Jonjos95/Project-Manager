@@ -217,3 +217,15 @@ Then use:
 npm run dev
 ```
 
+## 🤖 Automated Deployment
+
+This backend is configured with **GitHub Actions** for automatic deployment to AWS EC2.
+
+Every push to `main` branch automatically:
+1. Connects to EC2 via SSH
+2. Pulls latest code
+3. Installs dependencies
+4. Restarts PM2 process
+
+**No manual deployment needed!** 🚀
+
