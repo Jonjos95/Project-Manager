@@ -85,11 +85,13 @@ class UIController {
                 btn.classList.remove('px-4', 'py-2');
                 
                 // Make icons much larger when collapsed for better visibility
-                // Look for both <i> tags (before feather renders) and SVG (after feather renders)
-                const icon = btn.querySelector('i[data-feather], svg');
-                if (icon) {
-                    icon.classList.remove('w-5', 'h-5');
-                    icon.classList.add('w-8', 'h-8');
+                const svg = btn.querySelector('svg');
+                if (svg) {
+                    // Set both attributes and classes for maximum compatibility
+                    svg.setAttribute('width', '32');
+                    svg.setAttribute('height', '32');
+                    svg.classList.remove('w-5', 'h-5');
+                    svg.classList.add('w-8', 'h-8');
                 }
             });
             
@@ -101,10 +103,12 @@ class UIController {
                 });
                 
                 // Make counter icons larger when collapsed
-                // Target both <i> and SVG elements
-                countersSection.querySelectorAll('.counter-icon, .counter-icon + svg, i.counter-icon, svg.counter-icon').forEach(icon => {
-                    icon.classList.remove('w-6', 'h-6');
-                    icon.classList.add('w-8', 'h-8');
+                countersSection.querySelectorAll('svg').forEach(svg => {
+                    // Set both attributes and classes for maximum compatibility
+                    svg.setAttribute('width', '32');
+                    svg.setAttribute('height', '32');
+                    svg.classList.remove('w-6', 'h-6');
+                    svg.classList.add('w-8', 'h-8');
                 });
             }
             
@@ -135,11 +139,13 @@ class UIController {
                 btn.classList.add('px-4', 'py-2');
                 
                 // Restore original icon size
-                // Look for both <i> tags and SVG elements
-                const icon = btn.querySelector('i[data-feather], svg');
-                if (icon) {
-                    icon.classList.remove('w-8', 'h-8');
-                    icon.classList.add('w-5', 'h-5');
+                const svg = btn.querySelector('svg');
+                if (svg) {
+                    // Set both attributes and classes for maximum compatibility
+                    svg.setAttribute('width', '20');
+                    svg.setAttribute('height', '20');
+                    svg.classList.remove('w-8', 'h-8');
+                    svg.classList.add('w-5', 'h-5');
                 }
             });
             
@@ -151,10 +157,12 @@ class UIController {
                 });
                 
                 // Restore counter icon size
-                // Target both <i> and SVG elements
-                countersSection.querySelectorAll('.counter-icon, .counter-icon + svg, i.counter-icon, svg.counter-icon').forEach(icon => {
-                    icon.classList.remove('w-8', 'h-8');
-                    icon.classList.add('w-6', 'h-6');
+                countersSection.querySelectorAll('svg').forEach(svg => {
+                    // Set both attributes and classes for maximum compatibility
+                    svg.setAttribute('width', '24');
+                    svg.setAttribute('height', '24');
+                    svg.classList.remove('w-8', 'h-8');
+                    svg.classList.add('w-6', 'h-6');
                 });
             }
             
