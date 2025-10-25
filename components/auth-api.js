@@ -156,15 +156,23 @@ class AuthManager {
 
     // Load session from localStorage and verify with backend
     async loadSession() {
+        console.log('🔍 Loading session...');
         const token = localStorage.getItem(this.TOKEN_KEY);
         const userStr = localStorage.getItem(this.USER_KEY);
 
+        console.log('Token exists:', !!token);
+        console.log('User data exists:', !!userStr);
+
         if (!token || !userStr) {
+            console.log('❌ No stored session found');
             return false;
         }
 
         this.token = token;
         this.currentUser = JSON.parse(userStr);
+
+        console.log('👤 Stored user:', this.currentUser.username);
+        console.log('🔐 Verifying token with backend...');
 
         // Verify token with backend
         try {
@@ -174,8 +182,11 @@ class AuthManager {
                 }
             });
 
+            console.log('📡 Verification response status:', response.status);
+
             if (!response.ok) {
                 // Token invalid, clear session
+                console.log('❌ Token invalid, logging out');
                 this.logout();
                 return false;
             }
@@ -183,12 +194,14 @@ class AuthManager {
             const data = await response.json();
             this.currentUser = data.user;
             this.updateUserUI();
+            console.log('✅ Session restored successfully');
             return true;
 
         } catch (error) {
-            console.error('Session verification error:', error);
+            console.error('⚠️ Session verification error:', error);
             // Network error, use cached user data
             this.updateUserUI();
+            console.log('⚠️ Using cached user data (network error)');
             return true;
         }
     }
