@@ -71,10 +71,9 @@ class UIController {
             mainContent.classList.remove('lg:ml-64');
             mainContent.classList.add('lg:ml-20');
             
-            // Hide text elements, title, collapse button, and counters
+            // Hide text elements, title, and collapse button (but keep counters visible)
             if (sidebarTitle) sidebarTitle.classList.add('hidden');
             if (collapseBtn) collapseBtn.classList.add('hidden');
-            if (countersSection) countersSection.classList.add('hidden');
             
             document.querySelectorAll('.sidebar-text, .nav-text, .filter-text').forEach(el => {
                 el.classList.add('hidden');
@@ -86,6 +85,14 @@ class UIController {
                 btn.classList.remove('px-4');
             });
             
+            // Adjust counter padding for collapsed state
+            if (countersSection) {
+                countersSection.querySelectorAll('.p-3').forEach(counter => {
+                    counter.classList.remove('p-3');
+                    counter.classList.add('p-2');
+                });
+            }
+            
             // Change collapse icon direction
             if (collapseIcon) collapseIcon.setAttribute('data-feather', 'chevrons-right');
             
@@ -96,10 +103,9 @@ class UIController {
             mainContent.classList.remove('lg:ml-20');
             mainContent.classList.add('lg:ml-64');
             
-            // Show text elements, title, collapse button, and counters
+            // Show text elements, title, and collapse button
             if (sidebarTitle) sidebarTitle.classList.remove('hidden');
             if (collapseBtn) collapseBtn.classList.remove('hidden');
-            if (countersSection) countersSection.classList.remove('hidden');
             
             document.querySelectorAll('.sidebar-text, .nav-text, .filter-text').forEach(el => {
                 el.classList.remove('hidden');
@@ -110,6 +116,14 @@ class UIController {
                 btn.classList.remove('justify-center', 'px-2');
                 btn.classList.add('px-4');
             });
+            
+            // Restore counter padding for expanded state
+            if (countersSection) {
+                countersSection.querySelectorAll('.p-2').forEach(counter => {
+                    counter.classList.remove('p-2');
+                    counter.classList.add('p-3');
+                });
+            }
             
             // Change collapse icon direction
             if (collapseIcon) collapseIcon.setAttribute('data-feather', 'chevrons-left');
