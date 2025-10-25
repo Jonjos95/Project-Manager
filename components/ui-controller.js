@@ -101,8 +101,8 @@ class UIController {
                 
                 // Make counter icons larger when collapsed
                 countersSection.querySelectorAll('.counter-icon').forEach(icon => {
-                    icon.classList.remove('w-5', 'h-5');
-                    icon.classList.add('w-6', 'h-6');
+                    icon.classList.remove('w-6', 'h-6');
+                    icon.classList.add('w-8', 'h-8');
                 });
             }
             
@@ -146,8 +146,8 @@ class UIController {
                 
                 // Restore counter icon size
                 countersSection.querySelectorAll('.counter-icon').forEach(icon => {
-                    icon.classList.remove('w-6', 'h-6');
-                    icon.classList.add('w-5', 'h-5');
+                    icon.classList.remove('w-8', 'h-8');
+                    icon.classList.add('w-6', 'h-6');
                 });
             }
             
