@@ -9,15 +9,26 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Deploy to EC2
+    - name: Deploy Frontend & Backend to EC2
       uses: appleboy/ssh-action@master
       with:
         host: 54.158.1.37
         username: ec2-user
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          cd ~/Project-Manager/backend
+          echo "🔄 Pulling latest code..."
+          cd ~/Project-Manager
           git pull origin main
+          
+          echo "📦 Updating backend..."
+          cd backend
           npm install
           pm2 restart n8tive-backend
+          
+          echo "🌐 Deploying frontend..."
+          cd ..
+          chmod +x deploy-frontend.sh
+          ./deploy-frontend.sh
+          
+          echo "✅ Deployment complete!"
 
