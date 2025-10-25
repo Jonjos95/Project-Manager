@@ -173,11 +173,11 @@ class UIController {
     }
 
     toggleSettingsMenu() {
-        this.showModal('settingsModal');
+        this.toggleModal('settingsModal');
     }
 
     toggleHelpMenu() {
-        this.showModal('helpModal');
+        this.toggleModal('helpModal');
     }
 
     toggleNotifications() {
