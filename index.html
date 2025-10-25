@@ -621,6 +621,53 @@
             </div>
             <!-- End Reports View -->
             
+            <!-- Profile View -->
+            <div id="profileView" class="view-content hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">My Profile</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Manage your account settings and preferences</p>
+                </div>
+                
+                <div class="grid gap-6">
+                    <!-- Profile Information -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Profile Information</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4">
+                                <div id="profileAvatar" class="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center">
+                                    <span id="profileInitials" class="text-white text-2xl font-semibold">U</span>
+                                </div>
+                                <div>
+                                    <p id="profileFullName" class="text-xl font-semibold text-gray-800 dark:text-white">User Name</p>
+                                    <p id="profileUsername" class="text-sm text-gray-500 dark:text-gray-400">@username</p>
+                                    <p id="profileEmail" class="text-sm text-gray-500 dark:text-gray-400">email@example.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Account Actions -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Account Actions</h3>
+                        <div class="space-y-3">
+                            <button onclick="toggleSettingsMenu()" class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <i data-feather="settings" class="w-5 h-5 text-gray-600 dark:text-gray-400"></i>
+                                <span class="text-gray-700 dark:text-gray-300">Settings</span>
+                            </button>
+                            <button onclick="exportData()" class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <i data-feather="download" class="w-5 h-5 text-gray-600 dark:text-gray-400"></i>
+                                <span class="text-gray-700 dark:text-gray-300">Export My Data</span>
+                            </button>
+                            <button onclick="logout()" class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                <i data-feather="log-out" class="w-5 h-5 text-red-600 dark:text-red-400"></i>
+                                <span class="text-red-600 dark:text-red-400">Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Profile View -->
+            
         </div>
         
         <!-- Footer -->

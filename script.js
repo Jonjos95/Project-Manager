@@ -320,6 +320,30 @@ function expandSidebarIfCollapsed() {
     window.app.ui.expandSidebarIfCollapsed();
 }
 
+function showView(viewName) {
+    // Hide all views
+    document.querySelectorAll('.view-content').forEach(view => {
+        view.classList.add('hidden');
+    });
+    
+    // Show selected view
+    const selectedView = document.getElementById(`${viewName}View`);
+    if (selectedView) {
+        selectedView.classList.remove('hidden');
+    }
+    
+    // Update nav button states
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        if (btn.getAttribute('data-view') === viewName) {
+            btn.classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+            btn.classList.add('bg-purple-600', 'text-white');
+        } else {
+            btn.classList.add('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+            btn.classList.remove('bg-purple-600', 'text-white');
+        }
+    });
+}
+
 function showLoginModal() {
     window.app.auth.showLoginModal();
 }
