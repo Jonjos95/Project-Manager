@@ -109,6 +109,9 @@ class UIController {
             // Change collapse icon direction
             if (collapseIcon) collapseIcon.setAttribute('data-feather', 'chevrons-right');
             
+            // Re-render all Feather icons to apply size changes
+            if (typeof feather !== 'undefined') feather.replace();
+            
         } else {
             // Expand sidebar
             sidebar.classList.remove('w-20');
@@ -153,6 +156,9 @@ class UIController {
             
             // Change collapse icon direction
             if (collapseIcon) collapseIcon.setAttribute('data-feather', 'chevrons-left');
+            
+            // Re-render all Feather icons to apply size changes
+            if (typeof feather !== 'undefined') feather.replace();
         }
         
         // Update Feather icons
