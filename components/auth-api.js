@@ -49,6 +49,11 @@ class AuthManager {
 
         try {
             // Call backend API
+            console.log('🔵 Attempting registration...');
+            console.log('API URL:', API_URL);
+            console.log('Full URL:', `${API_URL}/auth/register`);
+            console.log('Data:', { name, email, username, password: '***' });
+            
             const response = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
                 headers: {
@@ -57,7 +62,9 @@ class AuthManager {
                 body: JSON.stringify({ name, email, username, password })
             });
 
+            console.log('✅ Response received:', response.status);
             const data = await response.json();
+            console.log('📦 Response data:', data);
 
             if (!response.ok) {
                 alert(data.message || 'Registration failed');
