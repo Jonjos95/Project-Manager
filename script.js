@@ -342,6 +342,56 @@ function showView(viewName) {
             btn.classList.remove('bg-purple-600', 'text-white');
         }
     });
+    
+    // Render view-specific data
+    if (window.app) {
+        switch(viewName) {
+            case 'board':
+                if (window.app.board) {
+                    window.app.board.render();
+                }
+                break;
+            case 'analytics':
+                if (window.app.analytics) {
+                    window.app.analytics.renderAnalytics();
+                }
+                break;
+            case 'timeline':
+                if (window.app.analytics) {
+                    window.app.analytics.renderTimeline();
+                }
+                break;
+            case 'reports':
+                if (window.app.analytics) {
+                    window.app.analytics.renderActivityLog();
+                }
+                break;
+            case 'profile':
+                updateProfileView();
+                break;
+        }
+    }
+    
+    // Refresh Feather icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+}
+
+function updateProfileView() {
+    // Update profile view with current user data
+    if (window.app && window.app.auth) {
+        const user = window.app.auth.getCurrentUser();
+        if (user) {
+            document.getElementById('profileFullName').textContent = user.name || 'User';
+            document.getElementById('profileUsername').textContent = '@' + (user.username || 'username');
+            document.getElementById('profileEmail').textContent = user.email || 'email@example.com';
+            
+            // Update initials
+            const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+            document.getElementById('profileInitials').textContent = initials;
+        }
+    }
 }
 
 function showLoginModal() {
