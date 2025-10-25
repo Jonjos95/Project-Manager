@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - N8tive.io Project Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6b46c1',
+                        secondary: '#4299e1'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+                    👥 User Management
+                </h1>
+
+                <div class="mb-4 flex space-x-2">
+                    <button onclick="loadUsers()" 
+                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        🔄 Refresh
+                    </button>
+                    <button onclick="exportUsers()" 
+                            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                        💾 Export
+                    </button>
+                    <button onclick="clearUsers()" 
+                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                        🗑️ Clear All
+                    </button>
+                </div>
+
+                <div id="userCount" class="mb-4 text-lg font-semibold text-gray-700 dark:text-gray-300">
+                    Total Users: 0
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                        <thead>
+                            <tr class="bg-gray-50 dark:bg-gray-700">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    ID
+                                </th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Name
+                                </th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Username
+                                </th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Created At
+                                </th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Password Hash
+                                </th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded">
+                    <h3 class="font-semibold text-blue-800 dark:text-blue-300 mb-2">
+                        📊 Statistics
+                    </h3>
+                    <div id="stats" class="space-y-1 text-sm text-blue-700 dark:text-blue-300">
+                        <!-- Stats will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="index.html" class="text-blue-600 hover:text-blue-800 dark:text-blue-400">
+                        ← Back to App
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const USERS_KEY = 'n8tive.users';
+        const TASKS_KEY = 'n8tive.tasks';
+        const SESSION_KEY = 'n8tive.session';
+
+        function loadUsers() {
+            const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+            const tasks = JSON.parse(localStorage.getItem(TASKS_KEY) || '[]');
+            
+            // Update count
+            document.getElementById('userCount').textContent = `Total Users: ${users.length}`;
+            
+            // Render table
+            const tbody = document.getElementById('userTableBody');
+            
+            if (users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                            No users found. Register a new user in the app.
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = users.map(user => {
+                    const userTasks = tasks.filter(t => t.userId === user.id);
+                    
+                    return `
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100 font-mono">
+                                ${user.id.substring(0, 8)}...
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                                ${user.name}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100 font-semibold">
+                                @${user.username}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                                ${new Date(user.createdAt).toLocaleString()}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 font-mono">
+                                ${user.password ? user.password.substring(0, 10) + '...' : 'N/A'}
+                            </td>
+                            <td class="px-4 py-3 text-sm">
+                                <div class="flex space-x-2">
+                                    <button onclick="viewUserDetails('${user.id}')" 
+                                            class="text-blue-600 hover:text-blue-800" title="View Details">
+                                        👁️
+                                    </button>
+                                    <button onclick="deleteUser('${user.id}')" 
+                                            class="text-red-600 hover:text-red-800" title="Delete User">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            // Show stats
+            const stats = document.getElementById('stats');
+            const tasksByUser = {};
+            tasks.forEach(task => {
+                tasksByUser[task.userId] = (tasksByUser[task.userId] || 0) + 1;
+            });
+            
+            stats.innerHTML = `
+                <p><strong>Total Users:</strong> ${users.length}</p>
+                <p><strong>Total Tasks:</strong> ${tasks.length}</p>
+                <p><strong>Active Sessions:</strong> ${localStorage.getItem(SESSION_KEY) ? '1' : '0'}</p>
+                <p><strong>Avg Tasks per User:</strong> ${users.length > 0 ? (tasks.length / users.length).toFixed(1) : 0}</p>
+            `;
+        }
+
+        function viewUserDetails(userId) {
+            const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+            const tasks = JSON.parse(localStorage.getItem(TASKS_KEY) || '[]');
+            
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            
+            const userTasks = tasks.filter(t => t.userId === userId);
+            
+            const details = `
+👤 User Details:
+
+ID: ${user.id}
+Name: ${user.name}
+Username: ${user.username}
+Created: ${new Date(user.createdAt).toLocaleString()}
+Password Hash: ${user.password}
+
+📊 Statistics:
+Total Tasks: ${userTasks.length}
+Completed: ${userTasks.filter(t => ['done', 'archived', 'maintenance'].includes(t.status)).length}
+Active: ${userTasks.filter(t => !['done', 'archived', 'maintenance'].includes(t.status)).length}
+            `;
+            
+            alert(details);
+        }
+
+        function deleteUser(userId) {
+            if (!confirm('⚠️ Delete this user? This will also delete all their tasks!')) {
+                return;
+            }
+            
+            // Remove user
+            let users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+            users = users.filter(u => u.id !== userId);
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+            
+            // Remove user's tasks
+            let tasks = JSON.parse(localStorage.getItem(TASKS_KEY) || '[]');
+            tasks = tasks.filter(t => t.userId !== userId);
+            localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+            
+            // Reload
+            loadUsers();
+            alert('✅ User deleted successfully');
+        }
+
+        function exportUsers() {
+            const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+            const data = JSON.stringify(users, null, 2);
+            
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `n8tive-users-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            
+            alert('✅ Users exported successfully');
+        }
+
+        function clearUsers() {
+            if (!confirm('⚠️ Delete ALL users? This will reset the entire application!')) {
+                return;
+            }
+            
+            if (!confirm('🚨 Are you ABSOLUTELY sure? This cannot be undone!')) {
+                return;
+            }
+            
+            localStorage.removeItem(USERS_KEY);
+            localStorage.removeItem(TASKS_KEY);
+            localStorage.removeItem(SESSION_KEY);
+            localStorage.removeItem('n8tive.activity');
+            
+            loadUsers();
+            alert('✅ All data cleared');
+        }
+
+        // Load on page load
+        window.onload = loadUsers;
+    </script>
+</body>
+</html>
+

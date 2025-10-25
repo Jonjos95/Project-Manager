@@ -8,11 +8,11 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
                         primary: '#6b46c1',
                         secondary: '#4299e1'
                     },
@@ -24,15 +24,15 @@
                         slideIn: {
                             '0%': { opacity: '0', transform: 'translateX(-20px)' },
                             '100%': { opacity: '1', transform: 'translateX(0)' }
-                        }
-                    },
-                    animation: {
+              }
+            },
+            animation: {
                         fadeIn: 'fadeIn 0.3s ease-out',
                         slideIn: 'slideIn 0.3s ease-out'
-                    }
-                }
             }
+          }
         }
+      }
     </script>
     
     <!-- Feather Icons CDN -->
@@ -82,7 +82,7 @@
             <!-- Navigation -->
             <div id="navigationSection" class="mb-6 transition-all duration-300">
                 <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3 sidebar-text">Views</h3>
-                <div class="space-y-2">
+                    <div class="space-y-2">
                     <button onclick="showView('board')" class="nav-btn w-full text-left px-4 py-2 rounded-lg bg-purple-600 text-white transition-colors duration-200" data-view="board">
                         <i data-feather="trello" class="w-4 h-4 inline mr-2"></i>
                         <span class="nav-text">Board</span>
@@ -317,8 +317,8 @@
                             <li>Click on any task card to view detailed information</li>
                             <li>Use filters in the sidebar to view specific task categories</li>
                         </ul>
-                    </div>
-                    
+            </div>
+
                     <div>
                         <h4 class="font-semibold text-gray-800 dark:text-white mb-2">Keyboard Shortcuts</h4>
                         <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
@@ -383,7 +383,7 @@
                             </select>
                         </div>
                         <div class="flex items-end">
-                            <button 
+<button 
                                 type="submit" 
                                 class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors duration-200 flex items-center"
                             >
@@ -421,7 +421,7 @@
                         </button>
                         <button onclick="scrollKanban('right')" class="p-2 bg-white dark:bg-gray-800 rounded-lg shadow hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" title="Scroll Right">
                             <i data-feather="chevron-right" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
-                        </button>
+                    </button>
                     </div>
                 </div>
             </div>
@@ -681,9 +681,9 @@
                     </button>
                 </div>
             </form>
-        </div>
-    </div>
-    
+                    </div>
+                </div>
+
     <!-- Detailed Ticket View Modal -->
     <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full my-8 animate-fadeIn">
@@ -699,7 +699,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <!-- Content -->
             <div class="p-6 space-y-6">
                 <!-- Description -->
@@ -770,11 +770,11 @@
             </div>
             <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Username</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Username or Email</label>
                     <input 
                         type="text" 
                         id="loginUsername" 
-                        placeholder="Enter your username" 
+                        placeholder="Enter your username or email" 
                         required
                         autocomplete="username"
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
@@ -814,7 +814,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6 animate-fadeIn">
             <div class="text-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Create Account</h2>
-                <p class="text-gray-600 dark:text-gray-400">Join N8tive.io Project Manager</p>
+                <p class="text-gray-600 dark:text-gray-400">Join N8tive.io's Project Manager</p>
             </div>
             <form id="registerForm" class="space-y-4">
                 <div>
@@ -825,6 +825,17 @@
                         placeholder="Enter your full name" 
                         required
                         autocomplete="name"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="registerEmail" 
+                        placeholder="your@email.com" 
+                        required
+                        autocomplete="email"
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                     >
                 </div>
@@ -885,7 +896,7 @@
     <script src="config.js"></script>
     
     <!-- Component Modules (Load in dependency order) -->
-    <script src="components/auth.js"></script>
+    <script src="components/auth-api.js"></script>
     <script src="components/methodology-manager.js"></script>
     <script src="components/task-manager.js"></script>
     <script src="components/ui-controller.js"></script>
@@ -893,7 +904,7 @@
     <script src="components/analytics.js"></script>
     
     <!-- Main Application Controller -->
-    <script src="script.js"></script>
+<script src="script.js"></script>
     
     <script>
         // Feather icons will be initialized by the app

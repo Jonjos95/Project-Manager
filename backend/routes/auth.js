@@ -22,6 +22,7 @@ const generateToken = (user) => {
 // Register new user
 router.post('/register', [
     body('name').trim().notEmpty().withMessage('Name is required'),
+    body('email').trim().isEmail().withMessage('Valid email is required'),
     body('username').trim().isLength({ min: 3 }).withMessage('Username must be at least 3 characters'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
 ], async (req, res) => {
@@ -35,18 +36,18 @@ router.post('/register', [
             });
         }
         
-        const { name, username, password } = req.body;
+        const { name, email, username, password } = req.body;
         
-        // Check if username already exists
+        // Check if username or email already exists
         const [existing] = await db.query(
-            'SELECT id FROM users WHERE username = ?',
-            [username.toLowerCase()]
+            'SELECT id FROM users WHERE username = ? OR email = ?',
+            [username.toLowerCase(), email.toLowerCase()]
         );
         
         if (existing.length > 0) {
             return res.status(409).json({ 
                 success: false, 
-                message: 'Username already taken' 
+                message: 'Username or email already taken' 
             });
         }
         
@@ -56,19 +57,29 @@ router.post('/register', [
         // Create user
         const userId = 'user_' + Date.now();
         await db.query(
-            'INSERT INTO users (id, username, name, password_hash) VALUES (?, ?, ?, ?)',
-            [userId, username.toLowerCase(), name, passwordHash]
+            'INSERT INTO users (id, username, email, name, password_hash) VALUES (?, ?, ?, ?, ?)',
+            [userId, username.toLowerCase(), email.toLowerCase(), name, passwordHash]
         );
         
         // Generate token
-        const user = { id: userId, username: username.toLowerCase(), name };
+        const user = { 
+            id: userId, 
+            username: username.toLowerCase(), 
+            email: email.toLowerCase(),
+            name 
+        };
         const token = generateToken(user);
         
         res.status(201).json({
             success: true,
             message: 'User registered successfully',
             token,
-            user: { id: user.id, username: user.username, name: user.name }
+            user: { 
+                id: user.id, 
+                username: user.username, 
+                email: user.email,
+                name: user.name 
+            }
         });
         
     } catch (error) {
@@ -80,9 +91,9 @@ router.post('/register', [
     }
 });
 
-// Login user
+// Login user (supports username or email)
 router.post('/login', [
-    body('username').trim().notEmpty().withMessage('Username is required'),
+    body('username').trim().notEmpty().withMessage('Username or email is required'),
     body('password').notEmpty().withMessage('Password is required')
 ], async (req, res) => {
     try {
@@ -97,16 +108,16 @@ router.post('/login', [
         
         const { username, password } = req.body;
         
-        // Find user
+        // Find user by username or email
         const [users] = await db.query(
-            'SELECT * FROM users WHERE username = ?',
-            [username.toLowerCase()]
+            'SELECT * FROM users WHERE username = ? OR email = ?',
+            [username.toLowerCase(), username.toLowerCase()]
         );
         
         if (users.length === 0) {
             return res.status(401).json({ 
                 success: false, 
-                message: 'Invalid username or password' 
+                message: 'Invalid credentials' 
             });
         }
         
@@ -118,7 +129,7 @@ router.post('/login', [
         if (!passwordMatch) {
             return res.status(401).json({ 
                 success: false, 
-                message: 'Invalid username or password' 
+                message: 'Invalid credentials' 
             });
         }
         
@@ -132,6 +143,7 @@ router.post('/login', [
             user: { 
                 id: user.id, 
                 username: user.username, 
+                email: user.email,
                 name: user.name 
             }
         });

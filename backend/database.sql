@@ -9,12 +9,18 @@ USE n8tive_project_manager;
 CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(50) PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_username (username)
+    INDEX idx_username (username),
+    INDEX idx_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Migration: Add email column if upgrading existing database
+-- ALTER TABLE users ADD COLUMN email VARCHAR(255) UNIQUE AFTER username;
+-- ALTER TABLE users ADD INDEX idx_email (email);
 
 -- Tasks table with row-level security (user_id foreign key)
 CREATE TABLE IF NOT EXISTS tasks (
