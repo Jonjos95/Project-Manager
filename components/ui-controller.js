@@ -81,14 +81,14 @@ class UIController {
             
             // Center buttons and adjust padding
             document.querySelectorAll('.nav-btn, .filter-btn').forEach(btn => {
-                btn.classList.add('justify-center', 'px-2', 'py-3');
+                btn.classList.add('justify-center', 'px-2', 'py-4');
                 btn.classList.remove('px-4', 'py-2');
                 
-                // Make icons larger when collapsed for better visibility
+                // Make icons much larger when collapsed for better visibility
                 const icon = btn.querySelector('i[data-feather]');
                 if (icon) {
                     icon.classList.remove('w-5', 'h-5');
-                    icon.classList.add('w-6', 'h-6');
+                    icon.classList.add('w-8', 'h-8');
                 }
             });
             
@@ -126,13 +126,13 @@ class UIController {
             
             // Restore button alignment and padding
             document.querySelectorAll('.nav-btn, .filter-btn').forEach(btn => {
-                btn.classList.remove('justify-center', 'px-2', 'py-3');
+                btn.classList.remove('justify-center', 'px-2', 'py-4');
                 btn.classList.add('px-4', 'py-2');
                 
                 // Restore original icon size
                 const icon = btn.querySelector('i[data-feather]');
                 if (icon) {
-                    icon.classList.remove('w-6', 'h-6');
+                    icon.classList.remove('w-8', 'h-8');
                     icon.classList.add('w-5', 'h-5');
                 }
             });
