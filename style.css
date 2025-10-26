@@ -161,8 +161,8 @@ select:focus-visible {
     justify-content: center !important;
     align-items: center !important;
     padding: 0.5rem !important; /* Tighter padding around icons (8px) */
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin: 0 auto !important; /* Center the button itself */
+    width: fit-content !important;
 }
 
 /* Make sure hover backgrounds are centered */
@@ -179,6 +179,5 @@ select:focus-visible {
 /* Ensure active state is perfectly centered with tight padding */
 .sidebar-collapsed .nav-btn.bg-purple-600,
 .sidebar-collapsed .filter-btn.bg-purple-600 {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin: 0 auto !important;
 }

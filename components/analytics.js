@@ -21,13 +21,15 @@ class Analytics {
         const counts = this.taskManager.getTaskCounts();
         
         // Total tasks
-        document.getElementById('totalTasksMetric').textContent = counts.total;
+        const totalTasksEl = document.getElementById('totalTasksMetric');
+        if (totalTasksEl) totalTasksEl.textContent = counts.total;
         
         // Completion rate
         const completionRate = counts.total > 0 
             ? Math.round((counts.completed / counts.total) * 100) 
             : 0;
-        document.getElementById('completionRateMetric').textContent = `${completionRate}%`;
+        const completionRateEl = document.getElementById('completionRateMetric');
+        if (completionRateEl) completionRateEl.textContent = `${completionRate}%`;
         
         // Average completion time
         const completedTasks = tasks.filter(t => t.completedAt);
@@ -43,10 +45,12 @@ class Analytics {
             avgTime = Math.round(totalTime / completedTasks.length / (1000 * 60 * 60 * 24)); // Days
         }
         
-        document.getElementById('avgCompletionMetric').textContent = `${avgTime}d`;
+        const avgCompletionEl = document.getElementById('avgCompletionMetric');
+        if (avgCompletionEl) avgCompletionEl.textContent = `${avgTime}d`;
         
         // Active tasks
-        document.getElementById('activeTasksMetric').textContent = counts.active;
+        const activeTasksEl = document.getElementById('activeTasksMetric');
+        if (activeTasksEl) activeTasksEl.textContent = counts.active;
     }
 
     // Render all charts
