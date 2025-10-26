@@ -42,7 +42,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="style.css?v=3.5">
+    <link rel="stylesheet" href="style.css?v=3.6">
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
     <!-- Main App Container (hidden when not authenticated) -->
@@ -479,13 +479,13 @@
             </div>
             
             <!-- Kanban Board -->
-            <div id="kanbanContainer" class="kanban-board-container overflow-x-auto pb-4 scroll-smooth relative">
+            <div id="kanbanContainer" class="kanban-board-container overflow-x-auto pb-4 scroll-smooth relative" style="min-height: 500px;">
                 <div id="kanbanBoardColumns" class="flex gap-4 min-w-max">
                     <!-- Columns will be dynamically generated here -->
                 </div>
                 
                 <!-- Empty State Overlay -->
-                <div id="emptyStateOverlay" class="hidden absolute inset-0 flex items-center justify-center bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-lg" style="min-height: 400px;">
+                <div id="emptyStateOverlay" class="absolute inset-0 flex items-center justify-center bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-lg" style="min-height: 500px; display: flex !important;">
                     <div class="text-center max-w-md mx-auto p-8 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-dashed border-purple-300 dark:border-purple-700">
                         <!-- Icon -->
                         <div class="mb-6 flex justify-center">
@@ -1089,7 +1089,7 @@
     <script src="components/methodology-manager.js?v=2.4"></script>
     <script src="components/task-manager.js?v=3.0"></script>
     <script src="components/ui-controller.js?v=2.4"></script>
-    <script src="components/kanban-board.js?v=3.1"></script>
+    <script src="components/kanban-board.js?v=3.2"></script>
     <script src="components/analytics.js?v=2.5"></script>
     
     <!-- Main Application Controller -->

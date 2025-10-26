@@ -40,12 +40,17 @@ class KanbanBoard {
     toggleEmptyState() {
         const tasks = this.taskManager.getAllTasks();
         const overlay = document.getElementById('emptyStateOverlay');
+        const columnsContainer = document.getElementById('kanbanBoardColumns');
         
         if (overlay) {
             if (tasks.length === 0) {
-                overlay.classList.remove('hidden');
+                // Show overlay, hide columns
+                overlay.style.display = 'flex';
+                if (columnsContainer) columnsContainer.style.opacity = '0.3';
             } else {
-                overlay.classList.add('hidden');
+                // Hide overlay, show columns
+                overlay.style.display = 'none';
+                if (columnsContainer) columnsContainer.style.opacity = '1';
             }
         }
     }
