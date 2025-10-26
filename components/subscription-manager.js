@@ -16,19 +16,69 @@ class SubscriptionManager {
     // Load available plans
     async loadPlans() {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/subscriptions/plans`);
+            const response = await fetch(`${API_URL}/subscriptions/plans`);
             if (response.ok) {
                 this.plans = await response.json();
+                this.renderPlans();
             }
         } catch (error) {
             console.error('Error loading plans:', error);
+        }
+    }
+    
+    // Render plans to the page
+    renderPlans() {
+        const container = document.getElementById('subscriptionPlansContainer');
+        if (!container || !this.plans.length) return;
+        
+        let html = '';
+        this.plans.forEach(plan => {
+            const isCurrentPlan = this.currentSubscription?.plan_id === plan.id;
+            const features = Array.isArray(plan.features) ? plan.features : JSON.parse(plan.features || '[]');
+            
+            html += `
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 ${isCurrentPlan ? 'ring-2 ring-purple-600' : ''}">
+                    ${isCurrentPlan ? '<div class="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-2">CURRENT PLAN</div>' : ''}
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">${plan.name}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">${plan.description}</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-gray-800 dark:text-white">$${plan.price_monthly}</span>
+                        <span class="text-gray-600 dark:text-gray-400">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-6">
+                        ${features.map(feature => `
+                            <li class="flex items-start gap-2">
+                                <i data-feather="check" class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-700 dark:text-gray-300">${feature}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    ${!isCurrentPlan ? `
+                        <button onclick="window.app.subscriptionManager.selectPlan('${plan.id}')" 
+                                class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all">
+                            Choose ${plan.name}
+                        </button>
+                    ` : `
+                        <button class="w-full px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-lg font-semibold cursor-not-allowed">
+                            Current Plan
+                        </button>
+                    `}
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        
+        // Refresh Feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
         }
     }
 
     // Load user's current subscription
     async loadCurrentSubscription() {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/subscriptions/my-subscription`, {
+            const response = await fetch(`${API_URL}/subscriptions/my-subscription`, {
                 headers: {
                     'Authorization': `Bearer ${this.auth.getToken()}`
                 }
@@ -41,11 +91,25 @@ class SubscriptionManager {
             console.error('Error loading subscription:', error);
         }
     }
+    
+    // Update UI with current subscription info
+    updateUI() {
+        // Update current plan banner
+        const banner = document.getElementById('currentSubscriptionBanner');
+        if (banner && this.currentSubscription) {
+            banner.classList.remove('hidden');
+            document.getElementById('currentPlanName').textContent = this.currentSubscription.plan_name || 'Free';
+            document.getElementById('currentPlanStatus').textContent = this.currentSubscription.status || 'Active';
+        }
+        
+        // Re-render plans to highlight current plan
+        this.renderPlans();
+    }
 
     // Check if user can perform action
     async checkLimit(action) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/subscriptions/check-limit`, {
+            const response = await fetch(`${API_URL}/api/subscriptions/check-limit`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -179,7 +243,7 @@ class SubscriptionManager {
         } else {
             // Upgrade to paid plan
             try {
-                const response = await fetch(`${API_BASE_URL}/api/subscriptions/create-checkout-session`, {
+                const response = await fetch(`${API_URL}/api/subscriptions/create-checkout-session`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
