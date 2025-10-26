@@ -5,10 +5,10 @@ const { body, validationResult } = require('express-validator');
 const crypto = require('crypto');
 
 // Middleware to verify JWT token
-const verifyToken = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 
 // Get all teams for current user
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     try {
         const [teams] = await req.db.query(
             `SELECT t.*, 
@@ -37,7 +37,7 @@ router.get('/', verifyToken, async (req, res) => {
 
 // Create new team
 router.post('/', [
-    verifyToken,
+    authenticateToken,
     body('name').trim().isLength({ min: 1, max: 255 }).withMessage('Team name is required'),
     body('description').optional().trim()
 ], async (req, res) => {
@@ -77,7 +77,7 @@ router.post('/', [
 });
 
 // Get team details
-router.get('/:teamId', verifyToken, async (req, res) => {
+router.get('/:teamId', authenticateToken, async (req, res) => {
     const { teamId } = req.params;
 
     try {
@@ -112,7 +112,7 @@ router.get('/:teamId', verifyToken, async (req, res) => {
 });
 
 // Get team members
-router.get('/:teamId/members', verifyToken, async (req, res) => {
+router.get('/:teamId/members', authenticateToken, async (req, res) => {
     const { teamId } = req.params;
 
     try {
@@ -145,7 +145,7 @@ router.get('/:teamId/members', verifyToken, async (req, res) => {
 
 // Invite user to team
 router.post('/:teamId/invite', [
-    verifyToken,
+    authenticateToken,
     body('email').isEmail().withMessage('Valid email is required'),
     body('role').isIn(['admin', 'member', 'viewer']).withMessage('Invalid role')
 ], async (req, res) => {
@@ -205,7 +205,7 @@ router.post('/:teamId/invite', [
 
 // Update team member role
 router.put('/:teamId/members/:userId', [
-    verifyToken,
+    authenticateToken,
     body('role').isIn(['admin', 'member', 'viewer']).withMessage('Invalid role')
 ], async (req, res) => {
     const errors = validationResult(req);
@@ -255,7 +255,7 @@ router.put('/:teamId/members/:userId', [
 });
 
 // Remove team member
-router.delete('/:teamId/members/:userId', verifyToken, async (req, res) => {
+router.delete('/:teamId/members/:userId', authenticateToken, async (req, res) => {
     const { teamId, userId } = req.params;
 
     try {
@@ -297,7 +297,7 @@ router.delete('/:teamId/members/:userId', verifyToken, async (req, res) => {
 });
 
 // Leave team
-router.post('/:teamId/leave', verifyToken, async (req, res) => {
+router.post('/:teamId/leave', authenticateToken, async (req, res) => {
     const { teamId } = req.params;
 
     try {
@@ -329,7 +329,7 @@ router.post('/:teamId/leave', verifyToken, async (req, res) => {
 });
 
 // Delete team
-router.delete('/:teamId', verifyToken, async (req, res) => {
+router.delete('/:teamId', authenticateToken, async (req, res) => {
     const { teamId } = req.params;
 
     try {
