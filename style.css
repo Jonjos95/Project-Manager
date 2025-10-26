@@ -154,11 +154,13 @@ select:focus-visible {
 /* Icon sizes - Match the expanded sidebar icons (Tailwind w-6 = 24px, w-7 = 28px) */
 /* These rules ensure icons stay the same size in both states */
 
-/* Fix hover effect alignment when sidebar is collapsed */
+/* Fix hover and active state alignment when sidebar is collapsed */
 .sidebar-collapsed .nav-btn,
 .sidebar-collapsed .filter-btn {
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
 /* Make sure hover backgrounds are centered */
@@ -170,4 +172,11 @@ select:focus-visible {
 .dark .sidebar-collapsed .nav-btn:hover,
 .dark .sidebar-collapsed .filter-btn:hover {
     background-color: rgba(75, 85, 99, 0.3);
+}
+
+/* Ensure active state is perfectly centered */
+.sidebar-collapsed .nav-btn.bg-purple-600,
+.sidebar-collapsed .filter-btn.bg-purple-600 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
