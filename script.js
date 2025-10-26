@@ -7,6 +7,7 @@ class App {
         this.auth = new AuthManager();
         this.methodology = new MethodologyManager();
         this.ui = new UIController();
+        this.glassUI = new GlassUI();
         this.taskManager = null; // Initialized after login
         this.board = null; // Initialized after login
         this.analytics = null; // Initialized after login
@@ -19,6 +20,9 @@ class App {
         
         // Initialize methodology
         this.methodology.init();
+        
+        // Initialize Glass UI effects
+        this.glassUI.init();
         
         // Check authentication (await the promise)
         const hasSession = await this.auth.init();
@@ -42,6 +46,9 @@ class App {
         
         // Update icons
         this.ui.refreshIcons();
+        
+        // Refresh glass effects after everything is loaded
+        setTimeout(() => this.glassUI.refresh(), 200);
     }
 
     // Initialize app after successful login
@@ -104,7 +111,7 @@ class App {
         }
         
         // Search input
-        const searchInput = document.getElementById('searchInput');
+    const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             searchInput.addEventListener('input', (e) => this.handleSearch(e));
         }
@@ -398,6 +405,11 @@ function showView(viewName) {
     // Refresh Feather icons
     if (typeof feather !== 'undefined') {
         feather.replace();
+    }
+    
+    // Refresh glass UI effects
+    if (window.app && window.app.glassUI) {
+        window.app.glassUI.refresh();
     }
 }
 
