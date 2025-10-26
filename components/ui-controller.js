@@ -96,8 +96,8 @@ class UIController {
             // Change collapse icon direction
             if (collapseIcon) collapseIcon.setAttribute('data-feather', 'chevrons-right');
             
-            // Re-render all Feather icons to apply size changes
-            if (typeof feather !== 'undefined') feather.replace();
+            // Re-render all Feather icons and force correct sizes
+            this.refreshIcons();
             
         } else {
             // Expand sidebar
@@ -131,13 +131,8 @@ class UIController {
             // Change collapse icon direction
             if (collapseIcon) collapseIcon.setAttribute('data-feather', 'chevrons-left');
             
-            // Re-render all Feather icons to apply size changes
-            if (typeof feather !== 'undefined') feather.replace();
-        }
-        
-        // Update Feather icons
-        if (typeof feather !== 'undefined') {
-            feather.replace();
+            // Re-render all Feather icons and force correct sizes
+            this.refreshIcons();
         }
     }
 
@@ -340,27 +335,27 @@ class UIController {
         if (typeof feather !== 'undefined') {
             feather.replace();
             
-            // FORCE icon sizes after Feather converts them to SVG
-            // Navigation icons - 24px
-            document.querySelectorAll('.nav-btn svg, .filter-btn svg').forEach(svg => {
-                svg.setAttribute('width', '24');
-                svg.setAttribute('height', '24');
-            });
-            
-            // Counter icons - 28px
-            document.querySelectorAll('.counter-icon').forEach(icon => {
-                // Find the SVG that replaced this icon
-                const svg = icon.tagName === 'svg' ? icon : icon.parentElement.querySelector('svg');
-                if (svg) {
+            // Use setTimeout to ensure SVGs are created before we modify them
+            setTimeout(() => {
+                // FORCE icon sizes after Feather converts them to SVG
+                // Navigation icons - 24px
+                const navIcons = document.querySelectorAll('.nav-btn svg, .filter-btn svg');
+                console.log(`Found ${navIcons.length} nav icons to resize`);
+                navIcons.forEach(svg => {
+                    svg.setAttribute('width', '24');
+                    svg.setAttribute('height', '24');
+                    console.log('Resized nav icon to 24px');
+                });
+                
+                // Counter icons - 28px
+                const counterIcons = document.querySelectorAll('#countersSection svg');
+                console.log(`Found ${counterIcons.length} counter icons to resize`);
+                counterIcons.forEach(svg => {
                     svg.setAttribute('width', '28');
                     svg.setAttribute('height', '28');
-                }
-            });
-            
-            document.querySelectorAll('#countersSection svg').forEach(svg => {
-                svg.setAttribute('width', '28');
-                svg.setAttribute('height', '28');
-            });
+                    console.log('Resized counter icon to 28px');
+                });
+            }, 100);
         }
     }
 
