@@ -4,7 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
-const db = require('../db');
+const db = require('../config/database');
 
 // Get stages for a team
 router.get('/team/:teamId', authenticateToken, async (req, res) => {
