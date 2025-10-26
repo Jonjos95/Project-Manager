@@ -38,13 +38,13 @@ router.get('/my-subscription', authenticateToken, async (req, res) => {
             WHERE us.user_id = ?
             ORDER BY us.created_at DESC
             LIMIT 1
-        `, [req.user.userId]);
+        `, [req.user.id]);
         
         if (subscriptions.length === 0) {
             // Create default free subscription
             await db.query(
                 'INSERT INTO user_subscriptions (user_id, plan_id, status) VALUES (?, ?, ?)',
-                [req.user.userId, 'free', 'active']
+                [req.user.id, 'free', 'active']
             );
             
             const [newSub] = await db.query(`
@@ -59,7 +59,7 @@ router.get('/my-subscription', authenticateToken, async (req, res) => {
                 FROM user_subscriptions us
                 JOIN subscription_plans sp ON us.plan_id = sp.id
                 WHERE us.user_id = ?
-            `, [req.user.userId]);
+            `, [req.user.id]);
             
             return res.json(newSub[0]);
         }
@@ -84,7 +84,7 @@ router.post('/check-limit', authenticateToken, async (req, res) => {
             WHERE us.user_id = ? AND us.status = 'active'
             ORDER BY us.created_at DESC
             LIMIT 1
-        `, [req.user.userId]);
+        `, [req.user.id]);
         
         if (subscription.length === 0) {
             return res.json({ allowed: false, reason: 'No active subscription' });
@@ -100,7 +100,7 @@ router.post('/check-limit', authenticateToken, async (req, res) => {
             if (limits.tasks !== -1) {
                 const [taskCount] = await db.query(
                     'SELECT COUNT(*) as count FROM tasks WHERE user_id = ?',
-                    [req.user.userId]
+                    [req.user.id]
                 );
                 if (taskCount[0].count >= limits.tasks) {
                     allowed = false;
@@ -111,7 +111,7 @@ router.post('/check-limit', authenticateToken, async (req, res) => {
             if (limits.teams !== -1) {
                 const [teamCount] = await db.query(
                     'SELECT COUNT(*) as count FROM teams WHERE owner_id = ?',
-                    [req.user.userId]
+                    [req.user.id]
                 );
                 if (teamCount[0].count >= limits.teams) {
                     allowed = false;
@@ -182,10 +182,10 @@ router.post('/cancel', authenticateToken, async (req, res) => {
         const { immediately } = req.body;
         
         await db.query(`
-            UPDATE user_subscriptions 
+            UPDATE user_subscriptions
             SET cancel_at_period_end = ?, status = ?
             WHERE user_id = ? AND status = 'active'
-        `, [!immediately, immediately ? 'canceled' : 'active', req.user.userId]);
+        `, [!immediately, immediately ? 'canceled' : 'active', req.user.id]);
         
         res.json({ 
             success: true,
@@ -205,7 +205,7 @@ router.get('/payment-history', authenticateToken, async (req, res) => {
             WHERE user_id = ?
             ORDER BY created_at DESC
             LIMIT 50
-        `, [req.user.userId]);
+        `, [req.user.id]);
         
         res.json(payments);
     } catch (error) {
