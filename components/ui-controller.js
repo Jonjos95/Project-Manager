@@ -339,6 +339,28 @@ class UIController {
     refreshIcons() {
         if (typeof feather !== 'undefined') {
             feather.replace();
+            
+            // FORCE icon sizes after Feather converts them to SVG
+            // Navigation icons - 24px
+            document.querySelectorAll('.nav-btn svg, .filter-btn svg').forEach(svg => {
+                svg.setAttribute('width', '24');
+                svg.setAttribute('height', '24');
+            });
+            
+            // Counter icons - 28px
+            document.querySelectorAll('.counter-icon').forEach(icon => {
+                // Find the SVG that replaced this icon
+                const svg = icon.tagName === 'svg' ? icon : icon.parentElement.querySelector('svg');
+                if (svg) {
+                    svg.setAttribute('width', '28');
+                    svg.setAttribute('height', '28');
+                }
+            });
+            
+            document.querySelectorAll('#countersSection svg').forEach(svg => {
+                svg.setAttribute('width', '28');
+                svg.setAttribute('height', '28');
+            });
         }
     }
 
