@@ -9,6 +9,7 @@ class App {
         this.ui = new UIController();
         this.glassUI = new GlassUI();
         this.subscriptionManager = null; // Initialized after login
+        this.teams = null; // Initialized after login
         this.taskManager = null; // Initialized after login
         this.board = null; // Initialized after login
         this.analytics = null; // Initialized after login
@@ -74,9 +75,13 @@ class App {
     async initializeAfterLogin(user) {
         // Initialize modules that require authentication
         this.subscriptionManager = new SubscriptionManager(this.auth);
+        this.teams = new TeamsManager(this.auth);
         this.taskManager = new TaskManager(this.auth, this.methodology);
         this.board = new KanbanBoard(this.taskManager, this.methodology, this.ui);
         this.analytics = new Analytics(this.taskManager, this.methodology);
+        
+        // Initialize teams
+        await this.teams.init();
         
         // Load data from backend (await the async call)
         await this.taskManager.init();
@@ -431,6 +436,12 @@ function showView(viewName) {
                     window.app.subscriptionManager.loadCurrentSubscription();
                 }
                 break;
+            case 'teams':
+                if (window.app.teams) {
+                    window.app.teams.loadMyTeams();
+                    window.app.teams.applyRolePermissions();
+                }
+                break;
         }
     }
     
@@ -494,6 +505,12 @@ function showRegisterModal() {
 
 function logout() {
     window.app.auth.logout();
+}
+
+function toggleTeamSwitcher() {
+    if (window.app && window.app.teams) {
+        window.app.teams.toggleTeamSwitcher();
+    }
 }
 
 function deleteTaskFromDetail() {
