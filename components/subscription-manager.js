@@ -20,6 +20,7 @@ class SubscriptionManager {
             if (response.ok) {
                 this.plans = await response.json();
                 this.renderPlans();
+                this.renderFeatureComparison();
             }
         } catch (error) {
             console.error('Error loading plans:', error);
@@ -104,6 +105,81 @@ class SubscriptionManager {
         
         // Re-render plans to highlight current plan
         this.renderPlans();
+        
+        // Render feature comparison table
+        this.renderFeatureComparison();
+    }
+    
+    // Render feature comparison table
+    renderFeatureComparison() {
+        const tableBody = document.getElementById('featureComparisonTable');
+        if (!tableBody || !this.plans.length) return;
+        
+        // Extract limits from each plan
+        const planLimits = {};
+        this.plans.forEach(plan => {
+            planLimits[plan.id] = typeof plan.limits_json === 'string' 
+                ? JSON.parse(plan.limits_json) 
+                : plan.limits_json;
+        });
+        
+        // Define features to compare
+        const features = [
+            { name: 'Tasks', key: 'tasks' },
+            { name: 'Teams', key: 'teams' },
+            { name: 'Team Members', key: 'team_members' },
+            { name: 'Storage', key: 'storage_mb', suffix: 'MB' },
+            { name: 'Advanced Analytics', key: 'analytics' },
+            { name: 'Priority Support', key: 'priority_support' },
+            { name: 'API Access', key: 'api_access' },
+            { name: 'Custom Workflows', key: 'custom_workflows' },
+            { name: 'SSO', key: 'sso' },
+            { name: '24/7 Support', key: 'support_247' },
+        ];
+        
+        let html = '';
+        features.forEach(feature => {
+            html += '<tr>';
+            html += `<td class="px-6 py-4 text-sm font-medium text-gray-800 dark:text-white">${feature.name}</td>`;
+            
+            ['free', 'pro', 'business', 'enterprise'].forEach(planId => {
+                const limits = planLimits[planId] || {};
+                const value = limits[feature.key];
+                
+                html += '<td class="px-6 py-4 text-center text-sm text-gray-700 dark:text-gray-300">';
+                
+                if (value === undefined) {
+                    // Check if it's a premium feature mentioned in plan features
+                    const plan = this.plans.find(p => p.id === planId);
+                    const features = Array.isArray(plan?.features) ? plan.features : JSON.parse(plan?.features || '[]');
+                    const hasFeature = features.some(f => f.toLowerCase().includes(feature.name.toLowerCase()));
+                    
+                    html += hasFeature 
+                        ? '<i data-feather="check" class="w-5 h-5 text-green-500 mx-auto"></i>' 
+                        : '<i data-feather="x" class="w-5 h-5 text-gray-400 mx-auto"></i>';
+                } else if (value === -1) {
+                    html += '<span class="font-semibold text-green-600">Unlimited</span>';
+                } else if (value === true) {
+                    html += '<i data-feather="check" class="w-5 h-5 text-green-500 mx-auto"></i>';
+                } else if (value === false) {
+                    html += '<i data-feather="x" class="w-5 h-5 text-gray-400 mx-auto"></i>';
+                } else {
+                    const suffix = feature.suffix || '';
+                    html += `<span class="font-medium">${value}${suffix ? ' ' + suffix : ''}</span>`;
+                }
+                
+                html += '</td>';
+            });
+            
+            html += '</tr>';
+        });
+        
+        tableBody.innerHTML = html;
+        
+        // Refresh Feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
     }
 
     // Check if user can perform action
