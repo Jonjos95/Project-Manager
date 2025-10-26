@@ -91,8 +91,9 @@ class App {
         // Update Quick Stats
         updateQuickStats();
         
-        // Show board view by default
-        showView('board');
+        // Restore last view or default to board
+        const lastView = localStorage.getItem('lastView') || 'board';
+        showView(lastView);
         
         // Update methodology selector
         this.methodology.updateMethodologySelector();
@@ -367,6 +368,9 @@ function expandSidebarIfCollapsed() {
 }
 
 function showView(viewName) {
+    // Save current view to localStorage
+    localStorage.setItem('lastView', viewName);
+    
     // Hide all views
     document.querySelectorAll('.view-content').forEach(view => {
         view.classList.add('hidden');
