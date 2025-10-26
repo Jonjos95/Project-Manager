@@ -115,33 +115,53 @@
     filter: drop-shadow(0 0 20px rgba(167, 139, 250, 0.5));
 }
 
-.logo-hexagon {
+/* 3D Cube Face Animations */
+.logo-face-top,
+.logo-face-left,
+.logo-face-right {
     stroke-dasharray: 200;
     stroke-dashoffset: 200;
-    animation: drawHexagon 1.5s ease-out 0.3s forwards;
 }
 
-.logo-cross {
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-    animation: drawCross 1s ease-out 0.8s forwards;
+.logo-face-top {
+    animation: drawFace 1s ease-out 0.3s forwards;
 }
 
+.logo-face-left {
+    animation: drawFace 1s ease-out 0.6s forwards;
+}
+
+.logo-face-right {
+    animation: drawFace 1s ease-out 0.9s forwards;
+}
+
+.logo-inner-line {
+    stroke-dasharray: 20;
+    stroke-dashoffset: 20;
+    animation: drawLine 0.5s ease-out 1.2s forwards;
+}
+
+/* All 7 dots appear sequentially */
 .logo-dot {
     opacity: 0;
-    animation: dotAppear 0.5s ease-out 1.3s forwards;
+    transform: scale(0);
 }
 
-.logo-dot:nth-child(3) { animation-delay: 1.4s; }
-.logo-dot:nth-child(4) { animation-delay: 1.5s; }
+.logo-dot-1 { animation: dotAppear 0.4s ease-out 1.3s forwards; }
+.logo-dot-2 { animation: dotAppear 0.4s ease-out 1.4s forwards; }
+.logo-dot-3 { animation: dotAppear 0.4s ease-out 1.5s forwards; }
+.logo-dot-4 { animation: dotAppear 0.4s ease-out 1.6s forwards; }
+.logo-dot-5 { animation: dotAppear 0.4s ease-out 1.7s forwards; }
+.logo-dot-6 { animation: dotAppear 0.4s ease-out 1.8s forwards; }
+.logo-dot-7 { animation: dotAppear 0.4s ease-out 1.9s forwards; }
 
-@keyframes drawHexagon {
+@keyframes drawFace {
     to {
         stroke-dashoffset: 0;
     }
 }
 
-@keyframes drawCross {
+@keyframes drawLine {
     to {
         stroke-dashoffset: 0;
     }
