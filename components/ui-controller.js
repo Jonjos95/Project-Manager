@@ -337,23 +337,27 @@ class UIController {
             
             // Use setTimeout to ensure SVGs are created before we modify them
             setTimeout(() => {
-                // FORCE icon sizes after Feather converts them to SVG
+                // FORCE icon sizes with inline styles (highest priority)
                 // Navigation icons - 24px
                 const navIcons = document.querySelectorAll('.nav-btn svg, .filter-btn svg');
                 console.log(`Found ${navIcons.length} nav icons to resize`);
                 navIcons.forEach(svg => {
-                    svg.setAttribute('width', '24');
-                    svg.setAttribute('height', '24');
-                    console.log('Resized nav icon to 24px');
+                    svg.style.width = '24px';
+                    svg.style.height = '24px';
+                    svg.style.minWidth = '24px';
+                    svg.style.minHeight = '24px';
+                    console.log('Resized nav icon to 24px with inline style');
                 });
                 
                 // Counter icons - 28px
                 const counterIcons = document.querySelectorAll('#countersSection svg');
                 console.log(`Found ${counterIcons.length} counter icons to resize`);
                 counterIcons.forEach(svg => {
-                    svg.setAttribute('width', '28');
-                    svg.setAttribute('height', '28');
-                    console.log('Resized counter icon to 28px');
+                    svg.style.width = '28px';
+                    svg.style.height = '28px';
+                    svg.style.minWidth = '28px';
+                    svg.style.minHeight = '28px';
+                    console.log('Resized counter icon to 28px with inline style');
                 });
             }, 100);
         }
