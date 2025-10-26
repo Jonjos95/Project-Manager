@@ -157,8 +157,10 @@ select:focus-visible {
 /* Fix hover and active state alignment when sidebar is collapsed */
 .sidebar-collapsed .nav-btn,
 .sidebar-collapsed .filter-btn {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0.5rem !important; /* Tighter padding around icons (8px) */
     margin-left: 0 !important;
     margin-right: 0 !important;
 }
@@ -174,7 +176,7 @@ select:focus-visible {
     background-color: rgba(75, 85, 99, 0.3);
 }
 
-/* Ensure active state is perfectly centered */
+/* Ensure active state is perfectly centered with tight padding */
 .sidebar-collapsed .nav-btn.bg-purple-600,
 .sidebar-collapsed .filter-btn.bg-purple-600 {
     margin-left: 0 !important;
