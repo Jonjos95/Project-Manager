@@ -132,6 +132,48 @@ select:focus-visible {
     animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Empty State Glass Enhancement */
+#emptyStateOverlay > div {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    box-shadow: 
+        0 20px 60px rgba(107, 70, 193, 0.15),
+        inset 0 2px 0 rgba(255, 255, 255, 0.8),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.dark #emptyStateOverlay > div {
+    background: rgba(31, 41, 55, 0.95) !important;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        inset 0 2px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Ensure empty state is responsive and fits properly */
+#emptyStateOverlay {
+    z-index: 10;
+}
+
+/* Make sure kanban container has proper overflow handling */
+#kanbanContainer {
+    position: relative;
+}
+
+/* Collapse button styling - no permanent purple background */
+#collapseBtn {
+    background: transparent !important;
+}
+
+#collapseBtn:hover {
+    background: rgba(147, 51, 234, 0.1) !important;
+}
+
+.dark #collapseBtn:hover {
+    background: rgba(147, 51, 234, 0.2) !important;
+}
+
 /* Task card hover effect */
 .bg-gray-50.dark\:bg-gray-700:hover {
     transform: translateY(-2px);
