@@ -64,6 +64,9 @@ class App {
         // Update Quick Stats
         updateQuickStats();
         
+        // Show board view by default
+        showView('board');
+        
         // Update methodology selector
         this.methodology.updateMethodologySelector();
         this.methodology.updateStatusSelectors();
@@ -340,12 +343,14 @@ function showView(viewName) {
     // Hide all views
     document.querySelectorAll('.view-content').forEach(view => {
         view.classList.add('hidden');
+        view.style.display = 'none';
     });
     
     // Show selected view
     const selectedView = document.getElementById(`${viewName}View`);
     if (selectedView) {
         selectedView.classList.remove('hidden');
+        selectedView.style.display = 'block';
     }
     
     // Update nav button states
