@@ -4,8 +4,8 @@ const router = express.Router();
 const db = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
 
-// Stripe integration (install: npm install stripe)
-// const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+// Stripe integration
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Get all available subscription plans
 router.get('/plans', async (req, res) => {

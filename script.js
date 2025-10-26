@@ -8,6 +8,7 @@ class App {
         this.methodology = new MethodologyManager();
         this.ui = new UIController();
         this.glassUI = new GlassUI();
+        this.subscriptionManager = null; // Initialized after login
         this.taskManager = null; // Initialized after login
         this.board = null; // Initialized after login
         this.analytics = null; // Initialized after login
@@ -72,6 +73,7 @@ class App {
     // Initialize app after successful login
     async initializeAfterLogin(user) {
         // Initialize modules that require authentication
+        this.subscriptionManager = new SubscriptionManager(this.auth);
         this.taskManager = new TaskManager(this.auth, this.methodology);
         this.board = new KanbanBoard(this.taskManager, this.methodology, this.ui);
         this.analytics = new Analytics(this.taskManager, this.methodology);
@@ -418,6 +420,12 @@ function showView(viewName) {
                 break;
             case 'profile':
                 updateProfileView();
+                break;
+            case 'subscriptions':
+                if (window.app.subscriptionManager) {
+                    window.app.subscriptionManager.loadPlans();
+                    window.app.subscriptionManager.loadCurrentSubscription();
+                }
                 break;
         }
     }

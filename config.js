@@ -50,6 +50,10 @@ if (isFileProtocol) {
     environment = 'Production (AWS)';
 }
 
+// Stripe Configuration (Publishable Key - safe for frontend)
+const STRIPE_PUBLISHABLE_KEY = 'pk_live_51SMJdZBTJt2ybYLKFOvSjXFE1pnt02AmqCoQbOimscXu93yYnL45a8NTxwS3FPOh1RAtKr2UHWjwBcixtKbF5Zro00ynCIUuxg';
+
 console.log('🌐 Environment:', environment);
 console.log('📡 API URL:', API_URL);
+console.log('💳 Stripe:', STRIPE_PUBLISHABLE_KEY ? 'Configured' : 'Not configured');
 

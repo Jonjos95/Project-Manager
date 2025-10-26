@@ -160,6 +160,10 @@
                         <i data-feather="file-text" class="w-6 h-6 mr-2" style="width: 24px; height: 24px;"></i>
                         <span class="nav-text">Reports</span>
                     </button>
+                    <button onclick="showView('subscriptions')" class="nav-btn w-full flex items-center text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" data-view="subscriptions" title="Subscription Plans">
+                        <i data-feather="credit-card" class="w-6 h-6 mr-2" style="width: 24px; height: 24px;"></i>
+                        <span class="nav-text">Subscriptions</span>
+                    </button>
                 </div>
             </div>
             
@@ -860,6 +864,59 @@
             </div>
             <!-- End Profile View -->
             
+            <!-- Subscriptions View -->
+            <div id="subscriptionsView" class="view-content hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Subscription Plans</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Choose the perfect plan for your needs</p>
+                </div>
+                
+                <!-- Current Subscription Status -->
+                <div id="currentSubscriptionBanner" class="hidden mb-6 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg p-6 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-90">Current Plan</p>
+                            <h3 id="currentPlanName" class="text-2xl font-bold">Free</h3>
+                            <p id="currentPlanStatus" class="text-sm opacity-90 mt-1">Active</p>
+                        </div>
+                        <button onclick="window.app.subscriptionManager.openBillingPortal()" class="bg-white text-purple-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                            Manage Subscription
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Subscription Plans Grid -->
+                <div id="subscriptionPlansContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Plans will be loaded here by JavaScript -->
+                    <div class="col-span-full text-center py-12">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+                        <p class="mt-4 text-gray-600 dark:text-gray-400">Loading plans...</p>
+                    </div>
+                </div>
+                
+                <!-- Subscription Features Comparison -->
+                <div class="mt-12">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-6 text-center">Feature Comparison</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Feature</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Free</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Pro</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Business</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Enterprise</th>
+                                </tr>
+                            </thead>
+                            <tbody id="featureComparisonTable" class="divide-y divide-gray-200 dark:divide-gray-600">
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Subscriptions View -->
+            
         </div>
         
         <!-- Footer -->
@@ -1151,9 +1208,13 @@
     <script src="components/kanban-board.js?v=3.2"></script>
     <script src="components/analytics.js?v=2.5"></script>
     <script src="components/glass-ui.js?v=1.0"></script>
+    <script src="components/subscription-manager.js?v=1.0"></script>
+    
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
     
     <!-- Main Application Controller -->
-    <script src="script.js?v=5.5"></script>
+    <script src="script.js?v=6.0"></script>
     
     <script>
         // Feather icons will be initialized by the app
