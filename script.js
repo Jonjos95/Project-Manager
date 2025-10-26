@@ -13,8 +13,26 @@ class App {
         this.analytics = null; // Initialized after login
     }
 
+    // Show splash screen with animation
+    showSplashScreen() {
+        return new Promise((resolve) => {
+            // Splash screen is already visible, just wait for animation to complete
+            // Animation lasts 2.5s + 0.8s fade out = 3.3s total
+            setTimeout(() => {
+                const splashScreen = document.getElementById('splashScreen');
+                if (splashScreen) {
+                    splashScreen.remove(); // Remove from DOM after animation
+                }
+                resolve();
+            }, 3300);
+        });
+    }
+
     // Initialize application
     async init() {
+        // Show splash screen and wait for animation
+        await this.showSplashScreen();
+        
         // Initialize UI first
         this.ui.init();
         
@@ -408,7 +426,7 @@ function showView(viewName) {
     if (typeof feather !== 'undefined') {
         feather.replace();
     }
-    
+
     // Refresh glass UI effects
     if (window.app && window.app.glassUI) {
         window.app.glassUI.refresh();
@@ -613,8 +631,8 @@ function renderMonthTimeline() {
                 <div id="day-${day}-tasks" class="mt-1 space-y-1">
                     <!-- Tasks for this day -->
                 </div>
-            </div>
-        `;
+                </div>
+            `;
     }
     
     html += '</div>';

@@ -42,9 +42,58 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="style.css?v=4.3">
+    <link rel="stylesheet" href="style.css?v=5.0">
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Animated Splash Screen -->
+    <div id="splashScreen" class="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900">
+        <div class="splash-content">
+            <!-- Animated Background Particles -->
+            <div class="splash-particles">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+            </div>
+            
+            <!-- Logo Container with Animations -->
+            <div class="splash-logo-container">
+                <!-- Outer Ring Animation -->
+                <div class="splash-ring"></div>
+                <div class="splash-ring-2"></div>
+                
+                <!-- Logo -->
+                <svg class="splash-logo" width="120" height="120" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M24 4L8 13V31L24 40L40 31V13L24 4Z" stroke="url(#logoGradient)" stroke-width="2" fill="none" class="logo-hexagon"/>
+                    <path d="M24 16V24M24 24V32M24 24H16M24 24H32" stroke="url(#logoGradient)" stroke-width="2.5" stroke-linecap="round" class="logo-cross"/>
+                    <circle cx="16" cy="16" r="1.5" fill="#a78bfa" class="logo-dot"/>
+                    <circle cx="32" cy="16" r="1.5" fill="#a78bfa" class="logo-dot"/>
+                    <circle cx="24" cy="32" r="1.5" fill="#a78bfa" class="logo-dot"/>
+                    <defs>
+                        <linearGradient id="logoGradient" x1="8" y1="4" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#a78bfa"/>
+                            <stop offset="100%" stop-color="#60a5fa"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                
+                <!-- Glow Effect -->
+                <div class="splash-glow"></div>
+            </div>
+            
+            <!-- Text Animation -->
+            <div class="splash-text">
+                <h1 class="splash-title">N8tive.io</h1>
+                <p class="splash-subtitle">Project Manager</p>
+                <div class="splash-loader">
+                    <div class="splash-loader-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Main App Container (hidden when not authenticated) -->
     <div id="appContainer" class="hidden">
         <!-- Mobile Menu Overlay -->
@@ -1094,7 +1143,7 @@
     <script src="components/glass-ui.js?v=1.0"></script>
     
     <!-- Main Application Controller -->
-    <script src="script.js?v=4.1"></script>
+    <script src="script.js?v=5.0"></script>
     
     <script>
         // Feather icons will be initialized by the app
