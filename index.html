@@ -167,6 +167,17 @@
                 </div>
             </div>
             
+            <!-- Collaboration Section -->
+            <div class="mb-6">
+                <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3 sidebar-text">Collaboration</h3>
+                <div class="space-y-2">
+                    <button onclick="showView('teams')" class="nav-btn w-full flex items-center text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" data-view="teams" title="Teams & Members">
+                        <i data-feather="users" class="w-6 h-6 mr-2" style="width: 24px; height: 24px;"></i>
+                        <span class="nav-text">Teams</span>
+                    </button>
+                </div>
+            </div>
+            
             <!-- Quick Filters (only for Board view) -->
             <div id="filtersSection" class="mb-6 transition-all duration-300">
                 <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3 sidebar-text">Quick Filters</h3>
@@ -917,6 +928,73 @@
             </div>
             <!-- End Subscriptions View -->
             
+            <!-- Teams View -->
+            <div id="teamsView" class="view-content hidden">
+                <div class="mb-6 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Teams & Collaboration</h2>
+                        <p class="text-gray-600 dark:text-gray-400">Manage your teams and collaborate effectively</p>
+                    </div>
+                    <button onclick="window.app.teams.showCreateTeamModal()" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all flex items-center gap-2">
+                        <i data-feather="plus" class="w-5 h-5"></i>
+                        <span>Create Team</span>
+                    </button>
+                </div>
+                
+                <!-- Admin Impersonation Mode (Only visible for admins) -->
+                <div id="adminImpersonationPanel" class="hidden mb-6 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-2 border-orange-300 dark:border-orange-700 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
+                                <i data-feather="eye" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-orange-900 dark:text-orange-300">Admin Impersonation Mode</h3>
+                                <p class="text-sm text-orange-700 dark:text-orange-400">Testing as: <span id="impersonatedRoleName" class="font-semibold">Member</span></p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <select id="impersonationRoleSelect" onchange="window.app.teams.changeImpersonationRole(this.value)" class="px-3 py-2 border border-orange-300 dark:border-orange-700 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                                <option value="admin">Admin</option>
+                                <option value="manager">Manager</option>
+                                <option value="member">Member</option>
+                                <option value="viewer">Viewer</option>
+                            </select>
+                            <button onclick="window.app.teams.disableImpersonation()" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+                                Exit Test Mode
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Current Role Badge -->
+                <div class="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 rounded-lg">
+                    <i data-feather="shield" class="w-5 h-5"></i>
+                    <span class="font-medium">Your Role: <span id="currentUserRole" class="font-bold">Member</span></span>
+                </div>
+                
+                <!-- My Teams Grid -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">My Teams</h3>
+                    <div id="teamsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Teams will be loaded here -->
+                        <div class="col-span-full text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <i data-feather="users" class="w-12 h-12 text-gray-400 mx-auto mb-3"></i>
+                            <p class="text-gray-600 dark:text-gray-400">No teams yet. Create your first team!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Team Invitations -->
+                <div id="teamInvitationsSection" class="mb-8 hidden">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Pending Invitations</h3>
+                    <div id="teamInvitationsList" class="space-y-3">
+                        <!-- Invitations will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            <!-- End Teams View -->
+            
         </div>
         
         <!-- Footer -->
@@ -1209,6 +1287,7 @@
     <script src="components/analytics.js?v=2.5"></script>
     <script src="components/glass-ui.js?v=1.0"></script>
     <script src="components/subscription-manager.js?v=1.0"></script>
+    <script src="components/teams-manager.js?v=1.0"></script>
     
     <!-- Stripe.js -->
     <script src="https://js.stripe.com/v3/"></script>
