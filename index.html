@@ -1009,6 +1009,24 @@
                         <!-- Invitations will be loaded here -->
                     </div>
                 </div>
+                
+                <!-- Custom Stages Section -->
+                <div class="mt-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Custom Workflow Stages</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Define custom stages for your team's workflow</p>
+                        </div>
+                        <button onclick="window.app.stages && window.app.stages.showCreateStageModal()" 
+                                class="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all flex items-center gap-2">
+                            <i data-feather="plus" class="w-5 h-5"></i>
+                            <span>Create Stage</span>
+                        </button>
+                    </div>
+                    <div id="stagesContainer">
+                        <!-- Stages populated dynamically -->
+                    </div>
+                </div>
             </div>
             <!-- End Teams View -->
             
@@ -1425,6 +1443,71 @@
         </div>
     </div>
 
+    <!-- Create Stage Modal -->
+    <div id="createStageModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6 animate-fadeIn">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Create Custom Stage</h2>
+                <button onclick="window.app.stages.hideCreateStageModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <i data-feather="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form onsubmit="window.app.stages.createStage(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Stage Name</label>
+                    <input 
+                        type="text" 
+                        id="createStageName" 
+                        placeholder="e.g., Code Review" 
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                    <textarea 
+                        id="createStageDescription" 
+                        rows="2"
+                        placeholder="What happens in this stage?"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    ></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Color</label>
+                    <select 
+                        id="createStageColor" 
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                        <option value="gray">⚪ Gray</option>
+                        <option value="blue" selected>🔵 Blue</option>
+                        <option value="green">🟢 Green</option>
+                        <option value="yellow">🟡 Yellow</option>
+                        <option value="orange">🟠 Orange</option>
+                        <option value="red">🔴 Red</option>
+                        <option value="purple">🟣 Purple</option>
+                        <option value="pink">🩷 Pink</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="createStageIsInitial" class="w-4 h-4 text-purple-600 rounded">
+                        <span class="text-sm text-gray-700 dark:text-gray-300">Initial Stage</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="createStageIsFinal" class="w-4 h-4 text-purple-600 rounded">
+                        <span class="text-sm text-gray-700 dark:text-gray-300">Final Stage</span>
+                    </label>
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg transition-colors font-semibold"
+                >
+                    Create Stage
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- API Configuration -->
     <script src="config.js"></script>
     
@@ -1438,6 +1521,7 @@
     <script src="components/glass-ui.js?v=1.0"></script>
     <script src="components/subscription-manager.js?v=1.0"></script>
     <script src="components/teams-manager.js?v=2.0"></script>
+    <script src="components/stages-manager.js?v=1.0"></script>
     
     <!-- Stripe.js -->
     <script src="https://js.stripe.com/v3/"></script>
