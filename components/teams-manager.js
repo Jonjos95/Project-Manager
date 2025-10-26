@@ -258,6 +258,14 @@ class TeamsManager {
                 window.app.board.render();
             }
         }
+        
+        // Refresh assignment dropdowns
+        if (typeof updateTaskAssignees === 'function') {
+            updateTaskAssignees();
+        }
+        if (typeof updateTaskDependencies === 'function') {
+            updateTaskDependencies();
+        }
     }
 
     // Render teams grid

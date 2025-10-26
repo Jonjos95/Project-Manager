@@ -160,6 +160,33 @@ class KanbanBoard {
                 ${task.description ? `
                     <p class="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">${task.description}</p>
                 ` : ''}
+                
+                <!-- Assignee & Owner Info -->
+                <div class="flex items-center gap-2 mb-3 text-xs">
+                    ${task.assignee || task.assigneeName ? `
+                        <div class="flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full">
+                            <div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white text-[10px] font-semibold">
+                                ${task.assigneeName ? task.assigneeName.charAt(0).toUpperCase() : '?'}
+                            </div>
+                            <span class="text-[11px]">${task.assigneeName || 'Assigned'}</span>
+                        </div>
+                    ` : ''}
+                    ${task.ownerName ? `
+                        <div class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                            <i data-feather="user" class="w-3 h-3"></i>
+                            <span class="text-[11px]">${task.ownerName}</span>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <!-- Dependency Indicator -->
+                ${task.dependency ? `
+                    <div class="mb-2 flex items-center gap-1 text-xs text-purple-600 dark:text-purple-400">
+                        <i data-feather="link" class="w-3 h-3"></i>
+                        <span class="text-[11px]">Depends on another task</span>
+                    </div>
+                ` : ''}
+                
                 <div class="flex items-center justify-between text-xs">
                     <span class="px-2 py-1 rounded ${
                         task.priority === 'high' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' :
@@ -219,19 +246,40 @@ class KanbanBoard {
         const task = this.taskManager.getTask(taskId);
         if (!task) return;
         
-        document.getElementById('detailTaskTitle').textContent = task.title;
-        document.getElementById('detailTaskDescription').textContent = task.description || 'No description';
-        document.getElementById('detailTaskPriority').textContent = 
+        document.getElementById('detailTitle').textContent = task.title;
+        document.getElementById('detailDescription').textContent = task.description || 'No description';
+        document.getElementById('detailPriorityText').textContent = 
             task.priority === 'low' ? 'Low' : task.priority === 'med' ? 'Medium' : 'High';
         
         const statusObj = this.methodologyManager.getStatusById(task.status);
-        document.getElementById('detailTaskStatus').textContent = statusObj ? statusObj.name : task.status;
+        document.getElementById('detailStatus').textContent = statusObj ? statusObj.name : task.status;
         
-        document.getElementById('detailTaskCreated').textContent = new Date(task.createdAt).toLocaleString();
-        document.getElementById('detailTaskUpdated').textContent = new Date(task.updatedAt).toLocaleString();
+        // Show assignee info
+        const assigneeEl = document.getElementById('detailAssignee');
+        if (assigneeEl) {
+            assigneeEl.textContent = task.assigneeName || 'Unassigned';
+        }
+        
+        // Show owner info
+        const ownerEl = document.getElementById('detailOwner');
+        if (ownerEl) {
+            ownerEl.textContent = task.ownerName || 'Unknown';
+        }
+        
+        // Show dependency info
+        const dependencyEl = document.getElementById('detailDependency');
+        if (dependencyEl && task.dependency) {
+            const depTask = this.taskManager.getTask(task.dependency);
+            dependencyEl.textContent = depTask ? depTask.title : 'Task not found';
+        } else if (dependencyEl) {
+            dependencyEl.textContent = 'None';
+        }
+        
+        document.getElementById('detailCreated').textContent = new Date(task.createdAt).toLocaleString();
+        document.getElementById('detailUpdated').textContent = new Date(task.updatedAt).toLocaleString();
         
         // Show files
-        const filesContainer = document.getElementById('detailTaskFiles');
+        const filesContainer = document.getElementById('detailFiles');
         if (task.files && task.files.length > 0) {
             filesContainer.innerHTML = task.files.map(file => `
                 <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
@@ -246,7 +294,7 @@ class KanbanBoard {
             filesContainer.innerHTML = '<p class="text-sm text-gray-500">No attachments</p>';
         }
         
-        this.uiController.showModal('taskDetailModal');
+        this.uiController.showModal('detailModal');
         this.uiController.refreshIcons();
     }
 

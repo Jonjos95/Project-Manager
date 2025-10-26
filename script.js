@@ -96,6 +96,10 @@ class App {
         // Update Quick Stats
         updateQuickStats();
         
+        // Populate assignment and dependency dropdowns
+        updateTaskAssignees();
+        updateTaskDependencies();
+        
         // Restore last view or default to board
         const lastView = localStorage.getItem('lastView') || 'board';
         showView(lastView);
@@ -163,22 +167,35 @@ class App {
         const description = document.getElementById('taskDescription').value.trim();
         const priority = document.getElementById('taskPriority').value;
         const status = document.getElementById('taskStatus').value;
+        const assigneeSelect = document.getElementById('taskAssignee');
+        const assignee = assigneeSelect ? assigneeSelect.value : '';
+        const dependencySelect = document.getElementById('taskDependency');
+        const dependency = dependencySelect ? dependencySelect.value : '';
         
         if (!title) {
             this.ui.alert('Please enter a task title');
             return;
         }
         
-        const newTask = await this.taskManager.addTask({
+        const taskData = {
             title,
             description,
             priority,
-            status
-        });
+            status,
+            assignee: assignee === 'me' ? this.auth.getCurrentUser().id : assignee,
+            assigneeName: assignee === 'me' ? this.auth.getCurrentUser().name : null,
+            owner: this.auth.getCurrentUser().id,
+            ownerName: this.auth.getCurrentUser().name,
+            dependency: dependency || null,
+            teamId: this.teams.currentTeam ? this.teams.currentTeam.id : null
+        };
+        
+        const newTask = await this.taskManager.addTask(taskData);
         
         if (newTask) {
             this.board.render();
             updateQuickStats(); // Update stats after adding task
+            updateTaskDependencies(); // Refresh dependency dropdown
             document.getElementById('taskForm').reset();
             document.getElementById('taskTitle').focus();
             this.ui.showToast('Task created successfully', 'success');
@@ -477,6 +494,51 @@ function updateQuickStats() {
             : 0;
         rateEl.textContent = `${rate}%`;
     }
+}
+
+// Update task assignee dropdown with team members
+function updateTaskAssignees() {
+    const assigneeSelect = document.getElementById('taskAssignee');
+    if (!assigneeSelect || !window.app) return;
+    
+    // Keep default options
+    let html = '<option value="">👤 Assign to...</option>';
+    html += '<option value="me">Assign to Me</option>';
+    
+    // Add team members if in a team context
+    if (window.app.teams && window.app.teams.currentTeam) {
+        const team = window.app.teams.currentTeam;
+        if (team.members && team.members.length > 0) {
+            html += '<optgroup label="Team Members">';
+            team.members.forEach(member => {
+                html += `<option value="${member.user_id}">${member.name} (${member.role})</option>`;
+            });
+            html += '</optgroup>';
+        }
+    }
+    
+    assigneeSelect.innerHTML = html;
+}
+
+// Update task dependency dropdown with existing tasks
+function updateTaskDependencies() {
+    const dependencySelect = document.getElementById('taskDependency');
+    if (!dependencySelect || !window.app || !window.app.taskManager) return;
+    
+    const tasks = window.app.taskManager.getAllTasks();
+    
+    let html = '<option value="">🔗 No dependency</option>';
+    
+    if (tasks && tasks.length > 0) {
+        html += '<optgroup label="Existing Tasks">';
+        tasks.forEach(task => {
+            const statusIcon = task.status === 'done' ? '✅' : task.status === 'inprogress' ? '🔄' : '📋';
+            html += `<option value="${task.id}">${statusIcon} ${task.title}</option>`;
+        });
+        html += '</optgroup>';
+    }
+    
+    dependencySelect.innerHTML = html;
 }
 
 function updateProfileView() {
