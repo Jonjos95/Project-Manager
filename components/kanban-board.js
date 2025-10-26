@@ -29,8 +29,25 @@ class KanbanBoard {
         // Update counters
         this.updateCounters();
         
+        // Toggle empty state overlay
+        this.toggleEmptyState();
+        
         // Refresh icons
         this.uiController.refreshIcons();
+    }
+    
+    // Toggle empty state overlay
+    toggleEmptyState() {
+        const tasks = this.taskManager.getAllTasks();
+        const overlay = document.getElementById('emptyStateOverlay');
+        
+        if (overlay) {
+            if (tasks.length === 0) {
+                overlay.classList.remove('hidden');
+            } else {
+                overlay.classList.add('hidden');
+            }
+        }
     }
 
     // Create column HTML

@@ -42,7 +42,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="style.css?v=3.4">
+    <link rel="stylesheet" href="style.css?v=3.5">
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
     <!-- Main App Container (hidden when not authenticated) -->
@@ -479,9 +479,58 @@
             </div>
             
             <!-- Kanban Board -->
-            <div id="kanbanContainer" class="kanban-board-container overflow-x-auto pb-4 scroll-smooth">
+            <div id="kanbanContainer" class="kanban-board-container overflow-x-auto pb-4 scroll-smooth relative">
                 <div id="kanbanBoardColumns" class="flex gap-4 min-w-max">
                     <!-- Columns will be dynamically generated here -->
+                </div>
+                
+                <!-- Empty State Overlay -->
+                <div id="emptyStateOverlay" class="hidden absolute inset-0 flex items-center justify-center bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-lg" style="min-height: 400px;">
+                    <div class="text-center max-w-md mx-auto p-8 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-dashed border-purple-300 dark:border-purple-700">
+                        <!-- Icon -->
+                        <div class="mb-6 flex justify-center">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-purple-400 dark:bg-purple-600 rounded-full blur-xl opacity-40 animate-pulse"></div>
+                                <div class="relative bg-gradient-to-br from-purple-500 to-blue-500 p-6 rounded-full">
+                                    <i data-feather="inbox" class="w-16 h-16 text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Text -->
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Your Board is Ready!</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+                            Start organizing your work by creating your first task using the <span class="font-semibold text-purple-600 dark:text-purple-400">"Quick Add Task"</span> form above.
+                        </p>
+                        
+                        <!-- Features List -->
+                        <div class="space-y-3 text-left mb-6">
+                            <div class="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                                <div class="flex-shrink-0 w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                                    <i data-feather="zap" class="w-4 h-4 text-purple-600 dark:text-purple-400"></i>
+                                </div>
+                                <span>Drag and drop tasks between columns</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                                <div class="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                    <i data-feather="users" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+                                </div>
+                                <span>Collaborate with your team in real-time</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                                <div class="flex-shrink-0 w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                                    <i data-feather="trending-up" class="w-4 h-4 text-green-600 dark:text-green-400"></i>
+                                </div>
+                                <span>Track progress with live analytics</span>
+                            </div>
+                        </div>
+                        
+                        <!-- CTA Button -->
+                        <button onclick="document.getElementById('taskTitle').focus()" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2 mx-auto">
+                            <i data-feather="plus-circle" class="w-5 h-5"></i>
+                            Create Your First Task
+                        </button>
+                    </div>
                 </div>
             </div>
             </div>
@@ -1040,7 +1089,7 @@
     <script src="components/methodology-manager.js?v=2.4"></script>
     <script src="components/task-manager.js?v=3.0"></script>
     <script src="components/ui-controller.js?v=2.4"></script>
-    <script src="components/kanban-board.js?v=3.0"></script>
+    <script src="components/kanban-board.js?v=3.1"></script>
     <script src="components/analytics.js?v=2.5"></script>
     
     <!-- Main Application Controller -->
