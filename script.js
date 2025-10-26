@@ -360,14 +360,16 @@ function showView(viewName) {
         selectedView.style.display = 'block';
     }
     
-    // Update nav button states
-    document.querySelectorAll('.nav-btn').forEach(btn => {
+    // Update nav button states - ensure only one is active
+    document.querySelectorAll('.nav-btn, .filter-btn').forEach(btn => {
+        // Remove active state from all buttons first
+        btn.classList.remove('bg-purple-600', 'text-white');
+        btn.classList.add('text-gray-700', 'dark:text-gray-300');
+        
+        // Add active state only to the matching button
         if (btn.getAttribute('data-view') === viewName) {
             btn.classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
             btn.classList.add('bg-purple-600', 'text-white');
-        } else {
-            btn.classList.add('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
-            btn.classList.remove('bg-purple-600', 'text-white');
         }
     });
     

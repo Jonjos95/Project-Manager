@@ -6,6 +6,8 @@
 .filter-btn, .nav-btn {
     overflow: hidden;
     white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: 1px solid transparent;
 }
 
 /* Smooth transitions for drag and drop */
@@ -165,21 +167,83 @@ select:focus-visible {
     width: fit-content !important;
 }
 
-/* Make sure hover backgrounds are centered */
-.sidebar-collapsed .nav-btn:hover,
-.sidebar-collapsed .filter-btn:hover {
-    background-color: rgba(156, 163, 175, 0.1);
+/* Enhanced glassy hover effect for navigation buttons */
+.nav-btn:hover,
+.filter-btn:hover {
+    background: rgba(147, 51, 234, 0.15) !important;
+    backdrop-filter: blur(12px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(150%) !important;
+    border: 1px solid rgba(147, 51, 234, 0.3) !important;
+    box-shadow: 
+        0 4px 16px rgba(147, 51, 234, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-1px) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.dark .sidebar-collapsed .nav-btn:hover,
-.dark .sidebar-collapsed .filter-btn:hover {
-    background-color: rgba(75, 85, 99, 0.3);
+.dark .nav-btn:hover,
+.dark .filter-btn:hover {
+    background: rgba(147, 51, 234, 0.25) !important;
+    backdrop-filter: blur(12px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(150%) !important;
+    border: 1px solid rgba(147, 51, 234, 0.4) !important;
+    box-shadow: 
+        0 4px 16px rgba(147, 51, 234, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Enhanced glassy active state */
+.nav-btn.bg-purple-600,
+.filter-btn.bg-purple-600 {
+    background: linear-gradient(
+        135deg,
+        rgba(147, 51, 234, 0.85) 0%,
+        rgba(107, 70, 193, 0.85) 100%
+    ) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 
+        0 8px 24px rgba(107, 70, 193, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .nav-btn.bg-purple-600,
+.dark .filter-btn.bg-purple-600 {
+    background: linear-gradient(
+        135deg,
+        rgba(147, 51, 234, 0.9) 0%,
+        rgba(107, 70, 193, 0.9) 100%
+    ) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 
+        0 8px 24px rgba(107, 70, 193, 0.5),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Make sure hover backgrounds are centered when collapsed */
+.sidebar-collapsed .nav-btn:hover,
+.sidebar-collapsed .filter-btn:hover {
+    margin: 0 auto !important;
 }
 
 /* Ensure active state is perfectly centered with tight padding */
 .sidebar-collapsed .nav-btn.bg-purple-600,
 .sidebar-collapsed .filter-btn.bg-purple-600 {
     margin: 0 auto !important;
+}
+
+/* Remove active state from non-selected buttons */
+.nav-btn:not(.bg-purple-600),
+.filter-btn:not(.bg-purple-600) {
+    background: transparent !important;
+}
+
+.dark .nav-btn:not(.bg-purple-600),
+.dark .filter-btn:not(.bg-purple-600) {
+    background: transparent !important;
 }
 
 /* ============================================
