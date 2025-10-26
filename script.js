@@ -61,9 +61,17 @@ class App {
         // Render initial board
         this.board.render();
         
+        // Update Quick Stats
+        updateQuickStats();
+        
         // Update methodology selector
         this.methodology.updateMethodologySelector();
         this.methodology.updateStatusSelectors();
+        
+        // Refresh Feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
     }
 
     // Setup global event listeners
