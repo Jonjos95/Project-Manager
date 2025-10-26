@@ -42,7 +42,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="style.css?v=2.4">
+    <link rel="stylesheet" href="style.css?v=2.5">
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
     <!-- Main App Container (hidden when not authenticated) -->
@@ -86,19 +86,19 @@
                 <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3 sidebar-text">Views</h3>
                     <div class="space-y-2">
                     <button onclick="showView('board')" class="nav-btn w-full flex items-center text-left px-4 py-2 rounded-lg bg-purple-600 text-white transition-colors duration-200" data-view="board">
-                        <i data-feather="trello" class="w-5 h-5 mr-2"></i>
+                        <i data-feather="trello" class="w-6 h-6 mr-2"></i>
                         <span class="nav-text">Board</span>
                     </button>
                     <button onclick="showView('analytics')" class="nav-btn w-full flex items-center text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" data-view="analytics">
-                        <i data-feather="bar-chart-2" class="w-5 h-5 mr-2"></i>
+                        <i data-feather="bar-chart-2" class="w-6 h-6 mr-2"></i>
                         <span class="nav-text">Analytics</span>
                     </button>
                     <button onclick="showView('timeline')" class="nav-btn w-full flex items-center text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" data-view="timeline">
-                        <i data-feather="activity" class="w-5 h-5 mr-2"></i>
+                        <i data-feather="activity" class="w-6 h-6 mr-2"></i>
                         <span class="nav-text">Timeline</span>
                     </button>
                     <button onclick="showView('reports')" class="nav-btn w-full flex items-center text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" data-view="reports">
-                        <i data-feather="file-text" class="w-5 h-5 mr-2"></i>
+                        <i data-feather="file-text" class="w-6 h-6 mr-2"></i>
                         <span class="nav-text">Reports</span>
                     </button>
                 </div>
@@ -116,14 +116,14 @@
             <div id="countersSection" class="space-y-2 transition-all duration-300">
                 <div class="flex items-center justify-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                     <div class="flex items-center gap-2">
-                        <i data-feather="circle" class="counter-icon w-6 h-6 text-blue-600 dark:text-blue-400"></i>
+                        <i data-feather="circle" class="counter-icon w-7 h-7 text-blue-600 dark:text-blue-400"></i>
                         <div class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="remainingCount">0</div>
                     </div>
                     <div class="text-xs text-blue-600 dark:text-blue-400 ml-2 sidebar-text">Remaining</div>
                 </div>
                 <div class="flex items-center justify-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                     <div class="flex items-center gap-2">
-                        <i data-feather="check-circle" class="counter-icon w-6 h-6 text-green-600 dark:text-green-400"></i>
+                        <i data-feather="check-circle" class="counter-icon w-7 h-7 text-green-600 dark:text-green-400"></i>
                         <div class="text-2xl font-bold text-green-600 dark:text-green-400" id="completedCount">0</div>
                     </div>
                     <div class="text-xs text-green-600 dark:text-green-400 ml-2 sidebar-text">Complete</div>

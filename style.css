@@ -151,23 +151,5 @@ select:focus-visible {
     background-color: rgba(55, 65, 81, 0.8);
 }
 
-/* Icon sizes - LARGER in both expanded and collapsed states */
-#sidebar .nav-btn svg,
-#sidebar .filter-btn svg,
-#sidebar .nav-btn i,
-#sidebar .filter-btn i,
-.sidebar-collapsed .nav-btn svg,
-.sidebar-collapsed .filter-btn svg,
-.sidebar-collapsed .nav-btn i,
-.sidebar-collapsed .filter-btn i {
-    width: 24px !important;
-    height: 24px !important;
-}
-
-#sidebar #countersSection svg,
-#sidebar #countersSection i,
-.sidebar-collapsed #countersSection svg,
-.sidebar-collapsed #countersSection i {
-    width: 28px !important;
-    height: 28px !important;
-}
+/* Icon sizes - Match the expanded sidebar icons (Tailwind w-6 = 24px, w-7 = 28px) */
+/* These rules ensure icons stay the same size in both states */
