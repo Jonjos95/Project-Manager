@@ -151,7 +151,7 @@ select:focus-visible {
     background-color: rgba(55, 65, 81, 0.8);
 }
 
-/* Keep icon sizes consistent - no change when collapsed */
+/* Icon sizes - expanded state */
 #sidebar .nav-btn svg,
 #sidebar .filter-btn svg,
 #sidebar .nav-btn i,
@@ -164,4 +164,19 @@ select:focus-visible {
 #sidebar #countersSection i {
     width: 24px !important;
     height: 24px !important;
+}
+
+/* Icon sizes - LARGER when collapsed for better visibility */
+.sidebar-collapsed .nav-btn svg,
+.sidebar-collapsed .filter-btn svg,
+.sidebar-collapsed .nav-btn i,
+.sidebar-collapsed .filter-btn i {
+    width: 24px !important;
+    height: 24px !important;
+}
+
+.sidebar-collapsed #countersSection svg,
+.sidebar-collapsed #countersSection i {
+    width: 28px !important;
+    height: 28px !important;
 }
