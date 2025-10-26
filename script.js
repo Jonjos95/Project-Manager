@@ -17,14 +17,14 @@ class App {
     showSplashScreen() {
         return new Promise((resolve) => {
             // Splash screen is already visible, just wait for animation to complete
-            // Animation lasts 5.5s + 1.2s fade out = 6.7s total
+            // Animation lasts 7s + 1.2s fade out = 8.2s total
             setTimeout(() => {
                 const splashScreen = document.getElementById('splashScreen');
                 if (splashScreen) {
                     splashScreen.remove(); // Remove from DOM after animation
                 }
                 resolve();
-            }, 6700);
+            }, 8200);
         });
     }
 

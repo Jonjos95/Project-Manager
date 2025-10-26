@@ -6,7 +6,7 @@
 
 /* Splash Screen Container */
 #splashScreen {
-    animation: splashFadeOut 1.2s ease-in-out 5.5s forwards;
+    animation: splashFadeOut 1.2s ease-in-out 7s forwards;
 }
 
 .splash-content {
