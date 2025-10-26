@@ -45,6 +45,8 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/teams', require('./routes/teams'));
 app.use('/api/subscriptions', require('./routes/subscriptions'));
+app.use('/api/stages', require('./routes/stages'));
+app.use('/api/milestones', require('./routes/milestones'));
 
 // 404 handler
 app.use((req, res) => {
