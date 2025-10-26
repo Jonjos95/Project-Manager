@@ -243,14 +243,19 @@ class KanbanBoard {
     }
 
     // Delete task
-    deleteTask(taskId) {
+    async deleteTask(taskId) {
         if (!this.uiController.confirm('Are you sure you want to delete this task?')) {
             return;
         }
         
-        this.taskManager.deleteTask(taskId);
-        this.render();
-        this.uiController.showToast('Task deleted successfully', 'success');
+        const success = await this.taskManager.deleteTask(taskId);
+        
+        if (success) {
+            this.render();
+            this.uiController.showToast('Task deleted successfully', 'success');
+        } else {
+            this.uiController.showToast('Failed to delete task', 'error');
+        }
     }
 
     // Remove file from task

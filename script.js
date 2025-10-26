@@ -45,14 +45,15 @@ class App {
     }
 
     // Initialize app after successful login
-    initializeAfterLogin(user) {
+    async initializeAfterLogin(user) {
         // Initialize modules that require authentication
         this.taskManager = new TaskManager(this.auth, this.methodology);
         this.board = new KanbanBoard(this.taskManager, this.methodology, this.ui);
         this.analytics = new Analytics(this.taskManager, this.methodology);
         
-        // Load data
-        this.taskManager.init();
+        // Load data from backend (await the async call)
+        await this.taskManager.init();
+        console.log('Tasks loaded, count:', this.taskManager.getAllTasks().length);
         
         // Update UI with user info
         this.auth.updateUserUI();
@@ -111,7 +112,7 @@ class App {
     }
 
     // Handle add task
-    handleAddTask(e) {
+    async handleAddTask(e) {
         e.preventDefault();
         
         const title = document.getElementById('taskTitle').value.trim();
@@ -124,23 +125,25 @@ class App {
             return;
         }
         
-        this.taskManager.addTask({
+        const newTask = await this.taskManager.addTask({
             title,
             description,
             priority,
             status
         });
         
-        this.board.render();
-        
-        document.getElementById('taskForm').reset();
-        document.getElementById('taskTitle').focus();
-        
-        this.ui.showToast('Task created successfully', 'success');
+        if (newTask) {
+            this.board.render();
+            document.getElementById('taskForm').reset();
+            document.getElementById('taskTitle').focus();
+            this.ui.showToast('Task created successfully', 'success');
+        } else {
+            this.ui.showToast('Failed to create task', 'error');
+        }
     }
 
     // Handle edit task
-    handleEditTask(e) {
+    async handleEditTask(e) {
         e.preventDefault();
         
         const taskId = document.getElementById('editTaskId').value;
@@ -154,17 +157,20 @@ class App {
             return;
         }
         
-        this.taskManager.updateTask(taskId, {
+        const success = await this.taskManager.updateTask(taskId, {
             title,
             description,
             priority,
             status
         });
         
-        this.board.render();
-        this.ui.hideModal('editTaskModal');
-        
-        this.ui.showToast('Task updated successfully', 'success');
+        if (success) {
+            this.board.render();
+            this.ui.hideModal('editTaskModal');
+            this.ui.showToast('Task updated successfully', 'success');
+        } else {
+            this.ui.showToast('Failed to update task', 'error');
+        }
     }
 
     // Handle search
@@ -405,6 +411,20 @@ function showRegisterModal() {
 
 function logout() {
     window.app.auth.logout();
+}
+
+function deleteTaskFromDetail() {
+    if (window.app && window.app.board && window.app.board.currentDetailTaskId) {
+        window.app.board.deleteTask(window.app.board.currentDetailTaskId);
+        window.app.ui.hideModal('taskDetailModal');
+    }
+}
+
+function openEditModalFromDetail() {
+    if (window.app && window.app.board && window.app.board.currentDetailTaskId) {
+        window.app.board.editTask(window.app.board.currentDetailTaskId);
+        window.app.ui.hideModal('taskDetailModal');
+    }
 }
 
 // Timeline View Management

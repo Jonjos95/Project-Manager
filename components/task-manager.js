@@ -1,5 +1,5 @@
 // Task Manager Module
-// Handles all task CRUD operations, storage, and filtering
+// Handles all task CRUD operations with backend API
 
 class TaskManager {
     constructor(authManager, methodologyManager) {
@@ -10,173 +10,185 @@ class TaskManager {
         this.searchQuery = '';
         this.activityLog = [];
         
-        this.STORAGE_KEY = 'n8tive.tasks';
         this.ACTIVITY_LOG_KEY = 'n8tive.activity';
-        
-        // Seed data
-        this.SEED_TASKS = [
-            {
-                id: this.generateId(),
-                title: 'Create project requirements',
-                description: 'Define all project requirements and specifications',
-                priority: 'med',
-                status: 'todo',
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                completedAt: null,
-                files: []
-            },
-            {
-                id: this.generateId(),
-                title: 'Design UI mockups',
-                description: 'Create wireframes and visual designs for the application',
-                priority: 'high',
-                status: 'doing',
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                completedAt: null,
-                files: []
-            }
-        ];
+        this.API_URL = window.CONFIG?.API_URL || 'http://localhost:3000/api';
     }
 
-    // Generate unique ID
+    // Generate unique ID (for client-side only operations)
     generateId() {
         return Date.now().toString(36) + Math.random().toString(36).substring(2);
     }
 
     // Initialize task manager
-    init() {
-        this.loadTasks();
+    async init() {
+        await this.loadTasks();
         this.loadActivityLog();
     }
 
-    // Load tasks from localStorage (with row-level security)
-    loadTasks() {
+    // Load tasks from backend API
+    async loadTasks() {
         const currentUser = this.authManager.getCurrentUser();
-        if (!currentUser) {
+        if (!currentUser || !currentUser.token) {
             this.tasks = [];
+            console.log('No authenticated user, tasks cleared');
             return;
         }
         
-        const stored = localStorage.getItem(this.STORAGE_KEY);
-        let allTasks = [];
-        
-        if (stored) {
-            allTasks = JSON.parse(stored);
+        try {
+            console.log('Loading tasks from API...');
+            const response = await fetch(`${this.API_URL}/tasks`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${currentUser.token}`,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
             
-            // Migrate old tasks (without userId) to current user
-            allTasks = allTasks.map(task => ({
-                ...task,
-                userId: task.userId || currentUser.id,
-                updatedAt: task.updatedAt || task.createdAt,
-                files: task.files || []
-            }));
+            if (!response.ok) {
+                throw new Error(`Failed to load tasks: ${response.status}`);
+            }
             
-            // Save migrated tasks
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(allTasks));
-        } else {
-            // Create seed tasks for new user
-            allTasks = this.SEED_TASKS.map(task => ({
-                ...task,
-                userId: currentUser.id
-            }));
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(allTasks));
+            const data = await response.json();
+            this.tasks = data.tasks || [];
+            console.log(`Loaded ${this.tasks.length} tasks from API`);
+        } catch (error) {
+            console.error('Error loading tasks:', error);
+            this.tasks = [];
         }
-        
-        // Filter tasks for current user (ROW-LEVEL SECURITY)
-        this.tasks = allTasks.filter(task => task.userId === currentUser.id);
     }
 
-    // Save tasks to localStorage
+    // No longer needed - backend handles persistence
     saveTasks() {
-        const currentUser = this.authManager.getCurrentUser();
-        if (!currentUser) return;
-        
-        // Load all tasks
-        const stored = localStorage.getItem(this.STORAGE_KEY);
-        let allTasks = stored ? JSON.parse(stored) : [];
-        
-        // Remove current user's tasks
-        allTasks = allTasks.filter(task => task.userId !== currentUser.id);
-        
-        // Add back current user's updated tasks
-        allTasks = [...allTasks, ...this.tasks];
-        
-        // Save all tasks
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(allTasks));
+        // This method is kept for compatibility but does nothing
+        // All saves go through individual API calls
     }
 
     // Add new task
-    addTask(taskData) {
+    async addTask(taskData) {
         const currentUser = this.authManager.getCurrentUser();
-        if (!currentUser) return null;
+        if (!currentUser || !currentUser.token) return null;
 
-        const newTask = {
-            id: this.generateId(),
-            userId: currentUser.id,
-            title: taskData.title,
-            description: taskData.description || '',
-            priority: taskData.priority || 'med',
-            status: taskData.status || 'todo',
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            completedAt: null,
-            files: taskData.files || []
-        };
-        
-        this.tasks.push(newTask);
-        this.saveTasks();
-        this.logActivity('created', newTask, `Created in ${taskData.status}`);
-        
-        return newTask;
+        try {
+            console.log('Creating task via API...', taskData);
+            const response = await fetch(`${this.API_URL}/tasks`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${currentUser.token}`,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    title: taskData.title,
+                    description: taskData.description || '',
+                    priority: taskData.priority || 'med',
+                    status: taskData.status || 'todo'
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to create task: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            const newTask = data.task;
+            
+            // Add to local array
+            this.tasks.push(newTask);
+            this.logActivity('created', newTask, `Created in ${newTask.status}`);
+            
+            console.log('Task created successfully:', newTask);
+            return newTask;
+        } catch (error) {
+            console.error('Error creating task:', error);
+            return null;
+        }
     }
 
     // Update task
-    updateTask(taskId, updates) {
+    async updateTask(taskId, updates) {
+        const currentUser = this.authManager.getCurrentUser();
+        if (!currentUser || !currentUser.token) return false;
+
         const task = this.tasks.find(t => t.id === taskId);
         if (!task) return false;
 
         const oldStatus = task.status;
         
-        Object.assign(task, updates, {
-            updatedAt: new Date().toISOString()
-        });
-        
-        // Set completedAt if moving to done
-        const doneStatuses = ['done', 'archived', 'maintenance'];
-        if (doneStatuses.includes(task.status) && !task.completedAt) {
-            task.completedAt = new Date().toISOString();
-        } else if (!doneStatuses.includes(task.status) && task.completedAt) {
-            task.completedAt = null;
+        try {
+            console.log('Updating task via API...', taskId, updates);
+            const response = await fetch(`${this.API_URL}/tasks/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${currentUser.token}`,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify(updates)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to update task: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            const updatedTask = data.task;
+            
+            // Update local array
+            Object.assign(task, updatedTask);
+            
+            // Log activity if status changed
+            if (oldStatus !== task.status) {
+                const oldStatusObj = this.methodologyManager.getStatusById(oldStatus);
+                const newStatusObj = this.methodologyManager.getStatusById(task.status);
+                this.logActivity('status_changed', task, 
+                    `Moved from ${oldStatusObj?.name || oldStatus} to ${newStatusObj?.name || task.status}`);
+            } else {
+                this.logActivity('updated', task, 'Task updated');
+            }
+            
+            console.log('Task updated successfully');
+            return true;
+        } catch (error) {
+            console.error('Error updating task:', error);
+            return false;
         }
-        
-        this.saveTasks();
-        
-        // Log activity if status changed
-        if (oldStatus !== task.status) {
-            const oldStatusObj = this.methodologyManager.getStatusById(oldStatus);
-            const newStatusObj = this.methodologyManager.getStatusById(task.status);
-            this.logActivity('status_changed', task, 
-                `Moved from ${oldStatusObj?.name || oldStatus} to ${newStatusObj?.name || task.status}`);
-        } else {
-            this.logActivity('updated', task, 'Task updated');
-        }
-        
-        return true;
     }
 
     // Delete task
-    deleteTask(taskId) {
+    async deleteTask(taskId) {
+        const currentUser = this.authManager.getCurrentUser();
+        if (!currentUser || !currentUser.token) return false;
+
         const task = this.tasks.find(t => t.id === taskId);
         if (!task) return false;
 
-        this.logActivity('deleted', task, 'Task deleted');
-        
-        this.tasks = this.tasks.filter(t => t.id !== taskId);
-        this.saveTasks();
-        
-        return true;
+        try {
+            console.log('Deleting task via API...', taskId);
+            const response = await fetch(`${this.API_URL}/tasks/${taskId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${currentUser.token}`,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to delete task: ${response.status}`);
+            }
+            
+            this.logActivity('deleted', task, 'Task deleted');
+            
+            // Remove from local array
+            this.tasks = this.tasks.filter(t => t.id !== taskId);
+            
+            console.log('Task deleted successfully');
+            return true;
+        } catch (error) {
+            console.error('Error deleting task:', error);
+            return false;
+        }
     }
 
     // Get task by ID
