@@ -151,32 +151,23 @@ select:focus-visible {
     background-color: rgba(55, 65, 81, 0.8);
 }
 
-/* Icon sizes - expanded state */
+/* Icon sizes - SAME in both expanded and collapsed states */
 #sidebar .nav-btn svg,
 #sidebar .filter-btn svg,
 #sidebar .nav-btn i,
-#sidebar .filter-btn i {
+#sidebar .filter-btn i,
+.sidebar-collapsed .nav-btn svg,
+.sidebar-collapsed .filter-btn svg,
+.sidebar-collapsed .nav-btn i,
+.sidebar-collapsed .filter-btn i {
     width: 20px !important;
     height: 20px !important;
 }
 
 #sidebar #countersSection svg,
-#sidebar #countersSection i {
-    width: 24px !important;
-    height: 24px !important;
-}
-
-/* Icon sizes - LARGER when collapsed for better visibility */
-.sidebar-collapsed .nav-btn svg,
-.sidebar-collapsed .filter-btn svg,
-.sidebar-collapsed .nav-btn i,
-.sidebar-collapsed .filter-btn i {
-    width: 24px !important;
-    height: 24px !important;
-}
-
+#sidebar #countersSection i,
 .sidebar-collapsed #countersSection svg,
 .sidebar-collapsed #countersSection i {
-    width: 28px !important;
-    height: 28px !important;
+    width: 24px !important;
+    height: 24px !important;
 }
