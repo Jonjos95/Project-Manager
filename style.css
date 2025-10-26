@@ -6,7 +6,7 @@
 
 /* Splash Screen Container */
 #splashScreen {
-    animation: splashFadeOut 0.8s ease-in-out 2.5s forwards;
+    animation: splashFadeOut 1s ease-in-out 4s forwards;
 }
 
 .splash-content {
@@ -131,7 +131,7 @@
 .logo-hexagon {
     stroke-dasharray: 180;
     stroke-dashoffset: 180;
-    animation: drawHexagon 1.5s ease-out 0.5s forwards;
+    animation: drawHexagon 1.8s ease-out 0.6s forwards;
 }
 
 @keyframes drawHexagon {
@@ -149,15 +149,15 @@
 }
 
 .logo-line-vertical {
-    animation: drawLine 0.8s ease-out 1.2s forwards;
+    animation: drawLine 0.6s ease-out 1.8s forwards;
 }
 
 .logo-line-diagonal-1 {
-    animation: drawLine 0.8s ease-out 1.4s forwards;
+    animation: drawLine 0.6s ease-out 2.1s forwards;
 }
 
 .logo-line-diagonal-2 {
-    animation: drawLine 0.8s ease-out 1.6s forwards;
+    animation: drawLine 0.6s ease-out 2.4s forwards;
 }
 
 @keyframes drawLine {
@@ -174,14 +174,14 @@
 
 /* Center blue dot appears first */
 .logo-dot-center { 
-    animation: dotAppear 0.4s ease-out 1.8s forwards; 
+    animation: dotAppear 0.5s ease-out 2.7s forwards; 
 }
 
 /* 4 purple corner dots appear sequentially */
-.logo-dot-1 { animation: dotAppear 0.3s ease-out 1.9s forwards; }
-.logo-dot-2 { animation: dotAppear 0.3s ease-out 2.0s forwards; }
-.logo-dot-3 { animation: dotAppear 0.3s ease-out 2.1s forwards; }
-.logo-dot-4 { animation: dotAppear 0.3s ease-out 2.2s forwards; }
+.logo-dot-1 { animation: dotAppear 0.4s ease-out 2.9s forwards; }
+.logo-dot-2 { animation: dotAppear 0.4s ease-out 3.1s forwards; }
+.logo-dot-3 { animation: dotAppear 0.4s ease-out 3.3s forwards; }
+.logo-dot-4 { animation: dotAppear 0.4s ease-out 3.5s forwards; }
 
 @keyframes dotAppear {
     0% {
@@ -270,7 +270,7 @@
     height: 100%;
     background: linear-gradient(90deg, #a78bfa, #60a5fa);
     border-radius: 10px;
-    animation: loaderProgress 2s ease-in-out forwards;
+    animation: loaderProgress 3.5s ease-in-out forwards;
     box-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
 }
 
