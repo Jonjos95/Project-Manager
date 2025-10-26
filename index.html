@@ -42,7 +42,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="style.css?v=3.1">
+    <link rel="stylesheet" href="style.css?v=3.2">
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
     <!-- Main App Container (hidden when not authenticated) -->
@@ -165,6 +165,15 @@
                                 <circle cx="32" cy="24" r="2" fill="#6b46c1"/>
                             </svg>
                             <h2 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white whitespace-nowrap">Project Manager</h2>
+                            
+                            <!-- Team Switcher -->
+                            <div class="hidden sm:block relative ml-2">
+                                <button id="teamSwitcherBtn" onclick="toggleTeamSwitcher()" class="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 text-purple-800 dark:text-purple-300 rounded-lg hover:from-purple-200 hover:to-blue-200 dark:hover:from-purple-900/50 dark:hover:to-blue-900/50 transition-all border border-purple-200 dark:border-purple-800">
+                                    <i data-feather="users" class="w-4 h-4"></i>
+                                    <span class="text-sm font-medium" id="currentTeamName">Personal</span>
+                                    <i data-feather="chevron-down" class="w-3 h-3"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
@@ -348,59 +357,94 @@
             
             <!-- Board View -->
             <div id="boardView" class="view-content">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 animate-fadeIn">
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Add New Task</h3>
-                <form id="taskForm" class="space-y-4">
-                    <div>
-                        <input 
-                            type="text" 
-                            id="taskTitle" 
-                            placeholder="Task title..." 
-                            required
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                        >
-                    </div>
-                    <div>
-                        <textarea 
-                            id="taskDescription" 
-                            placeholder="Task description (optional)..." 
-                            rows="3"
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                        ></textarea>
-                    </div>
-                    <div class="flex flex-wrap gap-4">
-                        <div class="flex-1 min-w-[200px]">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Priority</label>
+            <!-- Compact Form + Quick Stats Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Add New Task (Compact) -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5 animate-fadeIn">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center">
+                        <i data-feather="plus-circle" class="w-5 h-5 mr-2 text-purple-600"></i>
+                        Quick Add Task
+                    </h3>
+                    <form id="taskForm" class="space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input 
+                                type="text" 
+                                id="taskTitle" 
+                                placeholder="Task title..." 
+                                required
+                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                            >
+                            <input 
+                                type="text" 
+                                id="taskDescription" 
+                                placeholder="Description (optional)..." 
+                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                            >
+                        </div>
+                        <div class="flex flex-wrap gap-2">
                             <select 
                                 id="taskPriority" 
-                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                                class="flex-1 min-w-[120px] px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                             >
-                                <option value="low">Low</option>
-                                <option value="med" selected>Medium</option>
-                                <option value="high">High</option>
+                                <option value="low">🟢 Low</option>
+                                <option value="med" selected>🟡 Medium</option>
+                                <option value="high">🔴 High</option>
                             </select>
-                        </div>
-                        <div class="flex-1 min-w-[200px]">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Initial Status</label>
                             <select 
                                 id="taskStatus" 
-                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                                class="flex-1 min-w-[120px] px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                             >
                                 <option value="backlog">Backlog</option>
                                 <option value="todo" selected>To Do</option>
                             </select>
-                        </div>
-                        <div class="flex items-end">
-<button 
+                            <button 
                                 type="submit" 
-                                class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors duration-200 flex items-center"
+                                class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors duration-200 flex items-center text-sm"
                             >
-                                <i data-feather="plus" class="w-5 h-5 mr-2"></i>
-                                Add Task
+                                <i data-feather="plus" class="w-4 h-4 mr-1"></i>
+                                Add
                             </button>
                         </div>
+                    </form>
+                </div>
+                
+                <!-- Quick Stats Dashboard -->
+                <div class="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-lg shadow-md p-5 animate-fadeIn">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center">
+                        <i data-feather="bar-chart-2" class="w-5 h-5 mr-2 text-blue-600"></i>
+                        Quick Stats
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white dark:bg-gray-800/50 rounded-lg p-3 border border-purple-100 dark:border-purple-900/30">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Total</span>
+                                <i data-feather="layers" class="w-4 h-4 text-purple-600"></i>
+                            </div>
+                            <p class="text-2xl font-bold text-gray-800 dark:text-white" id="quickStatTotal">0</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800/50 rounded-lg p-3 border border-blue-100 dark:border-blue-900/30">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Active</span>
+                                <i data-feather="zap" class="w-4 h-4 text-blue-600"></i>
+                            </div>
+                            <p class="text-2xl font-bold text-gray-800 dark:text-white" id="quickStatActive">0</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800/50 rounded-lg p-3 border border-green-100 dark:border-green-900/30">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Done</span>
+                                <i data-feather="check-circle" class="w-4 h-4 text-green-600"></i>
+                            </div>
+                            <p class="text-2xl font-bold text-gray-800 dark:text-white" id="quickStatDone">0</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800/50 rounded-lg p-3 border border-orange-100 dark:border-orange-900/30">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Rate</span>
+                                <i data-feather="trending-up" class="w-4 h-4 text-orange-600"></i>
+                            </div>
+                            <p class="text-2xl font-bold text-gray-800 dark:text-white" id="quickStatRate">0%</p>
+                        </div>
                     </div>
-                </form>
+                </div>
             </div>
             
             <!-- Kanban Board Section -->
@@ -1000,7 +1044,7 @@
     <script src="components/analytics.js?v=2.5"></script>
     
     <!-- Main Application Controller -->
-    <script src="script.js?v=3.0"></script>
+    <script src="script.js?v=3.1"></script>
     
     <script>
         // Feather icons will be initialized by the app

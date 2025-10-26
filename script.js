@@ -134,6 +134,7 @@ class App {
         
         if (newTask) {
             this.board.render();
+            updateQuickStats(); // Update stats after adding task
             document.getElementById('taskForm').reset();
             document.getElementById('taskTitle').focus();
             this.ui.showToast('Task created successfully', 'success');
@@ -166,6 +167,7 @@ class App {
         
         if (success) {
             this.board.render();
+            updateQuickStats(); // Update stats after editing task
             this.ui.hideModal('editTaskModal');
             this.ui.showToast('Task updated successfully', 'success');
         } else {
@@ -356,6 +358,7 @@ function showView(viewName) {
                 if (window.app.board) {
                     // Always re-render to show latest tasks
                     window.app.board.render();
+                    updateQuickStats();
                     console.log('Board rendered with tasks:', window.app.taskManager.getAllTasks().length);
                 }
                 break;
@@ -382,6 +385,29 @@ function showView(viewName) {
     // Refresh Feather icons
     if (typeof feather !== 'undefined') {
         feather.replace();
+    }
+}
+
+function updateQuickStats() {
+    if (!window.app || !window.app.taskManager) return;
+    
+    const counts = window.app.taskManager.getTaskCounts();
+    
+    // Update Quick Stats
+    const totalEl = document.getElementById('quickStatTotal');
+    const activeEl = document.getElementById('quickStatActive');
+    const doneEl = document.getElementById('quickStatDone');
+    const rateEl = document.getElementById('quickStatRate');
+    
+    if (totalEl) totalEl.textContent = counts.total || 0;
+    if (activeEl) activeEl.textContent = counts.active || 0;
+    if (doneEl) doneEl.textContent = counts.completed || 0;
+    
+    if (rateEl) {
+        const rate = counts.total > 0 
+            ? Math.round((counts.completed / counts.total) * 100) 
+            : 0;
+        rateEl.textContent = `${rate}%`;
     }
 }
 

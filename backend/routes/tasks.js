@@ -9,12 +9,36 @@ const { authenticateToken } = require('../middleware/auth');
 router.use(authenticateToken);
 
 // Get all tasks for current user (ROW-LEVEL SECURITY)
+// Includes personal tasks and tasks from teams they're a member of
 router.get('/', async (req, res) => {
     try {
-        const [tasks] = await db.query(
-            'SELECT * FROM tasks WHERE user_id = ? ORDER BY created_at DESC',
-            [req.user.id]
-        );
+        const { teamId } = req.query;
+        
+        let query, params;
+        
+        if (teamId) {
+            // Get tasks for a specific team (with permission check)
+            query = `
+                SELECT t.* 
+                FROM tasks t
+                INNER JOIN team_members tm ON t.team_id = tm.team_id
+                WHERE tm.user_id = ? AND t.team_id = ?
+                ORDER BY t.created_at DESC
+            `;
+            params = [req.user.id, teamId];
+        } else {
+            // Get all accessible tasks (personal + all team tasks)
+            query = `
+                SELECT DISTINCT t.* 
+                FROM tasks t
+                LEFT JOIN team_members tm ON t.team_id = tm.team_id
+                WHERE t.user_id = ? OR tm.user_id = ?
+                ORDER BY t.created_at DESC
+            `;
+            params = [req.user.id, req.user.id];
+        }
+        
+        const [tasks] = await db.query(query, params);
         
         res.json({
             success: true,
@@ -75,12 +99,27 @@ router.post('/', [
             });
         }
         
-        const { title, description, priority, status } = req.body;
+        const { title, description, priority, status, teamId } = req.body;
         const taskId = 'task_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         
+        // If teamId provided, verify user is a member
+        if (teamId) {
+            const [membership] = await db.query(
+                'SELECT id FROM team_members WHERE team_id = ? AND user_id = ?',
+                [teamId, req.user.id]
+            );
+            
+            if (membership.length === 0) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Not a member of this team'
+                });
+            }
+        }
+        
         await db.query(
-            'INSERT INTO tasks (id, user_id, title, description, priority, status) VALUES (?, ?, ?, ?, ?, ?)',
-            [taskId, req.user.id, title, description || '', priority, status]
+            'INSERT INTO tasks (id, user_id, team_id, title, description, priority, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [taskId, req.user.id, teamId || null, title, description || '', priority, status]
         );
         
         // Fetch the created task
