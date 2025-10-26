@@ -266,6 +266,9 @@ class TeamsManager {
         if (typeof updateTaskDependencies === 'function') {
             updateTaskDependencies();
         }
+        
+        // Update active team members in sidebar
+        this.renderActiveTeamMembers();
     }
 
     // Render teams grid
@@ -569,6 +572,61 @@ class TeamsManager {
             if (window.app && window.app.ui) {
                 window.app.ui.showToast('Failed to delete team', 'error');
             }
+        }
+    }
+
+    // Render active team members in sidebar
+    renderActiveTeamMembers() {
+        const section = document.getElementById('activeTeamMembersSection');
+        const listContainer = document.getElementById('activeTeamMembersList');
+        
+        if (!section || !listContainer) return;
+        
+        // Show section if there's a current team, hide otherwise
+        if (!this.currentTeam || !this.currentTeam.members || this.currentTeam.members.length === 0) {
+            section.classList.add('hidden');
+            return;
+        }
+        
+        section.classList.remove('hidden');
+        
+        // Limit to first 5 members for sidebar display
+        const displayMembers = this.currentTeam.members.slice(0, 5);
+        
+        listContainer.innerHTML = displayMembers.map(member => {
+            const initial = member.name.charAt(0).toUpperCase();
+            const roleColor = {
+                'admin': 'from-red-500 to-pink-500',
+                'manager': 'from-purple-500 to-blue-500',
+                'member': 'from-blue-500 to-cyan-500',
+                'viewer': 'from-gray-400 to-gray-600'
+            }[member.role] || 'from-gray-400 to-gray-600';
+            
+            return `
+                <div class="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <div class="w-8 h-8 bg-gradient-to-br ${roleColor} rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+                        ${initial}
+                    </div>
+                    <div class="flex-1 min-w-0 sidebar-text">
+                        <p class="text-sm font-medium text-gray-800 dark:text-white truncate">${member.name}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">${member.role}</p>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        // Add "view all" link if there are more members
+        if (this.currentTeam.members.length > 5) {
+            listContainer.innerHTML += `
+                <button onclick="showView('teams')" 
+                        class="w-full text-center p-2 text-xs text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors sidebar-text">
+                    View all ${this.currentTeam.members.length} members →
+                </button>
+            `;
+        }
+        
+        if (typeof feather !== 'undefined') {
+            feather.replace();
         }
     }
 }

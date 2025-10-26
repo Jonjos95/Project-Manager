@@ -11,6 +11,7 @@ class App {
         this.subscriptionManager = null; // Initialized after login
         this.teams = null; // Initialized after login
         this.stages = null; // Initialized after login
+        this.milestones = null; // Initialized after login
         this.taskManager = null; // Initialized after login
         this.board = null; // Initialized after login
         this.analytics = null; // Initialized after login
@@ -78,13 +79,15 @@ class App {
         this.subscriptionManager = new SubscriptionManager(this.auth);
         this.teams = new TeamsManager(this.auth);
         this.stages = new StagesManager(this.auth, this.teams);
+        this.milestones = new MilestonesManager(this.auth, this.teams, this.stages);
         this.taskManager = new TaskManager(this.auth, this.methodology);
         this.board = new KanbanBoard(this.taskManager, this.methodology, this.ui);
         this.analytics = new Analytics(this.taskManager, this.methodology);
         
-        // Initialize teams and stages
+        // Initialize teams, stages, and milestones
         await this.teams.init();
         await this.stages.init();
+        await this.milestones.init();
         
         // Load data from backend (await the async call)
         await this.taskManager.init();
@@ -461,9 +464,14 @@ function showView(viewName) {
                     window.app.teams.loadMyTeams();
                     window.app.teams.applyRolePermissions();
                 }
-                // Load stages for current team
-                if (window.app.stages && window.app.teams && window.app.teams.currentTeam) {
-                    window.app.stages.loadTeamStages(window.app.teams.currentTeam.id);
+                // Load stages and milestones for current team
+                if (window.app.teams && window.app.teams.currentTeam) {
+                    if (window.app.stages) {
+                        window.app.stages.loadTeamStages(window.app.teams.currentTeam.id);
+                    }
+                    if (window.app.milestones) {
+                        window.app.milestones.loadMilestones(window.app.teams.currentTeam.id);
+                    }
                 }
                 break;
         }
