@@ -348,7 +348,9 @@ function showView(viewName) {
         switch(viewName) {
             case 'board':
                 if (window.app.board) {
+                    // Always re-render to show latest tasks
                     window.app.board.render();
+                    console.log('Board rendered with tasks:', window.app.taskManager.getAllTasks().length);
                 }
                 break;
             case 'analytics':
