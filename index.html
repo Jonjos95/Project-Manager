@@ -1308,6 +1308,123 @@
         </div>
     </div>
 
+    <!-- Create Team Modal -->
+    <div id="createTeamModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6 animate-fadeIn">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Create New Team</h2>
+                <button onclick="window.app.teams.hideCreateTeamModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <i data-feather="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form onsubmit="window.app.teams.createTeam(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Team Name</label>
+                    <input 
+                        type="text" 
+                        id="createTeamName" 
+                        placeholder="e.g., Design Team" 
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                    <textarea 
+                        id="createTeamDescription" 
+                        rows="3"
+                        placeholder="What is this team for?"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    ></textarea>
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-4 py-2 rounded-lg transition-colors font-semibold"
+                >
+                    Create Team
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Team Detail Modal -->
+    <div id="teamDetailModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full my-8 animate-fadeIn">
+            <!-- Header -->
+            <div class="border-b border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <h2 id="teamDetailName" class="text-2xl font-bold text-gray-800 dark:text-white mb-2"></h2>
+                        <p id="teamDetailDescription" class="text-gray-600 dark:text-gray-400"></p>
+                    </div>
+                    <button onclick="window.app.teams.hideTeamDetailModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <i data-feather="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 space-y-6">
+                <!-- Members Section -->
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Team Members</h3>
+                        <button onclick="window.app.teams.showInviteMemberModal()" 
+                                class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            <i data-feather="user-plus" class="w-4 h-4"></i>
+                            Invite Member
+                        </button>
+                    </div>
+                    <div id="teamMembersList" class="space-y-3">
+                        <!-- Members populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invite Member Modal -->
+    <div id="inviteMemberModal" class="fixed inset-0 bg-black bg-opacity-50 z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6 animate-fadeIn">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Invite Member</h2>
+                <button onclick="window.app.teams.hideInviteMemberModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <i data-feather="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form onsubmit="window.app.teams.inviteMember(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="inviteMemberEmail" 
+                        placeholder="colleague@example.com" 
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role</label>
+                    <select 
+                        id="inviteMemberRole" 
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    >
+                        <option value="viewer">Viewer - Can view tasks</option>
+                        <option value="member" selected>Member - Can create and edit tasks</option>
+                        <option value="manager">Manager - Can manage team and tasks</option>
+                        <option value="admin">Admin - Full access</option>
+                    </select>
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors font-semibold"
+                >
+                    Send Invitation
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- API Configuration -->
     <script src="config.js"></script>
     
@@ -1320,7 +1437,7 @@
     <script src="components/analytics.js?v=2.5"></script>
     <script src="components/glass-ui.js?v=1.0"></script>
     <script src="components/subscription-manager.js?v=1.0"></script>
-    <script src="components/teams-manager.js?v=1.0"></script>
+    <script src="components/teams-manager.js?v=2.0"></script>
     
     <!-- Stripe.js -->
     <script src="https://js.stripe.com/v3/"></script>
