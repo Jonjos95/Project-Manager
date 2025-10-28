@@ -20,7 +20,6 @@ class SubscriptionManager {
             if (response.ok) {
                 this.plans = await response.json();
                 this.renderPlans();
-                this.renderSettingsPlans();
                 this.renderFeatureComparison();
             }
         } catch (error) {
@@ -96,7 +95,7 @@ class SubscriptionManager {
     
     // Update UI with current subscription info
     updateUI() {
-        // Update current plan banner (main subscriptions view)
+        // Update current plan banner
         const banner = document.getElementById('currentSubscriptionBanner');
         if (banner && this.currentSubscription) {
             banner.classList.remove('hidden');
@@ -104,70 +103,11 @@ class SubscriptionManager {
             document.getElementById('currentPlanStatus').textContent = this.currentSubscription.status || 'Active';
         }
         
-        // Update current subscription in settings modal
-        const settingsBanner = document.getElementById('settingsCurrentSubscription');
-        if (settingsBanner && this.currentSubscription) {
-            settingsBanner.classList.remove('hidden');
-            document.getElementById('settingsCurrentPlanName').textContent = this.currentSubscription.plan_name || 'Free';
-            document.getElementById('settingsCurrentPlanStatus').textContent = this.currentSubscription.status || 'Active';
-        }
-        
         // Re-render plans to highlight current plan
         this.renderPlans();
-        this.renderSettingsPlans();
         
         // Render feature comparison table
         this.renderFeatureComparison();
-    }
-    
-    // Render plans in settings modal (compact version)
-    renderSettingsPlans() {
-        const container = document.getElementById('settingsSubscriptionPlans');
-        if (!container) {
-            console.warn('Settings subscription container not found');
-            return;
-        }
-        
-        if (!this.plans.length) {
-            container.innerHTML = '<div class="col-span-full text-center py-6 text-gray-600 dark:text-gray-400">No plans available</div>';
-            return;
-        }
-        
-        const currentPlanId = this.currentSubscription?.plan_id || 'free';
-        
-        let html = this.plans.map(plan => {
-            const isCurrent = plan.id === currentPlanId;
-            const features = Array.isArray(plan.features) ? plan.features : JSON.parse(plan.features || '[]');
-            
-            return `
-                <div class="border-2 ${isCurrent ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' : 'border-gray-200 dark:border-gray-600'} rounded-lg p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-semibold text-gray-800 dark:text-white">${plan.name}</h4>
-                        ${isCurrent ? '<span class="text-xs bg-purple-600 text-white px-2 py-1 rounded-full">Current</span>' : ''}
-                    </div>
-                    <p class="text-2xl font-bold text-gray-800 dark:text-white mb-1">
-                        $${plan.price_monthly}<span class="text-sm font-normal text-gray-600 dark:text-gray-400">/mo</span>
-                    </p>
-                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">${plan.description || ''}</p>
-                    ${!isCurrent ? `
-                        <button onclick="window.app.subscriptionManager.selectPlan('${plan.id}')" class="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all text-sm">
-                            Choose ${plan.name}
-                        </button>
-                    ` : `
-                        <button class="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-lg font-semibold cursor-not-allowed text-sm" disabled>
-                            Current Plan
-                        </button>
-                    `}
-                </div>
-            `;
-        }).join('');
-        
-        container.innerHTML = html;
-        
-        // Refresh Feather icons
-        if (typeof feather !== 'undefined') {
-            feather.replace();
-        }
     }
     
     // Render feature comparison table
