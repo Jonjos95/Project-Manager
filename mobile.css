@@ -1,0 +1,487 @@
+/* Mobile & Tablet Responsive Optimizations for N8tive.io Project Manager */
+
+/* ========================================
+   BASE MOBILE STYLES
+   ======================================== */
+
+/* Ensure proper mobile viewport */
+@viewport {
+    width: device-width;
+    zoom: 1.0;
+}
+
+/* Prevent horizontal scroll */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+/* ========================================
+   MOBILE PHONES (up to 640px)
+   ======================================== */
+@media (max-width: 640px) {
+    /* Adjust main content when sidebar is hidden */
+    #mainContent {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Full-width sidebar on mobile */
+    #sidebar {
+        width: 85% !important;
+        max-width: 300px;
+    }
+    
+    /* Smaller header elements */
+    header h2 {
+        font-size: 1.25rem !important;
+    }
+    
+    /* Stack team switcher on mobile */
+    #teamSwitcherBtn {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.5rem !important;
+    }
+    
+    /* Single column Kanban board */
+    .kanban-board-container {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    
+    .kanban-column {
+        width: 100% !important;
+        min-width: 100% !important;
+        margin-bottom: 1rem;
+    }
+    
+    /* Mobile-optimized cards */
+    .task-card {
+        padding: 1rem !important;
+    }
+    
+    /* Smaller stats cards */
+    .stats-card {
+        padding: 1rem !important;
+    }
+    
+    /* Mobile-friendly forms */
+    #taskForm input,
+    #taskForm textarea,
+    #taskForm select {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        padding: 0.75rem !important;
+    }
+    
+    /* Stack form elements */
+    .grid-cols-3,
+    .grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Full-width modals */
+    .modal-content,
+    [class*="max-w-"] {
+        max-width: 95vw !important;
+        margin: 1rem !important;
+    }
+    
+    /* Mobile navigation improvements */
+    .nav-btn {
+        padding: 0.875rem 1rem !important;
+        font-size: 0.9375rem !important;
+    }
+    
+    .nav-btn i {
+        width: 22px !important;
+        height: 22px !important;
+    }
+    
+    /* Touch-friendly counters */
+    #countersSection {
+        gap: 0.75rem !important;
+    }
+    
+    #countersSection > div {
+        padding: 0.875rem !important;
+    }
+    
+    /* Mobile header menu */
+    .header-menu-item {
+        padding: 0.5rem !important;
+    }
+    
+    .header-menu-item i {
+        width: 20px !important;
+        height: 20px !important;
+    }
+    
+    /* Hide desktop-only elements */
+    .desktop-only {
+        display: none !important;
+    }
+    
+    /* Adjust floating action button */
+    .floating-add-btn {
+        bottom: 1.5rem !important;
+        right: 1.5rem !important;
+        width: 3.5rem !important;
+        height: 3.5rem !important;
+    }
+    
+    /* Mobile-optimized empty states */
+    .empty-state {
+        padding: 2rem 1rem !important;
+        font-size: 0.875rem !important;
+    }
+    
+    /* Improve touch targets */
+    button, a, .clickable {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Mobile-friendly analytics charts */
+    canvas {
+        max-height: 250px !important;
+    }
+    
+    /* Profile dropdown */
+    #profileMenu {
+        right: 0.5rem !important;
+        min-width: 200px !important;
+    }
+    
+    /* Team members in sidebar */
+    #activeTeamMembersList {
+        font-size: 0.8125rem !important;
+    }
+}
+
+/* ========================================
+   TABLETS (641px - 1024px)
+   ======================================== */
+@media (min-width: 641px) and (max-width: 1024px) {
+    /* iPad-specific adjustments */
+    #mainContent {
+        margin-left: 0;
+    }
+    
+    /* Sidebar behavior on tablet */
+    #sidebar.collapsed {
+        width: 4rem !important;
+    }
+    
+    #sidebar:not(.collapsed) {
+        width: 16rem !important;
+    }
+    
+    /* Two-column Kanban on tablets */
+    .kanban-board-container {
+        flex-wrap: wrap !important;
+    }
+    
+    .kanban-column {
+        width: calc(50% - 0.5rem) !important;
+        min-width: calc(50% - 0.5rem) !important;
+    }
+    
+    /* Two-column grids */
+    .grid-cols-3 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    /* Moderate modal widths */
+    [class*="max-w-2xl"],
+    [class*="max-w-xl"] {
+        max-width: 90vw !important;
+    }
+    
+    /* Tablet-optimized charts */
+    canvas {
+        max-height: 300px !important;
+    }
+    
+    /* Touch-optimized buttons */
+    button {
+        min-height: 40px;
+    }
+    
+    /* Tablet header */
+    header h2 {
+        font-size: 1.5rem !important;
+    }
+}
+
+/* ========================================
+   LARGE TABLETS & SMALL LAPTOPS (1025px - 1280px)
+   ======================================== */
+@media (min-width: 1025px) and (max-width: 1280px) {
+    /* Optimize for iPad Pro landscape */
+    .kanban-column {
+        min-width: 300px !important;
+    }
+    
+    /* Three-column layouts */
+    .grid-cols-4 {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+/* ========================================
+   LANDSCAPE MODE OPTIMIZATIONS
+   ======================================== */
+@media (orientation: landscape) and (max-height: 600px) {
+    /* Reduce vertical padding in landscape */
+    .py-8,
+    .py-6 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    /* Compact modals in landscape */
+    .modal-content {
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+    }
+    
+    /* Compact header */
+    header {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+    }
+}
+
+/* ========================================
+   TOUCH DEVICE OPTIMIZATIONS
+   ======================================== */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .nav-btn,
+    .filter-btn,
+    button {
+        padding: 0.875rem 1rem !important;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .hover\:bg-purple-100:hover {
+        background-color: transparent !important;
+    }
+    
+    /* Touch-friendly drag handles */
+    .task-card {
+        cursor: grab;
+    }
+    
+    .task-card:active {
+        cursor: grabbing;
+        opacity: 0.9;
+    }
+    
+    /* Prevent double-tap zoom */
+    button, a {
+        touch-action: manipulation;
+    }
+}
+
+/* ========================================
+   ACCESSIBILITY IMPROVEMENTS
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .bg-purple-600 {
+        background-color: #5a32a3 !important;
+    }
+    
+    .text-gray-600 {
+        color: #1f2937 !important;
+    }
+}
+
+/* ========================================
+   iPAD SPECIFIC FIXES
+   ======================================== */
+@supports (-webkit-touch-callout: none) {
+    /* iOS-specific fixes */
+    input,
+    textarea,
+    select {
+        font-size: 16px !important; /* Prevents zoom */
+    }
+    
+    /* Fix iOS sticky positioning */
+    .sticky {
+        position: -webkit-sticky;
+        position: sticky;
+    }
+    
+    /* iOS safe area */
+    .safe-area-inset {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}
+
+/* ========================================
+   SPECIFIC COMPONENT MOBILE FIXES
+   ======================================== */
+
+/* Login/Register modals on mobile */
+@media (max-width: 640px) {
+    #loginModal,
+    #registerModal {
+        padding: 1rem !important;
+    }
+    
+    #loginModal > div,
+    #registerModal > div {
+        padding: 1.5rem !important;
+        max-width: 95vw !important;
+    }
+}
+
+/* Task detail modal mobile */
+@media (max-width: 640px) {
+    #detailModal .grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+    
+    #detailFiles img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* Settings modal mobile */
+@media (max-width: 640px) {
+    #settingsModal,
+    #helpModal {
+        padding: 0.5rem !important;
+    }
+    
+    #settingsModal > div,
+    #helpModal > div {
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+    }
+}
+
+/* Analytics mobile */
+@media (max-width: 640px) {
+    .analytics-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .chart-container {
+        min-height: 250px !important;
+        max-height: 300px !important;
+    }
+}
+
+/* Timeline mobile */
+@media (max-width: 640px) {
+    .timeline-item {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    
+    .timeline-date {
+        margin-bottom: 0.5rem !important;
+    }
+}
+
+/* Teams view mobile */
+@media (max-width: 640px) {
+    #teamsGrid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .team-card {
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* Subscriptions mobile */
+@media (max-width: 640px) {
+    #subscriptionPlans {
+        flex-direction: column !important;
+    }
+    
+    .subscription-card {
+        width: 100% !important;
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* Quick Stats mobile */
+@media (max-width: 640px) {
+    #quickStats {
+        margin-top: 1rem !important;
+    }
+    
+    #quickStats .grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ========================================
+   UTILITY CLASSES FOR RESPONSIVE
+   ======================================== */
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .mobile-only {
+        display: block;
+    }
+    
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+.tablet-only {
+    display: none;
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .tablet-only {
+        display: block;
+    }
+    
+    .hide-tablet {
+        display: none !important;
+    }
+}
+
+/* ========================================
+   PERFORMANCE OPTIMIZATIONS
+   ======================================== */
+@media (max-width: 1024px) {
+    /* Reduce animations on mobile for performance */
+    .animate-fadeIn,
+    .animate-slideIn {
+        animation-duration: 200ms !important;
+    }
+    
+    /* Simplify shadows on mobile */
+    .shadow-xl {
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+    }
+    
+    /* Reduce blur for performance */
+    .backdrop-blur-sm {
+        backdrop-filter: blur(4px) !important;
+    }
+}
+
