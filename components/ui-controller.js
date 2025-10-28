@@ -204,7 +204,16 @@ class UIController {
     }
 
     toggleSettingsMenu() {
+        const modal = document.getElementById('settingsModal');
+        const isHidden = modal.classList.contains('hidden');
+        
         this.toggleModal('settingsModal');
+        
+        // Load subscriptions when opening settings
+        if (isHidden && window.app && window.app.subscriptionManager) {
+            window.app.subscriptionManager.loadPlans();
+            window.app.subscriptionManager.loadCurrentSubscription();
+        }
     }
 
     toggleHelpMenu() {

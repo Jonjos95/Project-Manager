@@ -20,6 +20,7 @@ class SubscriptionManager {
             if (response.ok) {
                 this.plans = await response.json();
                 this.renderPlans();
+                this.renderSettingsPlans();
                 this.renderFeatureComparison();
             }
         } catch (error) {
@@ -122,7 +123,15 @@ class SubscriptionManager {
     // Render plans in settings modal (compact version)
     renderSettingsPlans() {
         const container = document.getElementById('settingsSubscriptionPlans');
-        if (!container || !this.plans.length) return;
+        if (!container) {
+            console.warn('Settings subscription container not found');
+            return;
+        }
+        
+        if (!this.plans.length) {
+            container.innerHTML = '<div class="col-span-full text-center py-6 text-gray-600 dark:text-gray-400">No plans available</div>';
+            return;
+        }
         
         const currentPlanId = this.currentSubscription?.plan_id || 'free';
         
